@@ -2,6 +2,9 @@ import { createClient } from "@/lib/supabase-server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 
+// OBLIGAMOS a Next.js a tratar esta ruta como dinámica (para evitar errores en el build)
+export const dynamic = "force-dynamic"
+
 export default async function AdminDashboard() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -12,8 +15,11 @@ export default async function AdminDashboard() {
     .select("*")
     .order("created_at", { ascending: false })
 
-  const total = propiedades?.length ?? 0
-  const destacadas = propiedades?.filter(p => p.destacada).length ?? 0
+  // Salvaguarda: si propiedades es null, aseguramos un array vacío
+  const listaPropiedades = propiedades || []
+
+  const total = listaPropiedades.length
+  const destacadas = listaPropiedades.filter(p => p.destacada).length
 
   return (
     <main className="min-h-screen bg-stone-50">
@@ -73,7 +79,7 @@ export default async function AdminDashboard() {
               </tr>
             </thead>
             <tbody>
-              {propiedades?.map((propiedad) => (
+              {listaPropiedades.map((propiedad) => (
                 <tr key={propiedad.id} style={{borderTop: "1px solid #FFF7ED"}}>
                   <td style={{padding: "14px 24px"}}>
                     <p style={{fontWeight: 600, color: "#1C0A00", fontSize: "14px"}}>{propiedad.titulo}</p>

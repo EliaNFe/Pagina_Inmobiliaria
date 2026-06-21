@@ -83,9 +83,11 @@ export default function NuevaPropiedad() {
       }
     }
 
-    if (imagen_url) {
-      await supabase.from("propiedades").update({ imagen_url } as any).eq("id", (propiedad as any).id)
-    }
+   if (imagen_url) {
+  // Guardamos la referencia de la consulta como 'any' en una constante limpia
+  const query: any = supabase.from("propiedades");
+  await query.update({ imagen_url }).eq("id", (propiedad as any).id);
+}
 
     router.push("/admin")
   }

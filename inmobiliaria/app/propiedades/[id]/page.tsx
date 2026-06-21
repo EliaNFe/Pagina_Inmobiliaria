@@ -2,11 +2,20 @@ import { getPropiedad, getImagenesPropiedad } from "@/lib/supabase"
 import Link from "next/link"
 import CarruselImagenes from "@/components/CarruselImagenes"
 
-export default async function DetallePropiedad({ params }: { params: Promise<{ id: string }> }) {
+// 1. Definimos la interfaz limpia para los Props según las exigencias de Next.js 16
+interface PageProps {
+  params: Promise<{ id: string }>
+}
+
+export default async function DetallePropiedad({ params }: PageProps) {
+  // 2. Esperamos de forma segura la resolución de los params
   const { id } = await params
 
-  const propiedad = await getPropiedad(id)
-  const imagenes = await getImagenesPropiedad(id)
+  // 3. Traemos los datos en paralelo desde Supabase para mejorar el rendimiento
+  const [propiedad, imagenes] = await Promise.all([
+    getPropiedad(id),
+    getImagenesPropiedad(id)
+  ])
 
   if (!propiedad) {
     return (
@@ -21,9 +30,11 @@ export default async function DetallePropiedad({ params }: { params: Promise<{ i
     )
   }
 
-  const todasLasImagenes = [
+  // 4. Mapeo seguro evitando que TypeScript proteste con el operador spread
+  const listaImagenes: string[] = imagenes?.map(i => i.url) || []
+  const todasLasImagenes: string[] = [
     ...(propiedad.imagen_url ? [propiedad.imagen_url] : []),
-    ...(imagenes?.map(i => i.url) || [])
+    ...listaImagenes
   ]
 
   return (
