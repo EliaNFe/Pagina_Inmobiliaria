@@ -12,6 +12,7 @@ Sitio web completo para una inmobiliaria real en Necochea, Buenos Aires. Incluye
 
 ## Caché
 
+
 Las consultas a Supabase están cacheadas con `unstable_cache` de Next.js para reducir los tiempos de carga:
 
 - Propiedades destacadas (home) → 5 minutos
