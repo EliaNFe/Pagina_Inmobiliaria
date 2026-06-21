@@ -1,4 +1,0 @@
-{
-  "buildCommand": "cd inmobiliaria && npm install && next build",
-  "outputDirectory": "inmobiliaria/.next"
-}
