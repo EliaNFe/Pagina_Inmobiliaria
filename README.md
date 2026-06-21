@@ -2,13 +2,25 @@
 
 Sitio web completo para una inmobiliaria real en Necochea, Buenos Aires. Incluye un catálogo público de propiedades y un panel de administración seguro para gestionar el contenido del sitio sin tocar código.
 
-## Stack
+## Stack 
 
 - **Next.js 15** — App Router, Server Components, API Routes
 - **TypeScript**
 - **Tailwind CSS v4**
 - **Supabase** — PostgreSQL, Storage y Auth
 - **Vercel** — deploy y hosting
+
+## Caché
+
+Las consultas a Supabase están cacheadas con `unstable_cache` de Next.js para reducir los tiempos de carga:
+
+- Propiedades destacadas (home) → 5 minutos
+- Catálogo de propiedades → 5 minutos  
+- Detalle de propiedad → 10 minutos
+- Imágenes de propiedad → 10 minutos
+- Configuración del sitio → 10 minutos
+
+En producción, las páginas se sirven desde caché y solo consultan Supabase cuando el caché expira.
 
 ## Funcionalidades
 
