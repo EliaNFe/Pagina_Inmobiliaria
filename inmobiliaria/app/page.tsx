@@ -1,17 +1,20 @@
 import { getPropiedadesDestacadas } from "@/lib/supabase"
 import Link from "next/link"
+import SliderPropiedades from "@/components/SliderPropiedades"
 
 export default async function Home() {
   const propiedades = await getPropiedadesDestacadas()
 
   return (
-    <main>
+    <main className="antialiased">
 
+            {/* HERO */}
       <section style={{
         background: "linear-gradient(135deg, #7C2D12 0%, #C2540A 45%, #EA580C 100%)",
         position: "relative",
         overflow: "hidden"
       }} className="text-white">
+
         <div style={{
           position: "absolute", inset: 0, opacity: 0.07,
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M0 0h40v40H0zm40 40h40v40H40z'/%3E%3C/g%3E%3C/svg%3E")`
@@ -19,168 +22,186 @@ export default async function Home() {
         <div style={{
           position: "absolute", right: "-120px", top: "-120px",
           width: "500px", height: "500px", borderRadius: "50%",
-          background: "rgba(255,255,255,0.05)", pointerEvents: "none"
+          background: "rgba(255,255,255,0.05)", pointerEvents: "none",
+          filter: "blur(40px)"
         }} />
         <div style={{
           position: "absolute", right: "80px", bottom: "-60px",
           width: "250px", height: "250px", borderRadius: "50%",
-          background: "rgba(255,255,255,0.04)", pointerEvents: "none"
+          background: "rgba(255,255,255,0.04)", pointerEvents: "none",
+          filter: "blur(20px)"
         }} />
-        <div className="relative max-w-6xl mx-auto px-6 py-32 md:py-44">
+
+        <div className="relative max-w-6xl mx-auto px-6 py-32 md:py-44 grid md:grid-cols-2 gap-12 items-center">
           <div className="max-w-2xl">
-            <div style={{
-              display: "inline-flex", alignItems: "center", gap: "8px",
-              background: "rgba(255,255,255,0.15)",
-              border: "1px solid rgba(255,255,255,0.2)",
-              borderRadius: "999px", padding: "6px 16px", marginBottom: "24px"
-            }}>
-              <div style={{width: "6px", height: "6px", borderRadius: "50%", background: "#FED7AA"}} />
-              <span style={{fontSize: "12px", letterSpacing: "0.1em", fontWeight: 600, color: "#FED7AA"}}>NECOCHEA, BUENOS AIRES</span>
-            </div>
-            <h1 style={{
-              fontSize: "clamp(2.5rem, 5vw, 4rem)",
-              fontWeight: 700, lineHeight: 1.1, marginBottom: "24px", color: "#fff"
-            }}>
+            <h1 className="font-display text-5xl md:text-[4rem] font-bold tracking-tight leading-[1.05] mb-6 text-white drop-shadow-sm">
               Tu próximo hogar<br />
-              <span style={{color: "#FED7AA"}}>está acá.</span>
+              <span className="text-[#FFD8B4]">está acá.</span>
             </h1>
-            <p style={{
-              fontSize: "18px", color: "rgba(255,255,255,0.8)",
-              lineHeight: 1.7, marginBottom: "40px", maxWidth: "480px"
-            }}>
-              Más de 20 años acompañando familias a encontrar el lugar donde construir su historia. Terrenos, casas y departamentos en Necochea.
+
+            <p className="text-lg md:text-xl text-white/90 leading-relaxed mb-10 max-w-lg font-light">
+              Años acompañando a encontrar el lugar donde vivir. Terrenos, casas y departamentos en Necochea.
             </p>
-            <div style={{display: "flex", gap: "12px", flexWrap: "wrap"}}>
-              <Link href="/propiedades" style={{
-                background: "#fff", color: "#C2540A",
-                fontWeight: 700, padding: "14px 32px", borderRadius: "12px",
-                textDecoration: "none", fontSize: "15px",
-                boxShadow: "0 4px 24px rgba(0,0,0,0.15)"
-              }}>
+
+            <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
+              <Link
+                href="/propiedades"
+                className="inline-flex items-center gap-2 text-white font-semibold text-[15px] group"
+                style={{ textDecoration: "none" }}
+              >
                 Ver propiedades
               </Link>
-              <Link href="/contacto" style={{
-                background: "rgba(255,255,255,0.12)",
-                border: "1.5px solid rgba(255,255,255,0.3)",
-                color: "#fff", fontWeight: 600, padding: "14px 32px",
-                borderRadius: "12px", textDecoration: "none", fontSize: "15px"
-              }}>
+              <Link
+                href="/contacto"
+                className="inline-flex items-center gap-2 text-white font-semibold text-[15px] group"
+                style={{ textDecoration: "none" }}
+              >
                 Hablar con Liliana
+                <span className="transition-transform group-hover:translate-x-1">→</span>
               </Link>
             </div>
           </div>
-        </div>
-      </section>
+              {/* Panel espacial con la foto */}
+<div className="relative hidden md:flex items-center justify-center h-[600px]">
 
+  {/* Efecto Glass redondo principal que contiene la foto */}
+  <div style={{
+    position: "absolute",
+    width: "440px", 
+    height: "440px",
+    borderRadius: "50%",
+    background: "rgba(255, 255, 255, 0.05)",
+    backdropFilter: "blur(1px)",
+    WebkitBackdropFilter: "blur(1px)",
+    border: "1px solid rgba(255, 255, 255, 0.2)",
+    boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.3)",
+    overflow: "hidden", // Importante para contener el difuminado
+    zIndex: 10,
+  }}>
+
+    {/* Imagen con difuminado (mask) solo en el borde inferior */}
+    <div
+      className="relative h-full w-full"
+      style={{
+        WebkitMaskImage: "linear-gradient(to bottom, black 80%, transparent 100%)",
+        maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
+      }}
+      >
+      <img
+        src="/liliana-hero-cutout.png"
+        alt="Liliana Cirigliano"
+        className="w-full h-full object-contain"
+        style={{ objectPosition: "center -40px" }} // Ajusta la altura de Liliana dentro del círculo
+      />
+    </div>
+  </div>
+
+  {/* Eliminé la sombra negra antigua que molestaba (anterior zIndex: 5) */}
+
+  {/* Chip flotante actualizado */}
+  <div
+    className="absolute z-20 rounded-full px-8 py-4 shadow-xl"
+    style={{ 
+      bottom: "120px", // Ajustado para el nuevo layout
+      left: "125px", // Ajustado para el nuevo layout
+      background: "rgba(255, 255, 255, 0.1)",
+      backdropFilter: "blur(15px)",
+      WebkitBackdropFilter: "blur(15px)",
+      border: "1px solid rgba(255, 255, 255, 0.2)",
+    }}
+  >
+    <p className="text-[24px] font-display font-extrabold text-orange-800 leading-none">Liliana Cirigliano</p>
+    <p className="text-[14px] text-stone-800 font-medium tracking-tight">Necochea, Buenos Aires</p>
+    </div>
+      </div>
+        </div>
+          </section>
+          
+      {/* PROPIEDADES DESTACADAS */}
       {propiedades && propiedades.length > 0 && (
-        <section style={{background: "#FFF7ED"}} className="py-20">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="flex justify-between items-end mb-10">
+        <section style={{background: "linear-gradient(180deg, #FFF7ED 0%, #FEF3E8 100%)"}}>
+          <div className="max-w-6xl mx-auto px-6 py-24">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-14 gap-4">
               <div>
-                <p style={{fontSize: "11px", fontWeight: 700, letterSpacing: "0.12em", color: "#C2540A", textTransform: "uppercase", marginBottom: "8px"}}>Selección</p>
-                <h2 style={{fontSize: "2rem", fontWeight: 700, color: "#1C0A00"}}>Propiedades destacadas</h2>
+                <p className="text-xs font-bold tracking-[0.15em] text-[#C2540A] uppercase mb-3">
+                  Selección
+                </p>
+                <h2 className="font-display text-3xl md:text-4xl font-bold text-[#1C0A00] tracking-tight">
+                  Propiedades destacadas
+                </h2>
               </div>
-              <Link href="/propiedades" style={{fontSize: "14px", fontWeight: 600, color: "#C2540A", textDecoration: "none"}}>
-                Ver todas →
+              <Link
+                href="/propiedades"
+                className="text-sm font-semibold text-[#C2540A] hover:text-[#9A3412] transition-colors"
+              >
+                Ver catálogo completo →
               </Link>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {propiedades.map((propiedad) => (
-                <Link key={propiedad.id} href={`/propiedades/${propiedad.id}`} style={{textDecoration: "none"}} className="group">
-                  <div style={{
-                    background: "#fff", borderRadius: "16px", overflow: "hidden",
-                    border: "1px solid #FFE4CC",
-                    boxShadow: "0 2px 8px rgba(194,84,10,0.06)"
-                  }} className="transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-                    <div style={{position: "relative", height: "210px", overflow: "hidden"}}>
-                      {propiedad.imagen_url ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={propiedad.imagen_url} alt={propiedad.titulo} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                      ) : (
-                        <div style={{width: "100%", height: "100%", background: "#FFE4CC", display: "flex", alignItems: "center", justifyContent: "center"}}>
-                          <span style={{color: "#C2540A", fontSize: "13px", opacity: 0.5}}>Sin imagen</span>
-                        </div>
-                      )}
-                      <span style={{
-                        position: "absolute", top: "12px", left: "12px",
-                        background: "rgba(255,255,255,0.95)", color: "#7C2D12",
-                        fontSize: "11px", fontWeight: 700, padding: "5px 12px",
-                        borderRadius: "999px", letterSpacing: "0.05em"
-                      }}>
-                        {propiedad.tipo}
-                      </span>
-                    </div>
-                    <div style={{padding: "20px"}}>
-                      <h3 style={{fontWeight: 600, color: "#1C0A00", marginBottom: "4px", fontSize: "16px"}} className="group-hover:text-orange-700 transition-colors">{propiedad.titulo}</h3>
-                      <p style={{color: "#92400E", fontSize: "13px", marginBottom: "16px"}}>{propiedad.ubicacion}</p>
-                      <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-                        <p style={{fontSize: "20px", fontWeight: 800, color: "#C2540A"}}>${propiedad.precio?.toLocaleString()}</p>
-                        <p style={{fontSize: "12px", color: "#A16207"}}>{propiedad.superficie} m²</p>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+
+            <SliderPropiedades propiedades={propiedades as any} />
           </div>
         </section>
       )}
 
-      <section style={{background: "#fff"}} className="py-20">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <p style={{fontSize: "11px", fontWeight: 700, letterSpacing: "0.12em", color: "#C2540A", textTransform: "uppercase", marginBottom: "12px"}}>Por qué elegirnos</p>
-          <h2 style={{fontSize: "1.75rem", fontWeight: 700, color: "#1C0A00", lineHeight: 1.3, marginBottom: "20px"}}>
-            Una inmobiliaria que trabaja para vos, no para la comisión
-          </h2>
-          <p style={{color: "#78350F", lineHeight: 1.8, marginBottom: "32px", fontSize: "15px", maxWidth: "600px", margin: "0 auto 32px"}}>
-            Cada operación es distinta. Por eso no usamos guiones ni procesos genéricos. Liliana conoce Necochea palmo a palmo y te va a asesorar con la honestidad de quien quiere que tomes la mejor decisión.
-          </p>
-          <Link href="/nosotros" style={{color: "#C2540A", fontWeight: 600, fontSize: "14px", textDecoration: "none"}}>
-            Conocer más sobre nosotros →
-          </Link>
-        </div>
-      </section>
-
-      <section style={{
-        background: "linear-gradient(135deg, #431407 0%, #7C2D12 50%, #9A3412 100%)",
-        position: "relative", overflow: "hidden"
-      }} className="py-24 text-center">
+      {/* CTA — Panel de vidrio sobre fondo oscuro */}
+      <section
+        className="relative overflow-hidden py-28 text-center"
+        style={{ background: "linear-gradient(135deg, #1C0A00 0%, #431407 100%)" }}
+      >
         <div style={{
-          position: "absolute", left: "50%", top: "50%", transform: "translate(-50%,-50%)",
-          width: "600px", height: "600px", borderRadius: "50%",
-          background: "rgba(255,255,255,0.03)", pointerEvents: "none"
+          position: "absolute", left: "20%", top: "-80px",
+          width: "350px", height: "350px", borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(234,88,12,0.3) 0%, transparent 70%)",
+          filter: "blur(20px)", pointerEvents: "none"
         }} />
-        <div className="relative max-w-xl mx-auto px-6">
-          <h2 style={{fontSize: "2rem", fontWeight: 700, color: "#fff", marginBottom: "16px"}}>¿Tenés una consulta?</h2>
-          <p style={{color: "rgba(255,255,255,0.65)", marginBottom: "36px", lineHeight: 1.7, fontSize: "15px"}}>
-            Sin compromisos ni formularios interminables. Solo una conversación para entender qué estás buscando.
-          </p>
-          <Link href="/contacto" style={{
-            display: "inline-block",
-            background: "#fff", color: "#C2540A",
-            fontWeight: 700, padding: "16px 40px", borderRadius: "12px",
-            textDecoration: "none", fontSize: "15px",
-            boxShadow: "0 4px 24px rgba(0,0,0,0.2)"
-          }}>
-            Contactar a Liliana
-          </Link>
-        </div>
+        <div style={{
+          position: "absolute", right: "15%", bottom: "-100px",
+          width: "300px", height: "300px", borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)",
+          filter: "blur(20px)", pointerEvents: "none"
+        }} />
+
+        <div className="relative max-w-lg mx-auto px-6">
+          {/* Acá está la magia del Glassmorfismo oscuro */}
+         
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-5">
+              ¿Tenés una consulta?
+            </h2>
+            <p className="text-[16px] text-white/60 mb-10 leading-relaxed">
+              Sin compromisos. Solo una conversación para entender qué estás buscando.
+            </p>
+            <Link
+              href="/contacto"
+              className="inline-flex items-center gap-2 text-white font-semibold text-[15px] group"
+              style={{ textDecoration: "none" }}
+            >
+              <u>Contactar a Liliana</u>
+            </Link>
+          </div>
+        
       </section>
 
-      <footer style={{background: "#0C0500"}} className="py-8">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p style={{color: "rgba(255,255,255,0.35)", fontSize: "13px"}}>© 2025 Inmobiliaria Liliana Cirigliano — Necochea, Buenos Aires</p>
-          <div style={{display: "flex", gap: "24px"}}>
+      {/* FOOTER — línea de vidrio sutil para unificar con el resto */}
+      <footer className="py-12 border-t border-white/10" style={{background: "#0A0300"}}>
+        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+          <p className="text-white/40 text-sm font-medium">
+            © {new Date().getFullYear()} Inmobiliaria Liliana Cirigliano — Necochea, Buenos Aires
+          </p>
+          <nav className="flex gap-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-2 py-1.5">
             {[
-              {href: "/propiedades", label: "Propiedades"},
-              {href: "/nosotros", label: "Nosotros"},
-              {href: "/contacto", label: "Contacto"},
-            ].map(l => (
-              <Link key={l.href} href={l.href} style={{color: "rgba(255,255,255,0.35)", fontSize: "13px", textDecoration: "none"}}>
-                {l.label}
+              { href: "/propiedades", label: "Propiedades" },
+              { href: "/nosotros", label: "Nosotros" },
+              { href: "/contacto", label: "Contacto" },
+            ].map(link => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-white/50 text-sm font-medium hover:text-white hover:bg-white/10 transition-colors px-3 py-1.5 rounded-xl"
+              >
+                {link.label}
               </Link>
             ))}
-          </div>
+          </nav>
         </div>
       </footer>
     </main>

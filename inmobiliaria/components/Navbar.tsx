@@ -2,41 +2,93 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { Home, Building2, Users, MessageCircle } from "lucide-react"
+
+const links = [
+  { href: "/", label: "Inicio", icon: Home },
+  { href: "/propiedades", label: "Propiedades", icon: Building2 },
+  { href: "/nosotros", label: "Nosotros", icon: Users },
+  { href: "/contacto", label: "Contacto", icon: MessageCircle },
+]
 
 export default function Navbar() {
   const pathname = usePathname()
-  const links = [
-    { href: "/", label: "Inicio" },
-    { href: "/propiedades", label: "Propiedades" },
-    { href: "/nosotros", label: "Nosotros" },
-    { href: "/contacto", label: "Contacto" },
-  ]
+
+  // El panel de admin tiene su propia navegación interna;
+  // el navbar público no debe superponerse ahí.
+  if (pathname?.startsWith("/admin")) return null
 
   return (
-    <header style={{
-      background: "rgba(255,255,255,0.97)",
-      backdropFilter: "blur(12px)",
-      borderBottom: "1px solid #FFE4CC",
-      position: "sticky", top: 0, zIndex: 50
-    }}>
-      <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-        <Link href="/" style={{textDecoration: "none", display: "flex", flexDirection: "column", lineHeight: 1}}>
-          <span style={{fontSize: "10px", letterSpacing: "0.15em", color: "#C2540A", fontWeight: 700, textTransform: "uppercase"}}>Inmobiliaria</span>
-          <span style={{fontSize: "17px", fontWeight: 700, color: "#1C0A00", letterSpacing: "-0.02em"}}>Liliana Cirigliano</span>
-        </Link>
-        <nav style={{display: "flex", gap: "32px", alignItems: "center"}}>
-          {links.map((link) => (
-            <Link key={link.href} href={link.href} style={{
-              fontSize: "14px", fontWeight: 500, textDecoration: "none",
-              color: pathname === link.href ? "#C2540A" : "#78350F",
-              borderBottom: pathname === link.href ? "2px solid #C2540A" : "2px solid transparent",
-              paddingBottom: "2px", transition: "color 0.2s"
-            }}>
-              {link.label}
+    <>
+      {/* NAV DESKTOP — logo, menú y CTA como tres piezas independientes */}
+      <header className="hidden md:block fixed top-5 inset-x-0 z-50 px-6 pointer-events-none">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+
+          {/* Logo — separado, a la izquierda */}
+          <Link
+            href="/"
+            className="glass rounded-2xl px-5 py-2.5 flex flex-col leading-none shadow-lg shadow-black/5 pointer-events-auto"
+            style={{ textDecoration: "none" }}
+          >
+            <span className="text-[10px] tracking-[0.15em] text-orange-700/70 font-semibold uppercase">
+              Inmobiliaria
+            </span>
+            <span className="font-display text-[15px] font-bold text-stone-900">
+              Liliana Cirigliano
+            </span>
+          </Link>
+
+          {/* Pill de navegación — centrado, libre del logo y del CTA */}
+          <nav className="glass rounded-2xl px-2 py-2 flex items-center gap-1 shadow-lg shadow-black/5 pointer-events-auto">
+            {links.map((link) => {
+              const Icon = link.icon
+              const active = pathname === link.href
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all"
+                  style={{
+                    textDecoration: "none",
+                    background: active ? "#C2540A" : "transparent",
+                    color: active ? "#fff" : "#57534E",
+                  }}
+                >
+                  <Icon size={16} strokeWidth={2} />
+                  {link.label}
+                </Link>
+              )
+            })}
+          </nav>
+        </div>
+      </header>
+
+      {/* NAV MOBILE — tab bar flotante inferior */}
+      <nav className="flex md:hidden fixed bottom-5 inset-x-4 z-50 glass-strong rounded-[24px] px-2 py-2 shadow-2xl shadow-black/10 justify-between">
+        {links.map((link) => {
+          const Icon = link.icon
+          const active = pathname === link.href
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="flex flex-col items-center gap-1 py-2 px-3 rounded-2xl flex-1 transition-all"
+              style={{
+                textDecoration: "none",
+                background: active ? "rgba(194,84,10,0.1)" : "transparent",
+              }}
+            >
+              <Icon size={20} strokeWidth={2} color={active ? "#C2540A" : "#A8A29E"} />
+              <span
+                className="text-[10px] font-semibold"
+                style={{ color: active ? "#C2540A" : "#A8A29E" }}
+              >
+                {link.label}
+              </span>
             </Link>
-          ))}
-        </nav>
-      </div>
-    </header>
+          )
+        })}
+      </nav>
+    </>
   )
 }

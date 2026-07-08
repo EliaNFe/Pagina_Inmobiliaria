@@ -25,7 +25,24 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  const { pathname } = request.nextUrl
+
+  // La página de login siempre queda accesible (si no, nadie podría loguearse)
+  const esLogin = pathname === "/admin/login"
+
+  // Si no hay usuario autenticado y la ruta no es /admin/login -> afuera
+  if (!user && !esLogin) {
+    const loginUrl = new URL("/admin/login", request.url)
+    return NextResponse.redirect(loginUrl)
+  }
+
+  // Si ya está logueado y trata de entrar a /admin/login -> mandalo al dashboard
+  if (user && esLogin) {
+    const dashboardUrl = new URL("/admin", request.url)
+    return NextResponse.redirect(dashboardUrl)
+  }
 
   return supabaseResponse
 }

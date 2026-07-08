@@ -2,45 +2,55 @@ import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 import { NextRequest, NextResponse } from "next/server"
 
-const intentos = new Map<string, { count: number; lastAttempt: number }>()
+const VENTANA_MINUTOS = 5
+const MAX_INTENTOS = 5
 
-function checkRateLimit(ip: string): boolean {
-  const ahora = Date.now()
-  const ventana = 5 * 60 * 1000 // 5 minutos
-  const maxIntentos = 5
 
-  const registro = intentos.get(ip)
+async function checkRateLimit(
+  supabase: ReturnType<typeof createServerClient>,
+  ip: string
+): Promise<boolean> {
+  const ahora = new Date()
+
+  const { data: registro } = await supabase
+    .from("login_intentos")
+    .select("*")
+    .eq("ip", ip)
+    .single()
 
   if (!registro) {
-    intentos.set(ip, { count: 1, lastAttempt: ahora })
+    await supabase.from("login_intentos").insert({
+      ip,
+      intentos: 1,
+      primer_intento: ahora.toISOString(),
+    } as never)
     return true
   }
 
-  if (ahora - registro.lastAttempt > ventana) {
-    intentos.set(ip, { count: 1, lastAttempt: ahora })
+  const r = registro as unknown as { ip: string; intentos: number; primer_intento: string }
+  const minutosPasados = (ahora.getTime() - new Date(r.primer_intento).getTime()) / 60000
+
+  if (minutosPasados > VENTANA_MINUTOS) {
+    await supabase
+      .from("login_intentos")
+      .update({ intentos: 1, primer_intento: ahora.toISOString() } as never)
+      .eq("ip", ip)
     return true
   }
 
-  if (registro.count >= maxIntentos) {
+  if (r.intentos >= MAX_INTENTOS) {
     return false
   }
 
-  registro.count++
-  registro.lastAttempt = ahora
+  await supabase
+    .from("login_intentos")
+    .update({ intentos: r.intentos + 1 } as never)
+    .eq("ip", ip)
   return true
 }
 
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for") ?? "unknown"
-
-  if (!checkRateLimit(ip)) {
-    return NextResponse.json(
-      { error: "Demasiados intentos. Esperá 5 minutos e intentá de nuevo." },
-      { status: 429 }
-    )
-  }
-
-  const { email, password } = await request.json()
   const cookieStore = await cookies()
 
   const supabase = createServerClient(
@@ -59,6 +69,17 @@ export async function POST(request: NextRequest) {
       },
     }
   )
+
+  const dentroDelLimite = await checkRateLimit(supabase, ip)
+
+  if (!dentroDelLimite) {
+    return NextResponse.json(
+      { error: "Demasiados intentos. Esperá 5 minutos e intentá de nuevo." },
+      { status: 429 }
+    )
+  }
+
+  const { email, password } = await request.json()
 
   const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 

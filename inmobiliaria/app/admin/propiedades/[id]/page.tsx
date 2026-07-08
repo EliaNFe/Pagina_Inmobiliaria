@@ -5,8 +5,24 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { use } from "react"
 import { getSupabaseClient } from "@/lib/supabase-client"
+import { actualizarPropiedad, borrarImagenPropiedad, borrarPropiedad } from "@/lib/property-actions"
 
+// Este cliente se sigue usando SOLO para lectura inicial de datos
+// (mostrar el formulario con los valores actuales). Las escrituras
+// (guardar, borrar imagen, borrar propiedad) ahora pasan por Server Actions.
 const supabase = getSupabaseClient()
+
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      const result = reader.result as string
+      resolve(result.split(",")[1])
+    }
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
 
 export default function EditarPropiedad({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -38,7 +54,10 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
         .single()
 
       if (propiedad) {
-        const p = propiedad as any
+        const p = propiedad as never as {
+          titulo: string; descripcion: string; tipo: string
+          precio: number; superficie: number; ubicacion: string; destacada: boolean
+        }
         setForm({
           titulo: p.titulo || "",
           descripcion: p.descripcion || "",
@@ -56,7 +75,7 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
         .eq("propiedad_id", id)
         .order("orden")
 
-      if (imgs) setImagenes(imgs as any)
+      if (imgs) setImagenes(imgs as never)
       setLoadingData(false)
     }
     cargarDatos()
@@ -74,9 +93,7 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
   }
 
   async function handleBorrarImagen(imagenId: string, url: string) {
-    const filename = url.split("/").pop()
-    if (filename) await supabase.storage.from("propiedades").remove([filename])
-    await (supabase.from("propiedad_imagenes") as any).delete().eq("id", imagenId)
+    await borrarImagenPropiedad(imagenId, url)
     setImagenes(prev => prev.filter(i => i.id !== imagenId))
   }
 
@@ -85,66 +102,36 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
     setError("")
     setSuccess("")
 
-    // CORRECCIÓN: Casteamos la tabla entera a any para anular las restricciones en cascada
-    const { error: updateError } = await (supabase.from("propiedades") as any)
-      .update({
-        titulo: form.titulo,
-        descripcion: form.descripcion,
-        tipo: form.tipo,
-        precio: Number(form.precio),
-        superficie: Number(form.superficie),
-        ubicacion: form.ubicacion,
-        destacada: form.destacada,
-      })
-      .eq("id", id)
+    try {
+      const nuevasImagenesBase64 = await Promise.all(
+        nuevasImagenes.map(async (img) => ({
+          nombre: img.name,
+          base64: await fileToBase64(img),
+        }))
+      )
 
-    if (updateError) {
-      setError("Error al guardar los cambios")
-      setLoading(false)
-      return
-    }
+      const resultado = await actualizarPropiedad(id, form, nuevasImagenesBase64, imagenes.length)
 
-    for (let i = 0; i < nuevasImagenes.length; i++) {
-      const imagen = nuevasImagenes[i]
-      const ext = imagen.name.split(".").pop()
-      const filename = `${Date.now()}_${i}.${ext}`
-
-      const { error: uploadError } = await supabase.storage
-        .from("propiedades")
-        .upload(filename, imagen)
-
-      if (!uploadError) {
-        const { data: urlData } = supabase.storage.from("propiedades").getPublicUrl(filename)
-        
-        // CORRECCIÓN: Evitamos que proteste TypeScript en el insert metiendo el cast en la tabla
-        await (supabase.from("propiedad_imagenes") as any).insert({
-          propiedad_id: id,
-          url: urlData.publicUrl,
-          orden: imagenes.length + i,
-        })
+      if (resultado.error) {
+        setError(resultado.error)
+        setLoading(false)
+        return
       }
+
+      setSuccess("Propiedad actualizada correctamente")
+      setNuevasImagenes([])
+      setPreviews([])
+      if (resultado.imagenes) setImagenes(resultado.imagenes as never)
+    } catch {
+      setError("Error al guardar los cambios")
+    } finally {
+      setLoading(false)
     }
-
-    setSuccess("Propiedad actualizada correctamente")
-    setNuevasImagenes([])
-    setPreviews([])
-
-    const { data: imgs } = await supabase
-      .from("propiedad_imagenes")
-      .select("*")
-      .eq("propiedad_id", id)
-      .order("orden")
-    if (imgs) setImagenes(imgs as any)
-    setLoading(false)
   }
 
   async function handleBorrarPropiedad() {
     if (!confirm("¿Seguro que querés borrar esta propiedad? Esta acción no se puede deshacer.")) return
-    for (const img of imagenes) {
-      const filename = img.url.split("/").pop()
-      if (filename) await supabase.storage.from("propiedades").remove([filename])
-    }
-    await (supabase.from("propiedades") as any).delete().eq("id", id)
+    await borrarPropiedad(id, imagenes)
     router.push("/admin")
   }
 
@@ -224,7 +211,7 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
               style={{width: "18px", height: "18px", accentColor: "#C2540A"}} />
             <div>
               <label htmlFor="destacada" style={{fontSize: "14px", fontWeight: 600, color: "#1C0A00", cursor: "pointer"}}>Mostrar en página principal</label>
-              <p style={{fontSize: "12px", color: "#92400E", marginTop: "2px"}}>Aparece en la sección de propiedades destacadas del home</p>
+              <p style={{fontSize: "12px", color: "#92400E", marginTop: "2px"}}>Aparece en la sección de propiedades destacadas del home (máximo 6, se priorizan las más recientes)</p>
             </div>
           </div>
 

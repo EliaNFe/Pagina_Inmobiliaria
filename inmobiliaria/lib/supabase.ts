@@ -7,36 +7,61 @@ const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 export const supabase = createClient(supabaseUrl, supabaseKey)
 
 // Propiedades destacadas para el home — caché de 5 minutos
+// LÍMITE: muestra máximo 6. Si hay más de 6 marcadas como "destacada",
+// se priorizan las más recientes (created_at descendente). El admin
+// avisa esto mismo para que no haya sorpresas.
 export const getPropiedadesDestacadas = unstable_cache(
   async () => {
     const { data } = await supabase
       .from("propiedades")
       .select("*")
       .eq("destacada", true)
+      .order("created_at", { ascending: false })
       .limit(6)
     return data
   },
   ["propiedades-destacadas"],
-  { revalidate: 300 }
+  { revalidate: 300, tags: ["propiedades"] }
 )
 
-// Todas las propiedades con paginado — caché de 5 minutos
+// Todas las propiedades con paginado y filtro opcional por tipo — caché de 5 minutos
 export const getPropiedades = unstable_cache(
-  async (pagina: number = 1) => {
+  async (pagina: number = 1, tipo?: string) => {
     const POR_PAGINA = 12
     const desde = (pagina - 1) * POR_PAGINA
     const hasta = desde + POR_PAGINA - 1
 
-    const { data, count } = await supabase
+    let query = supabase
       .from("propiedades")
       .select("*", { count: "exact" })
       .order("created_at", { ascending: false })
-      .range(desde, hasta)
+
+    if (tipo) {
+      query = query.eq("tipo", tipo)
+    }
+
+    const { data, count } = await query.range(desde, hasta)
 
     return { data, count }
   },
-  ["propiedades"],
-  { revalidate: 300 }
+  // Antes esta key era ["propiedades"], igual a la de arriba: ambos cachés
+  // se pisaban entre sí. Ahora cada función tiene su propia key.
+  ["propiedades-listado"],
+  { revalidate: 300, tags: ["propiedades"] }
+)
+
+// Cantidad de propiedades por tipo — para armar los filtros con conteos reales
+export const getConteoPorTipo = unstable_cache(
+  async () => {
+    const { data } = await supabase.from("propiedades").select("tipo")
+    const conteo: Record<string, number> = {}
+    data?.forEach((row: { tipo: string }) => {
+      conteo[row.tipo] = (conteo[row.tipo] || 0) + 1
+    })
+    return conteo
+  },
+  ["propiedades-conteo-tipo"],
+  { revalidate: 300, tags: ["propiedades"] }
 )
 
 // Detalle de una propiedad — caché de 10 minutos
@@ -50,7 +75,7 @@ export const getPropiedad = unstable_cache(
     return data
   },
   ["propiedad"],
-  { revalidate: 600 }
+  { revalidate: 600, tags: ["propiedades"] }
 )
 
 // Imágenes de una propiedad — caché de 10 minutos
@@ -64,7 +89,7 @@ export const getImagenesPropiedad = unstable_cache(
     return data
   },
   ["propiedad-imagenes"],
-  { revalidate: 600 }
+  { revalidate: 600, tags: ["propiedades"] }
 )
 
 // Configuración del sitio — caché de 10 minutos
@@ -78,5 +103,5 @@ export const getConfiguracion = unstable_cache(
     return config
   },
   ["configuracion"],
-  { revalidate: 600 }
+  { revalidate: 600, tags: ["configuracion"] }
 )

@@ -1,14 +1,23 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { getSupabaseClient } from "@/lib/supabase-client"
+import { crearPropiedad } from "@/lib/property-actions"
 
-const supabase = getSupabaseClient()
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      const result = reader.result as string
+      // Sacamos el prefijo "data:image/...;base64,"
+      resolve(result.split(",")[1])
+    }
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
 
 export default function NuevaPropiedad() {
-  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [imagenes, setImagenes] = useState<File[]>([])
@@ -39,57 +48,32 @@ export default function NuevaPropiedad() {
     setLoading(true)
     setError("")
 
-    let imagen_url = ""
-
-    const { data: propiedad, error: insertError } = await supabase
-      .from("propiedades")
-      .insert({
-        titulo: form.titulo,
-        descripcion: form.descripcion,
-        tipo: form.tipo,
-        precio: Number(form.precio),
-        superficie: Number(form.superficie),
-        ubicacion: form.ubicacion,
-        destacada: form.destacada,
-        imagen_url: "",
-      } as any)
-      .select()
-      .single()
-
-    if (insertError || !propiedad) {
-      setError("Error al guardar la propiedad")
+    if (!form.titulo || !form.precio || !form.superficie) {
+      setError("Completá título, precio y superficie como mínimo")
       setLoading(false)
       return
     }
 
-    for (let i = 0; i < imagenes.length; i++) {
-      const img = imagenes[i]
-      const ext = img.name.split(".").pop()
-      const filename = `${Date.now()}_${i}.${ext}`
+    try {
+      const imagenesBase64 = await Promise.all(
+        imagenes.map(async (img) => ({
+          nombre: img.name,
+          base64: await fileToBase64(img),
+        }))
+      )
 
-      const { error: uploadError } = await supabase.storage
-        .from("propiedades")
-        .upload(filename, img)
+      const resultado = await crearPropiedad(form, imagenesBase64)
 
-      if (!uploadError) {
-        const { data: urlData } = supabase.storage.from("propiedades").getPublicUrl(filename)
-        if (i === 0) imagen_url = urlData.publicUrl
-
-        await supabase.from("propiedad_imagenes").insert({
-          propiedad_id: (propiedad as any).id,
-          url: urlData.publicUrl,
-          orden: i,
-        } as any)
+      // Si llegamos acá sin redirect automático, hubo un error
+      if (resultado?.error) {
+        setError(resultado.error)
+        setLoading(false)
       }
+      // Si fue bien, la Server Action ya hizo redirect("/admin")
+    } catch {
+      setError("Error al guardar la propiedad")
+      setLoading(false)
     }
-
-   if (imagen_url) {
-  // Guardamos la referencia de la consulta como 'any' en una constante limpia
-  const query: any = supabase.from("propiedades");
-  await query.update({ imagen_url }).eq("id", (propiedad as any).id);
-}
-
-    router.push("/admin")
   }
 
   return (
@@ -173,7 +157,7 @@ export default function NuevaPropiedad() {
             />
             <div>
               <label htmlFor="destacada" style={{fontSize: "14px", fontWeight: 600, color: "#1C0A00", cursor: "pointer"}}>Mostrar en página principal</label>
-              <p style={{fontSize: "12px", color: "#92400E", marginTop: "2px"}}>Aparece en la sección de propiedades destacadas del home</p>
+              <p style={{fontSize: "12px", color: "#92400E", marginTop: "2px"}}>Aparece en la sección de propiedades destacadas del home (máximo 6, se priorizan las más recientes)</p>
             </div>
           </div>
 

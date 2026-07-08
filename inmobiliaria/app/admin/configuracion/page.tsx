@@ -2,8 +2,11 @@
 
 import { useState, useEffect } from "react"
 import { getSupabaseClient } from "@/lib/supabase-client"
+import { guardarConfiguracion } from "@/lib/property-actions"
 import Link from "next/link"
 
+// Sigue usándose para LEER la config inicial. El guardado ahora pasa
+// por la Server Action guardarConfiguracion (lib/property-actions.ts).
 const supabase = getSupabaseClient()
 
 export default function Configuracion() {
@@ -18,8 +21,6 @@ export default function Configuracion() {
     email: "",
     horario: "",
     direccion: "",
-    hero_titulo: "",
-    hero_subtitulo: "",
   })
 
   useEffect(() => {
@@ -27,7 +28,7 @@ export default function Configuracion() {
       const { data } = await supabase.from("configuracion").select("*")
       if (data) {
         const obj: Record<string, string> = {}
-        ;(data as any[]).forEach((row) => {
+        ;(data as never as { clave: string; valor: string }[]).forEach((row) => {
           obj[row.clave] = row.valor
         })
         setConfig(prev => ({ ...prev, ...obj }))
@@ -42,17 +43,12 @@ export default function Configuracion() {
     setError("")
     setSuccess("")
 
-    const entries = Object.entries(config)
-    for (const [clave, valor] of entries) {
-      const { error: upsertError } = await supabase
-        .from("configuracion")
-        .upsert({ clave, valor } as any, { onConflict: "clave" })
+    const resultado = await guardarConfiguracion(config)
 
-      if (upsertError) {
-        setError("Error al guardar la configuración")
-        setLoading(false)
-        return
-      }
+    if (resultado.error) {
+      setError(resultado.error)
+      setLoading(false)
+      return
     }
 
     setSuccess("Configuración guardada correctamente")
@@ -79,22 +75,6 @@ export default function Configuracion() {
         {success && <div style={{background: "#F0FDF4", border: "1px solid #BBF7D0", color: "#16A34A", padding: "12px 16px", borderRadius: "8px", marginBottom: "20px", fontSize: "14px"}}>{success}</div>}
 
         <div style={{background: "#fff", borderRadius: "16px", border: "1px solid #FFE4CC", padding: "32px", display: "flex", flexDirection: "column", gap: "24px"}}>
-
-          <div>
-            <p style={{fontSize: "13px", fontWeight: 700, color: "#C2540A", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "16px", borderBottom: "1px solid #FFE4CC", paddingBottom: "8px"}}>Página de inicio</p>
-            <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
-              <div>
-                <label style={{display: "block", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px"}}>Título principal del hero</label>
-                <input value={config.hero_titulo} onChange={e => setConfig(prev => ({...prev, hero_titulo: e.target.value}))}
-                  style={{width: "100%", border: "1px solid #FFE4CC", borderRadius: "8px", padding: "10px 14px", fontSize: "14px", outline: "none", boxSizing: "border-box"}} />
-              </div>
-              <div>
-                <label style={{display: "block", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px"}}>Subtítulo del hero</label>
-                <input value={config.hero_subtitulo} onChange={e => setConfig(prev => ({...prev, hero_subtitulo: e.target.value}))}
-                  style={{width: "100%", border: "1px solid #FFE4CC", borderRadius: "8px", padding: "10px 14px", fontSize: "14px", outline: "none", boxSizing: "border-box"}} />
-              </div>
-            </div>
-          </div>
 
           <div>
             <p style={{fontSize: "13px", fontWeight: 700, color: "#C2540A", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "16px", borderBottom: "1px solid #FFE4CC", paddingBottom: "8px"}}>Contacto</p>
