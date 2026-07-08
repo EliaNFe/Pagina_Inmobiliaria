@@ -79,7 +79,6 @@ export async function crearPropiedad(form: FormPropiedad, imagenesBase64: { nomb
   }
 
   // Esto es lo que arregla el delay: invalidamos el caché ni bien terminamos de escribir.
-  revalidateTag("propiedades")
   revalidatePath("/")
   revalidatePath("/propiedades")
   revalidatePath("/admin")
@@ -132,7 +131,6 @@ export async function actualizarPropiedad(
     }
   }
 
-  revalidateTag("propiedades")
   revalidatePath("/")
   revalidatePath("/propiedades")
   revalidatePath(`/propiedades/${id}`)
@@ -156,7 +154,6 @@ export async function borrarImagenPropiedad(imagenId: string, url: string) {
   }
   await supabase.from("propiedad_imagenes").delete().eq("id", imagenId)
 
-  revalidateTag("propiedades")
 }
 
 export async function borrarPropiedad(id: string, imagenes: { url: string }[]) {
@@ -168,7 +165,6 @@ export async function borrarPropiedad(id: string, imagenes: { url: string }[]) {
   }
   await supabase.from("propiedades").delete().eq("id", id)
 
-  revalidateTag("propiedades")
   revalidatePath("/")
   revalidatePath("/propiedades")
   revalidatePath("/admin")
@@ -190,7 +186,6 @@ export async function guardarConfiguracion(config: Record<string, string>) {
     }
   }
 
-  revalidateTag("configuracion")
   revalidatePath("/")
   revalidatePath("/contacto")
 
