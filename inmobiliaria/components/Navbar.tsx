@@ -64,7 +64,15 @@ export default function Navbar() {
       </header>
 
       {/* NAV MOBILE — tab bar flotante inferior */}
-      <nav className="flex md:hidden fixed bottom-5 inset-x-4 z-50 glass-strong rounded-[24px] px-2 py-2 shadow-2xl shadow-black/10 justify-between">
+      <nav
+        className="flex md:hidden fixed bottom-5 inset-x-4 z-50 rounded-[24px] px-2 py-2 shadow-2xl shadow-black/10 justify-between"
+        style={{
+          background: "rgba(255, 255, 255, 0)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          border: "1px solid rgba(255,255,255,0.8)",
+        }}
+      >
         {links.map((link) => {
           const Icon = link.icon
           const active = pathname === link.href
