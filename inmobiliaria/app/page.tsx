@@ -8,114 +8,103 @@ export default async function Home() {
   return (
     <main className="antialiased">
 
-            {/* HERO */}
-      <section style={{
-        background: "linear-gradient(135deg, #7C2D12 0%, #C2540A 45%, #EA580C 100%)",
-        position: "relative",
-        overflow: "hidden"
-      }} className="text-white">
+             {/* HERO — estilo editorial, fondo oscuro sólido, foto diagonal */}
+      <section style={{ background: "#1C0A00", position: "relative", overflow: "hidden" }} className="text-white">
 
-        <div style={{
-          position: "absolute", inset: 0, opacity: 0.07,
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M0 0h40v40H0zm40 40h40v40H40z'/%3E%3C/g%3E%3C/svg%3E")`
-        }} />
-        <div style={{
-          position: "absolute", right: "-120px", top: "-120px",
-          width: "500px", height: "500px", borderRadius: "50%",
-          background: "rgba(255,255,255,0.05)", pointerEvents: "none",
-          filter: "blur(40px)"
-        }} />
-        <div style={{
-          position: "absolute", right: "80px", bottom: "-60px",
-          width: "250px", height: "250px", borderRadius: "50%",
-          background: "rgba(255,255,255,0.04)", pointerEvents: "none",
-          filter: "blur(20px)"
-        }} />
+        <style>{`
+          @keyframes marquee-scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+          }
+        `}</style>
 
-        <div className="relative max-w-6xl mx-auto px-6 py-32 md:py-44 grid md:grid-cols-2 gap-12 items-center">
-          <div className="max-w-2xl">
-            <h1 className="font-display text-5xl md:text-[4rem] font-bold tracking-tight leading-[1.05] mb-6 text-white drop-shadow-sm">
-              Tu próximo hogar<br />
-              <span className="text-[#FFD8B4]">está acá.</span>
+        <div className="max-w-7xl mx-auto grid md:grid-cols-[1fr_0.9fr] min-h-[640px]">
+
+          {/* Columna de texto */}
+          <div className="relative z-10 flex flex-col justify-center px-6 md:px-12 py-24">
+
+            <div className="flex items-center gap-3 mb-8">
+              <div style={{ width: "36px", height: "1.5px", background: "#C2540A" }} />
+              <span className="text-xs tracking-[0.2em] font-semibold text-orange-500 uppercase">
+                Necochea, Buenos Aires
+              </span>
+            </div>
+
+            <h1 className="font-display text-[3rem] md:text-[4.2rem] font-bold tracking-tight leading-[0.98] mb-8">
+              Tu próximo
+              <br />
+              hogar<span style={{ color: "#C2540A" }}>.</span>
             </h1>
 
-            <p className="text-lg md:text-xl text-white/90 leading-relaxed mb-10 max-w-lg font-light">
-              Años acompañando a encontrar el lugar donde vivir. Terrenos, casas y departamentos en Necochea.
+            <p className="text-white/60 text-lg leading-relaxed max-w-md mb-12 font-light">
+              Años acompañando familias a encontrar el lugar donde vivir. Terrenos, casas y departamentos en Necochea.
             </p>
 
-            <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
+            <div className="flex flex-wrap items-center gap-6">
               <Link
                 href="/propiedades"
-                className="inline-flex items-center gap-2 text-white font-semibold text-[15px] group"
-                style={{ textDecoration: "none" }}
+                className="inline-flex items-center justify-center font-semibold text-[15px] px-8 py-4 transition-colors"
               >
                 Ver propiedades
               </Link>
               <Link
                 href="/contacto"
-                className="inline-flex items-center gap-2 text-white font-semibold text-[15px] group"
-                style={{ textDecoration: "none" }}
+                className="inline-flex items-center gap-2 font-semibold text-[15px] text-white group"
+                style={{ textDecoration: "none", borderBottom: "1px solid rgba(255,255,255,0.3)", paddingBottom: "2px" }}
               >
                 Hablar con Liliana
                 <span className="transition-transform group-hover:translate-x-1">→</span>
               </Link>
             </div>
           </div>
-              {/* Panel espacial con la foto */}
-<div className="relative hidden md:flex items-center justify-center h-[600px]">
 
-  {/* Efecto Glass redondo principal que contiene la foto */}
-  <div style={{
-    position: "absolute",
-    width: "440px", 
-    height: "440px",
-    borderRadius: "50%",
-    background: "rgba(255, 255, 255, 0.05)",
-    backdropFilter: "blur(1px)",
-    WebkitBackdropFilter: "blur(1px)",
-    border: "1px solid rgba(255, 255, 255, 0.2)",
-    boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.3)",
-    overflow: "hidden", // Importante para contener el difuminado
-    zIndex: 10,
-  }}>
-
-    {/* Imagen con difuminado (mask) solo en el borde inferior */}
-    <div
-      className="relative h-full w-full"
-      style={{
-        WebkitMaskImage: "linear-gradient(to bottom, black 80%, transparent 100%)",
-        maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
-      }}
-      >
-      <img
-        src="/liliana-hero-cutout.png"
-        alt="Liliana Cirigliano"
-        className="w-full h-full object-contain"
-        style={{ objectPosition: "center -40px" }} // Ajusta la altura de Liliana dentro del círculo
-      />
-    </div>
-  </div>
-
-  {/* Eliminé la sombra negra antigua que molestaba (anterior zIndex: 5) */}
-
-  {/* Chip flotante actualizado */}
-  <div
-    className="absolute z-20 rounded-full px-8 py-4 shadow-xl"
-    style={{ 
-      bottom: "120px", // Ajustado para el nuevo layout
-      left: "125px", // Ajustado para el nuevo layout
-      background: "rgba(255, 255, 255, 0.1)",
-      backdropFilter: "blur(15px)",
-      WebkitBackdropFilter: "blur(15px)",
-      border: "1px solid rgba(255, 255, 255, 0.2)",
-    }}
-  >
-    <p className="text-[24px] font-display font-extrabold text-orange-800 leading-none">Liliana Cirigliano</p>
-    <p className="text-[14px] text-stone-800 font-medium tracking-tight">Necochea, Buenos Aires</p>
-    </div>
-      </div>
+          {/* Columna de foto — panel diagonal a pantalla completa */}
+          <div
+            className="relative hidden md:block"
+            style={{
+              clipPath: "polygon(12% 0, 100% 0, 100% 100%, 0% 100%)",
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/liliana-hero-cutout.png"
+              alt="Liliana Cirigliano"
+              className="absolute inset-0 w-full h-full"
+              style={{ objectFit: "cover", objectPosition: "center 15%" }}
+            />
+            {/* Overlay duotono para integrar la foto a la paleta */}
+            <div style={{
+              position: "absolute", inset: 0,
+              background: "linear-gradient(160deg, rgba(124,45,18,0.55) 0%, rgba(28,10,0,0.15) 55%, rgba(28,10,0,0.65) 100%)",
+              mixBlendMode: "multiply",
+            }} />
+            <div style={{
+              position: "absolute", inset: 0,
+              background: "linear-gradient(0deg, rgba(28,10,0,0.5) 0%, transparent 35%)",
+            }} />
+          </div>
         </div>
-          </section>
+
+        {/* Cinta de texto en movimiento */}
+        <div style={{ background: "#C2540A", borderTop: "1px solid rgba(255,255,255,0.15)" }} className="py-3 overflow-hidden">
+          <div
+            className="flex whitespace-nowrap"
+            style={{ animation: "marquee-scroll 22s linear infinite" }}
+          >
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="flex items-center">
+                {["Terrenos", "Casas", "Departamentos", "Locales comerciales", "+20 años de experiencia", "Necochea, Buenos Aires"].map((item) => (
+                  <span key={item} className="flex items-center text-white font-semibold text-sm tracking-wide">
+                    {item}
+                    <span className="mx-6 text-orange-200">•</span>
+                  </span>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
           
       {/* PROPIEDADES DESTACADAS */}
       {propiedades && propiedades.length > 0 && (
@@ -140,7 +129,7 @@ export default async function Home() {
 
             <SliderPropiedades propiedades={propiedades as any} />
           </div>
-        </section>
+</section>
       )}
 
       {/* CTA — Panel de vidrio sobre fondo oscuro */}
