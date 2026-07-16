@@ -1,6 +1,9 @@
 import { getPropiedadesDestacadas, getConteoPorTipo } from "@/lib/supabase"
+import { supabase } from "@/lib/supabase"
 import Link from "next/link"
 import SliderPropiedades from "@/components/SliderPropiedades"
+import ConsultaWhatsappForm from "@/components/ConsultaWhatsappForm"
+import Reveal from "@/components/Reveal"
 
 const CATEGORIAS = [
   { tipo: "Casa", label: "Casas", icon: "M3 12l9-9 9 9M5 10v10h14V10" },
@@ -10,12 +13,14 @@ const CATEGORIAS = [
 ]
 
 export default async function Home() {
-  const [propiedades, conteoPorTipo] = await Promise.all([
+  const [propiedades, conteoPorTipo, configData] = await Promise.all([
     getPropiedadesDestacadas(),
     getConteoPorTipo(),
+    supabase.from("configuracion").select("*"),
   ])
 
-  // Foto real de la primera propiedad destacada de cada tipo, si existe
+  const whatsapp = configData.data?.find((c: any) => c.clave === "whatsapp")?.valor || ""
+
   const imagenPorTipo: Record<string, string> = {}
   propiedades?.forEach((p: any) => {
     if (p.tipo && p.imagen_url && !imagenPorTipo[p.tipo]) {
@@ -115,7 +120,7 @@ export default async function Home() {
         </div>
       </section>
 
-            {/* WRAPPER — une tiles + destacadas en un solo fondo continuo con parallax CSS puro */}
+      {/* WRAPPER — une tiles + destacadas + quiénes somos en un solo fondo continuo */}
       <div
         style={{
           position: "relative",
@@ -217,7 +222,7 @@ export default async function Home() {
             </div>
           </div>
         </section>
-
+<Reveal>
         {/* PROPIEDADES DESTACADAS */}
         {propiedades && propiedades.length > 0 && (
           <section style={{ position: "relative", background: "transparent" }}>
@@ -240,12 +245,80 @@ export default async function Home() {
             </div>
           </section>
         )}
-      </div>
+</Reveal>
+        {/* QUIÉNES SOMOS */}
+        <section style={{ position: "relative", background: "transparent" }} className="pb-24">
+          <div className="relative max-w-6xl mx-auto px-6">
+            <div className="grid md:grid-cols-2 gap-14 items-start">
 
+              <div>
+                <Reveal>
+                <div className="flex items-center gap-3 mb-6">
+                  <div style={{ width: "28px", height: "1.5px", background: "#C2540A" }} />
+                  <span className="text-xs tracking-[0.2em] font-semibold text-orange-700 uppercase">
+                    Quiénes somos
+                  </span>
+                </div>
+                
+                <h2 className="font-display text-3xl md:text-4xl font-bold text-[#1C0A00] tracking-tight leading-[1.15] mb-6">
+                  Una inmobiliaria familiar, no una franquicia
+                </h2>
+                <p className="text-stone-600 leading-relaxed mb-4">
+                  Liliana Cirigliano lleva más de 20 años en el mercado inmobiliario de Necochea. No hay un call center ni un guion armado — cada consulta la atiende ella misma, conociendo la zona palmo a palmo.
+                </p>
+                <p className="text-stone-600 leading-relaxed mb-8">
+                  Trabajamos con la convicción de que comprar o vender una propiedad es una decisión importante, y merece un trato directo, honesto y sin apuro.
+                </p>
+                <a
+                  href="/nosotros"
+                  className="inline-flex items-center gap-2 font-semibold text-[15px] text-orange-700 group"
+                  style={{ textDecoration: "none" }}
+                >
+                  Conocer más sobre nosotros
+                  <span className="transition-transform group-hover:translate-x-1">→</span>
+                </a>
+                </Reveal>
+              </div>
+        <div className="flex flex-col gap-6"> {/* Incrementamos el gap de 4 a 6 para darles más aire */}
+          {[
+          { n: "01", t: "Primera charla", d: "Nos contás qué buscás, sin formularios largos ni compromisos." },
+          { n: "02", t: "Propuestas reales", d: "Te mostramos opciones que se ajustan a lo que necesitás de verdad." },
+          { n: "03", t: "Acompañamiento", d: "Desde la primera visita hasta la escritura, y después también." },
+          ].map((item) => (
+          <Reveal key={item.n}> {/* El Reveal ahora envuelve individualmente a cada tarjeta */}
+          <div
+          className="flex items-start gap-4 backdrop-blur-sm"
+          style={{
+              // Fondo semi-transparente para que se fusione con el fondo y se vean los puntos
+              background: "rgba(255, 255, 255, 0.35)", 
+              // Borde más suave con un sutil tono naranja/cálido
+              border: "1px solid rgba(194, 84, 10, 0.15)", 
+              borderRadius: "12px", 
+              padding: "1.25rem",
+              // Una sombra muy suave para dar volumen sin ensuciar el diseño
+              boxShadow: "0 4px 20px -2px rgba(28, 10, 0, 0.02)" 
+              }}
+              > 
+              <span className="font-display font-extrabold text-orange-700" style={{ fontSize: "22px", lineHeight: 1 }}>
+              {item.n}
+              </span>
+              <div>
+                <p className="font-display font-bold text-stone-900 text-[15px] mb-1">{item.t}</p>
+                <p className="text-stone-500 text-sm leading-relaxed">{item.d}</p>
+                </div>
+              </div>
+            </Reveal>
+            ))}
+            </div>
+
+            </div>
+          </div>
+        </section>
+      </div>
 
       {/* CTA */}
       <section
-        className="relative overflow-hidden py-28 text-center"
+        className="relative overflow-hidden py-28"
         style={{ background: "linear-gradient(135deg, #1C0A00 0%, #431407 100%)" }}
       >
         <div style={{
@@ -261,20 +334,35 @@ export default async function Home() {
           filter: "blur(20px)", pointerEvents: "none"
         }} />
 
-        <div className="relative max-w-lg mx-auto px-6">
-          <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-5">
-            ¿Tenés una consulta?
-          </h2>
-          <p className="text-[16px] text-white/60 mb-10 leading-relaxed">
-            Sin compromisos. Solo una conversación para entender qué estás buscando.
-          </p>
-          <Link
-            href="/contacto"
-            className="inline-flex items-center gap-2 text-white font-semibold text-[15px] group"
-            style={{ textDecoration: "none" }}
-          >
-            <u>Contactar a Liliana</u>
-          </Link>
+        <div className="relative max-w-lg mx-auto px-6 text-center">
+          <Reveal>
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-5">
+              ¿Tenés una consulta?
+            </h2>
+            <p className="text-[16px] text-white/60 mb-10 leading-relaxed">
+              Sin compromisos. Solo una conversación para entender qué estás buscando.
+            </p>
+          </Reveal>
+
+          <Reveal delay={150}>
+            <ConsultaWhatsappForm numeroWhatsapp={whatsapp} />
+          </Reveal>
+
+          <Reveal delay={300}>
+            <div className="flex items-center gap-4 my-8 max-w-md mx-auto">
+              <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.15)" }} />
+              <span className="text-white/30 text-xs uppercase tracking-wider">o</span>
+              <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.15)" }} />
+            </div>
+
+            <Link
+              href="/contacto"
+              className="inline-flex items-center gap-2 text-white font-semibold text-[15px] group"
+              style={{ textDecoration: "none" }}
+            >
+              <u>Contactar a Liliana</u>
+            </Link>
+          </Reveal>
         </div>
       </section>
 
