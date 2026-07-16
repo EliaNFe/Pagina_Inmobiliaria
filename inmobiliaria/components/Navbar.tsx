@@ -27,19 +27,37 @@ export default function Navbar() {
           {/* Logo — separado, a la izquierda */}
           <Link
             href="/"
-            className="glass rounded-2xl px-5 py-2.5 flex flex-col leading-none shadow-lg shadow-black/5 pointer-events-auto"
-            style={{ textDecoration: "none" }}
+            className="rounded-2xl px-5 py-2.5 flex flex-col leading-none shadow-lg shadow-black/15 pointer-events-auto"
+            style={{ 
+              textDecoration: "none",
+              // Vidrio oscuro templado que se fusiona con el fondo de la web
+              background: "rgba(28, 10, 0, 0.45)", 
+              backdropFilter: "blur(16px)",
+              WebkitBackdropFilter: "blur(16px)",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+            }}
           >
-            <span className="text-[10px] tracking-[0.15em] text-orange-700/70 font-semibold uppercase">
+            {/* Cambiado a un naranja más brillante para que destaque en fondo oscuro */}
+            <span className="text-[10px] tracking-[0.15em] text-orange-400 font-semibold uppercase">
               Inmobiliaria
             </span>
-            <span className="font-display text-[15px] font-bold text-stone-900">
+            {/* Texto cambiado a stone-100 (casi blanco) para legibilidad */}
+            <span className="font-display text-[15px] font-bold text-stone-100 mt-1">
               Liliana Cirigliano
             </span>
           </Link>
 
           {/* Pill de navegación — centrado, libre del logo y del CTA */}
-          <nav className="glass rounded-2xl px-2 py-2 flex items-center gap-1 shadow-lg shadow-black/5 pointer-events-auto">
+          <nav 
+            className="rounded-2xl px-2 py-2 flex items-center gap-1 shadow-lg shadow-black/15 pointer-events-auto"
+            style={{
+              // Mismo tono de vidrio oscuro templado
+              background: "rgba(28, 10, 0, 0.45)", 
+              backdropFilter: "blur(16px)",
+              WebkitBackdropFilter: "blur(16px)",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+            }}
+          >
             {links.map((link) => {
               const Icon = link.icon
               const active = pathname === link.href
@@ -47,11 +65,12 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all"
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all hover:text-white"
                   style={{
                     textDecoration: "none",
                     background: active ? "#C2540A" : "transparent",
-                    color: active ? "#fff" : "#57534E",
+                    // Los inactivos ahora son un blanco suave translúcido para que no compitan y se lean perfecto
+                    color: active ? "#fff" : "rgba(255, 255, 255, 0.7)", 
                   }}
                 >
                   <Icon size={16} strokeWidth={2} />
@@ -67,10 +86,10 @@ export default function Navbar() {
       <nav
         className="flex md:hidden fixed bottom-5 inset-x-4 z-50 rounded-[24px] px-2 py-2 shadow-2xl shadow-black/10 justify-between"
         style={{
-          background: "rgba(255, 255, 255, 0)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          border: "1px solid rgba(255,255,255,0.8)",
+              background: "rgba(28, 10, 0, 0.45)", 
+              backdropFilter: "blur(16px)",
+              WebkitBackdropFilter: "blur(16px)",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
         }}
       >
         {links.map((link) => {
