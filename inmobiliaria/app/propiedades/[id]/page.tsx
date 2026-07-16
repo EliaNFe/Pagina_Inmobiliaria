@@ -27,11 +27,14 @@ export default async function DetallePropiedad({ params }: PageProps) {
     )
   }
 
+  // propiedad_imagenes es la única fuente de verdad para el carrusel.
+  // imagen_url solo se usa como respaldo si por algún motivo la propiedad
+  // no tiene ninguna fila en propiedad_imagenes (dato viejo o borrado a mano).
   const listaImagenes: string[] = imagenes?.map(i => i.url) || []
-  const todasLasImagenes: string[] = [
-    ...(propiedad.imagen_url ? [propiedad.imagen_url] : []),
-    ...listaImagenes
-  ]
+  const todasLasImagenes: string[] =
+    listaImagenes.length > 0
+      ? listaImagenes
+      : (propiedad.imagen_url ? [propiedad.imagen_url] : [])
 
   return (
     <main className="antialiased" style={{ background: "#FDFBF9", minHeight: "100vh" }}>
@@ -59,7 +62,6 @@ export default async function DetallePropiedad({ params }: PageProps) {
           </div>
 
           <div>
-            {/* Stats como números grandes, no cards de vidrio */}
             <div className="flex items-start gap-10 mb-8 pb-8" style={{ borderBottom: "1px solid #F0E4D8" }}>
               <div>
                 <p className="text-[11px] text-stone-400 uppercase tracking-wider mb-1.5">Precio</p>

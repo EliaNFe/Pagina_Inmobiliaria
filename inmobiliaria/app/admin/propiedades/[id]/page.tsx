@@ -7,9 +7,6 @@ import { use } from "react"
 import { getSupabaseClient } from "@/lib/supabase-client"
 import { actualizarPropiedad, borrarImagenPropiedad, borrarPropiedad } from "@/lib/property-actions"
 
-// Este cliente se sigue usando SOLO para lectura inicial de datos
-// (mostrar el formulario con los valores actuales). Las escrituras
-// (guardar, borrar imagen, borrar propiedad) ahora pasan por Server Actions.
 const supabase = getSupabaseClient()
 
 function fileToBase64(file: File): Promise<string> {
@@ -93,7 +90,9 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
   }
 
   async function handleBorrarImagen(imagenId: string, url: string) {
-    await borrarImagenPropiedad(imagenId, url)
+    // Le pasamos el id de la propiedad para que la Server Action pueda
+    // recalcular imagen_url y no queden "huecos" con la foto principal.
+    await borrarImagenPropiedad(imagenId, url, id)
     setImagenes(prev => prev.filter(i => i.id !== imagenId))
   }
 
@@ -219,10 +218,15 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
             <div>
               <label style={{display: "block", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "12px"}}>Fotos actuales</label>
               <div style={{display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px"}}>
-                {imagenes.map((img) => (
+                {imagenes.map((img, i) => (
                   <div key={img.id} style={{position: "relative", borderRadius: "8px", overflow: "hidden", aspectRatio: "1"}}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={img.url} alt="foto" style={{width: "100%", height: "100%", objectFit: "cover"}} />
+                    {i === 0 && (
+                      <span style={{position: "absolute", top: "4px", left: "4px", background: "#C2540A", color: "#fff", fontSize: "10px", fontWeight: 700, padding: "2px 6px", borderRadius: "4px"}}>
+                        Principal
+                      </span>
+                    )}
                     <button onClick={() => handleBorrarImagen(img.id, img.url)}
                       style={{position: "absolute", top: "4px", right: "4px", background: "rgba(0,0,0,0.6)", color: "#fff", border: "none", borderRadius: "50%", width: "24px", height: "24px", cursor: "pointer", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "center"}}>
                       ×
