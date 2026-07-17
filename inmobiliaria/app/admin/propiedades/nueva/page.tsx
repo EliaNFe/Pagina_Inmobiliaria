@@ -3,19 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { crearPropiedad } from "@/lib/property-actions"
-
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => {
-      const result = reader.result as string
-      // Sacamos el prefijo "data:image/...;base64,"
-      resolve(result.split(",")[1])
-    }
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
-}
+import { comprimirImagen } from "@/lib/comprimir-imagen"
 
 export default function NuevaPropiedad() {
   const [loading, setLoading] = useState(false)
@@ -58,18 +46,16 @@ export default function NuevaPropiedad() {
       const imagenesBase64 = await Promise.all(
         imagenes.map(async (img) => ({
           nombre: img.name,
-          base64: await fileToBase64(img),
+          base64: await comprimirImagen(img),
         }))
       )
 
       const resultado = await crearPropiedad(form, imagenesBase64)
 
-      // Si llegamos acá sin redirect automático, hubo un error
       if (resultado?.error) {
         setError(resultado.error)
         setLoading(false)
       }
-      // Si fue bien, la Server Action ya hizo redirect("/admin")
     } catch {
       setError("Error al guardar la propiedad")
       setLoading(false)
