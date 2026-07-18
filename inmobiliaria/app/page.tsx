@@ -108,7 +108,7 @@ export default async function Home() {
           <div className="flex whitespace-nowrap" style={{ animation: "marquee-scroll 22s linear infinite" }}>
             {[...Array(2)].map((_, i) => (
               <div key={i} className="flex items-center">
-                {["Terrenos", "Casas", "Departamentos", "Locales comerciales", "+20 años de experiencia", "Necochea, Buenos Aires"].map((item) => (
+                {["Terrenos", "Casas", "Departamentos", "Locales comerciales", "Tasación", "Alquiler", "Necochea, Buenos Aires"].map((item) => (
                   <span key={item} className="flex items-center text-white font-semibold text-sm tracking-wide">
                     {item}
                     <span className="mx-6 text-orange-200">•</span>
@@ -225,23 +225,36 @@ export default async function Home() {
 <Reveal>
         {/* PROPIEDADES DESTACADAS */}
         {propiedades && propiedades.length > 0 && (
-          <section style={{ position: "relative", background: "transparent" }}>
-            <div className="relative max-w-6xl mx-auto px-6 py-24">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-14 gap-4">
+          <section className="py-16">
+            <div className="max-w-6xl mx-auto px-6">
+              
+              {/* Encabezado más compacto y elegante */}
+              <div className="flex items-end justify-between mb-10">
                 <div>
-                  <p className="text-xs font-bold tracking-[0.15em] text-[#C2540A] uppercase mb-3">
-                    Selección
-                  </p>
-                  <h2 className="font-display text-3xl md:text-4xl font-bold text-[#1C0A00] tracking-tight">
-                    Propiedades destacadas
+                  <h2 className="font-display text-2xl md:text-3xl font-bold text-[#1C0A00] tracking-tight mb-1">
+                    Selección destacada
                   </h2>
+                  <p className="text-stone-500 text-sm">Propiedades elegidas para vos</p>
                 </div>
-                <Link href="/propiedades" className="text-sm font-semibold text-[#C2540A] hover:text-[#9A3412] transition-colors">
+                <Link 
+                  href="/propiedades" 
+                  className="hidden sm:flex text-sm font-semibold text-[#C2540A] hover:opacity-70 transition-opacity"
+                >
                   Ver catálogo completo →
                 </Link>
               </div>
 
-              <SliderPropiedades propiedades={propiedades as any} />
+              {/* Slider - Contenedor ajustado */}
+              <div className="relative">
+                <SliderPropiedades propiedades={propiedades as any} />
+              </div>
+
+              {/* Link móvil (para cuando no se ve el de arriba) */}
+              <div className="sm:hidden mt-6 text-center">
+                 <Link href="/propiedades" className="text-sm font-semibold text-[#C2540A]">
+                  Ver catálogo completo →
+                </Link>
+              </div>
             </div>
           </section>
         )}
