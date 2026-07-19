@@ -66,7 +66,7 @@ export default async function Home() {
               <Link
                 href="/propiedades"
                 className="inline-flex items-center justify-center font-semibold text-[15px] px-8 py-4 transition-colors"
-                style={{ textDecoration: "none", background: "#C2540A", color: "#fff", borderRadius: "4px" }}
+                
               >
                 Ver propiedades
               </Link>
