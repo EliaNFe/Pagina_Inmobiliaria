@@ -22,33 +22,42 @@ export default function Nosotros() {
         </div>
       </section>
 
-      {/* HISTORIA — panel de foto + texto */}
+      {/* HISTORIA — panel de marca + texto */}
       <section style={{ background: "#FDFBF9" }} className="py-24">
         <div className="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-start">
 
-          {/* Panel de foto */}
+          {/* Panel de marca — hasta que haya una foto real, se presenta
+              como tarjeta de isotipo (no como retrato). Sin mix-blend-mode:
+              el logo tiene fondo propio y "multiply" contra el fondo del
+              contenedor era justo lo que generaba el rectángulo destiñido. */}
           <div>
             <div
-              className="relative overflow-hidden"
+              className="relative overflow-hidden flex items-center justify-center"
               style={{
-                border: "1px solid #F0E4D8",
-                borderRadius: "8px",
-                aspectRatio: "4/5",
-                background: "#F5F0EA",
+                border: "1px solid #E6D9CC",
+                borderRadius: "12px",
+                aspectRatio: "4 / 3",
+                background: "linear-gradient(160deg, #FFFFFF 0%, #FBF1E4 100%)",
+                boxShadow: "0 24px 48px rgba(28,10,0,0.08)",
+                padding: "40px",
               }}
             >
-              {/* Cuando tengas la foto, reemplazá este bloque por:
-                  <img src="/liliana-nosotros.jpg" alt="Liliana Cirigliano" className="w-full h-full object-cover" /> */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#C2540A" strokeWidth="1.5" opacity="0.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M14 8h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <span className="text-stone-400 text-sm">Foto de Liliana</span>
-              </div>
+              {/* Detalle de esquinas — le da lectura de "sello/tarjeta" intencional */}
+              <span style={{ position: "absolute", top: 18, left: 18, width: 22, height: 22, borderTop: "2px solid #C2540A", borderLeft: "2px solid #C2540A", borderTopLeftRadius: "4px" }} />
+              <span style={{ position: "absolute", top: 18, right: 18, width: 22, height: 22, borderTop: "2px solid #C2540A", borderRight: "2px solid #C2540A", borderTopRightRadius: "4px" }} />
+              <span style={{ position: "absolute", bottom: 18, left: 18, width: 22, height: 22, borderBottom: "2px solid #C2540A", borderLeft: "2px solid #C2540A", borderBottomLeftRadius: "4px" }} />
+              <span style={{ position: "absolute", bottom: 18, right: 18, width: 22, height: 22, borderBottom: "2px solid #C2540A", borderRight: "2px solid #C2540A", borderBottomRightRadius: "4px" }} />
+
+              <img
+                src="/liliana-nosotros.png"
+                alt="Liliana Cirigliano — Gestiones Inmobiliarias"
+                className="object-contain"
+                style={{ maxWidth: "76%", maxHeight: "76%" }}
+              />
             </div>
             <div className="flex items-center gap-2 mt-4">
               <div style={{ width: "18px", height: "1.5px", background: "#C2540A" }} />
-              <p className="text-xs text-stone-500 tracking-wide">Liliana Cirigliano — Necochea, Buenos Aires</p>
+              <p className="text-xs text-stone-500 tracking-wide">Necochea, Buenos Aires</p>
             </div>
           </div>
 
