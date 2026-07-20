@@ -125,7 +125,7 @@ export default async function Home() {
       <img
         src="/liliana-hero-cutout.png"
         alt="Liliana Cirigliano"
-        className="absolute bottom-[-10px] right-[-45px] h-[103%] w-auto max-w-none object-contain select-none"
+        className="absolute bottom-[0px] right-[-45px] h-[103%] w-auto max-w-none object-contain select-none"
         draggable={false}
       />
 
