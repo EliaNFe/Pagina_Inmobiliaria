@@ -39,86 +39,104 @@ export default async function Home() {
       `}</style>
 
       {/* HERO */}
-      <section style={{ background: "#1C0A00", position: "relative", overflow: "hidden" }} className="text-white">
+<section
+  className="relative overflow-hidden text-white"
+  style={{
+    background: "linear-gradient(180deg, #2A1004 0%, #1C0A00 100%)",
+  }}
+>
+  <div className="max-w-7xl mx-auto relative min-h-[640px]">
 
-        <div className="max-w-7xl mx-auto grid md:grid-cols-[1fr_0.9fr] min-h-[640px]">
+    {/* Contenido */}
+    <div className="relative z-10 flex flex-col justify-center px-6 md:px-12 py-24 max-w-xl">
 
-          <div className="relative z-10 flex flex-col justify-center px-6 md:px-12 py-24">
+      <div className="flex items-center gap-4 mb-10">
+        <div className="w-10 h-px bg-[#C2540A]" />
+        <span className="text-xs tracking-[0.22em] font-semibold uppercase text-orange-400">
+          Necochea, Buenos Aires
+        </span>
+      </div>
 
-            <div className="flex items-center gap-3 mb-8">
-              <div style={{ width: "36px", height: "1.5px", background: "#C2540A" }} />
-              <span className="text-xs tracking-[0.2em] font-semibold text-orange-500 uppercase">
-                Necochea, Buenos Aires
+      <h1 className="font-display text-[3.5rem] md:text-[4.5rem] leading-[0.92] font-bold tracking-tight">
+        Tu próximo
+        <br />
+        hogar<span className="text-[#C2540A]">.</span>
+      </h1>
+
+      <p className="mt-10 text-lg leading-8 text-white/70 font-light">
+        Años acompañando familias a encontrar el lugar donde vivir.
+        Terrenos, casas y departamentos en Necochea.
+      </p>
+        <div className="flex flex-wrap items-center gap-8 mt-12">
+          <Link
+          href="/propiedades"
+                    >
+          Ver propiedades
+          </Link>
+          <Link
+            href="/contacto"
+            className="inline-flex items-center gap-2 text-[15px] font-semibold text-white group"
+            >
+          Hablar con Liliana
+          <span className="transition-transform group-hover:translate-x-1">→</span>
+          </Link>
+        </div>
+    </div>
+
+    {/* Imagen */}
+    <div className="hidden md:block absolute inset-y-0 right-0 w-[48%]">
+
+      {/* Línea diagonal sutil */}
+      <div
+        className="absolute left-0 top-0 h-full w-px"
+        style={{
+          background: "linear-gradient(180deg, transparent 0%, rgba(194,84,10,.45) 20%, rgba(194,84,10,.25) 80%, transparent 100%)",
+          transform: "skewX(-18deg)",
+          transformOrigin: "top",
+        }}
+      />
+
+      {/* Imagen sin recortes */}
+      <img
+        src="/liliana-hero-cutout.png"
+        alt="Liliana Cirigliano"
+        className="absolute bottom-0 right-[-30px] h-[105%] w-auto max-w-none object-contain"
+      />
+
+      {/* Degradado suave para integrarla */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "linear-gradient(90deg, rgba(28,10,0,.35) 0%, transparent 25%, transparent 100%)",
+        }}
+      />
+    </div>
+  </div>
+
+  {/* Franja inferior */}
+  <div className="bg-[#C2540A] border-t border-white/10 py-3 overflow-hidden">
+    <div
+      className="flex whitespace-nowrap"
+      style={{ animation: "marquee-scroll 22s linear infinite" }}
+    >
+      {[...Array(2)].map((_, i) => (
+        <div key={i} className="flex items-center">
+          {
+            ["Terrenos", "Casas", "Departamentos", "Locales comerciales", "Tasación", "Alquiler", "Necochea, Buenos Aires"].map((item) => (
+              <span
+                key={item}
+                className="flex items-center text-white font-semibold text-sm tracking-wide"
+              >
+                {item}
+                <span className="mx-6 text-orange-200">•</span>
               </span>
-            </div>
-
-            <h1 className="font-display text-[3rem] md:text-[4.2rem] font-bold tracking-tight leading-[0.98] mb-8">
-              Tu próximo
-              <br />
-              hogar<span style={{ color: "#C2540A" }}>.</span>
-            </h1>
-
-            <p className="text-white/60 text-lg leading-relaxed max-w-md mb-12 font-light">
-              Años acompañando familias a encontrar el lugar donde vivir. Terrenos, casas y departamentos en Necochea.
-            </p>
-
-            <div className="flex flex-wrap items-center gap-6">
-              <Link
-                href="/propiedades"
-                className="inline-flex items-center justify-center font-semibold text-[15px] px-8 py-4 transition-colors"
-                
-              >
-                Ver propiedades
-              </Link>
-              <Link
-                href="/contacto"
-                className="inline-flex items-center gap-2 font-semibold text-[15px] text-white group"
-                style={{ textDecoration: "none", borderBottom: "1px solid rgba(255,255,255,0.3)", paddingBottom: "2px" }}
-              >
-                Hablar con Liliana
-                <span className="transition-transform group-hover:translate-x-1">→</span>
-              </Link>
-            </div>
-          </div>
-
-          <div
-            className="relative hidden md:block"
-            style={{ clipPath: "polygon(12% 0, 100% 0, 100% 100%, 0% 100%)" }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/liliana-hero-cutout.png"
-              alt="Liliana Cirigliano"
-              className="absolute inset-0 w-full h-full"
-              style={{ objectFit: "cover", objectPosition: "center 15%" }}
-            />
-            <div style={{
-              position: "absolute", inset: 0,
-              background: "linear-gradient(160deg, rgba(124,45,18,0.55) 0%, rgba(28,10,0,0.15) 55%, rgba(28,10,0,0.65) 100%)",
-              mixBlendMode: "multiply",
-            }} />
-            <div style={{
-              position: "absolute", inset: 0,
-              background: "linear-gradient(0deg, rgba(28,10,0,0.5) 0%, transparent 35%)",
-            }} />
-          </div>
+            ))
+          }
         </div>
-
-        <div style={{ background: "#C2540A", borderTop: "1px solid rgba(255,255,255,0.15)" }} className="py-3 overflow-hidden">
-          <div className="flex whitespace-nowrap" style={{ animation: "marquee-scroll 22s linear infinite" }}>
-            {[...Array(2)].map((_, i) => (
-              <div key={i} className="flex items-center">
-                {["Terrenos", "Casas", "Departamentos", "Locales comerciales", "Tasación", "Alquiler", "Necochea, Buenos Aires"].map((item) => (
-                  <span key={item} className="flex items-center text-white font-semibold text-sm tracking-wide">
-                    {item}
-                    <span className="mx-6 text-orange-200">•</span>
-                  </span>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      ))}
+    </div>
+  </div>
+</section>
 
       {/* WRAPPER — une tiles + destacadas + quiénes somos en un solo fondo continuo */}
       <div
@@ -330,54 +348,47 @@ export default async function Home() {
       </div>
 
       {/* CTA */}
-      <section
-        className="relative overflow-hidden py-28"
-        style={{ background: "linear-gradient(135deg, #1C0A00 0%, #431407 100%)" }}
-      >
-        <div style={{
-          position: "absolute", left: "20%", top: "-80px",
-          width: "350px", height: "350px", borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(234,88,12,0.3) 0%, transparent 70%)",
-          filter: "blur(20px)", pointerEvents: "none"
-        }} />
-        <div style={{
-          position: "absolute", right: "15%", bottom: "-100px",
-          width: "300px", height: "300px", borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)",
-          filter: "blur(20px)", pointerEvents: "none"
-        }} />
+<section
+  className="border-t border-[#382015]"
+  style={{ background: "#1C0A00" }}
+>
+  <div className="max-w-6xl mx-auto px-6 py-24">
 
-        <div className="relative max-w-lg mx-auto px-6 text-center">
-          <Reveal>
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-5">
-              ¿Tenés una consulta?
-            </h2>
-            <p className="text-[16px] text-white/60 mb-10 leading-relaxed">
-              Sin compromisos. Solo una conversación para entender qué estás buscando.
-            </p>
-          </Reveal>
+    <div className="grid md:grid-cols-2 gap-16 lg:gap-24 items-center">
 
-          <Reveal delay={150}>
-            <ConsultaWhatsappForm numeroWhatsapp={whatsapp} />
-          </Reveal>
-
-          <Reveal delay={300}>
-            <div className="flex items-center gap-4 my-8 max-w-md mx-auto">
-              <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.15)" }} />
-              <span className="text-white/30 text-xs uppercase tracking-wider">o</span>
-              <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.15)" }} />
-            </div>
-
-            <Link
-              href="/contacto"
-              className="inline-flex items-center gap-2 text-white font-semibold text-[15px] group"
-              style={{ textDecoration: "none" }}
-            >
-              <u>Contactar a Liliana</u>
-            </Link>
-          </Reveal>
+      {/* TEXTO */}
+      <Reveal>
+        <div>
+          <span className="text-xs uppercase tracking-[0.25em] text-[#C2540A] font-semibold">
+            Contacto
+          </span>
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-white leading-tight mt-6">
+            ¿Tenés una consulta?
+          </h2>
+          <p className="mt-6 text-lg text-white/60 leading-8 max-w-md">
+            Sin compromisos. Solo una conversación para entender qué estás buscando.
+          </p>
+          <Link
+            href="/contacto"
+            className="inline-flex items-center gap-2 mt-10 text-[#C2540A] font-semibold group"
+          >
+            También podés escribirnos
+            <span className="transition-transform group-hover:translate-x-1">
+              →
+            </span>
+          </Link>
         </div>
-      </section>
+      </Reveal>
+
+      {/* FORMULARIO */}
+      <Reveal delay={150}>
+        <div>
+          <ConsultaWhatsappForm numeroWhatsapp={whatsapp} />
+        </div>
+      </Reveal>
+    </div>
+  </div>
+</section>
 
       {/* FOOTER */}
       <footer className="py-12 border-t border-white/10" style={{ background: "#0A0300" }}>
