@@ -38,104 +38,145 @@ export default async function Home() {
         }
       `}</style>
 
-      {/* HERO */}
+  {/* HERO */}
 <section
   className="relative overflow-hidden text-white"
   style={{
-    background: "linear-gradient(180deg, #2A1004 0%, #1C0A00 100%)",
+    background: "linear-gradient(180deg, #241005 0%, #1C0A00 100%)",
   }}
 >
-  <div className="max-w-7xl mx-auto relative min-h-[640px]">
+  <div className="relative max-w-7xl mx-auto min-h-[640px]">
+
+    {/* Línea diagonal */}
+    <div
+      className="absolute pointer-events-none hidden md:block"
+      style={{
+        left: "48%",
+        top: "-5%",
+        width: "1px",
+        height: "115%",
+        background:
+          "linear-gradient(180deg, transparent 0%, rgba(194,84,10,.22) 15%, rgba(194,84,10,.12) 85%, transparent 100%)",
+        transform: "rotate(12deg)",
+        transformOrigin: "top",
+      }}
+    />
 
     {/* Contenido */}
-    <div className="relative z-10 flex flex-col justify-center px-6 md:px-12 py-24 max-w-xl">
+    <div className="relative z-10 flex flex-col justify-center px-6 md:px-12 py-24 max-w-xl min-h-[640px]">
 
       <div className="flex items-center gap-4 mb-10">
         <div className="w-10 h-px bg-[#C2540A]" />
+
         <span className="text-xs tracking-[0.22em] font-semibold uppercase text-orange-400">
           Necochea, Buenos Aires
         </span>
       </div>
 
-      <h1 className="font-display text-[3.5rem] md:text-[4.5rem] leading-[0.92] font-bold tracking-tight">
+      <h1 className="font-display text-[3.5rem] md:text-[4.6rem] font-bold leading-[0.92] tracking-tight">
         Tu próximo
         <br />
-        hogar<span className="text-[#C2540A]">.</span>
+        hogar
+        <span className="text-[#C2540A]">.</span>
       </h1>
 
-      <p className="mt-10 text-lg leading-8 text-white/70 font-light">
+      <p className="mt-10 text-lg leading-8 text-white/70 font-light max-w-md">
         Años acompañando familias a encontrar el lugar donde vivir.
         Terrenos, casas y departamentos en Necochea.
       </p>
-        <div className="flex flex-wrap items-center gap-8 mt-12">
-          <Link
+
+      <div className="flex items-center gap-10 mt-12">
+
+        <Link
           href="/propiedades"
-                    >
+          className="font-semibold text-white hover:text-[#C2540A] transition-colors"
+        >
           Ver propiedades
-          </Link>
-          <Link
-            href="/contacto"
-            className="inline-flex items-center gap-2 text-[15px] font-semibold text-white group"
-            >
+        </Link>
+
+        <Link
+          href="/contacto"
+          className="inline-flex items-center gap-2 font-semibold text-white group"
+        >
           Hablar con Liliana
-          <span className="transition-transform group-hover:translate-x-1">→</span>
-          </Link>
-        </div>
+
+          <span className="transition-transform duration-300 group-hover:translate-x-1">
+            →
+          </span>
+
+        </Link>
+
+      </div>
+
     </div>
 
     {/* Imagen */}
-    <div className="hidden md:block absolute inset-y-0 right-0 w-[48%]">
+    <div className="hidden md:block absolute inset-y-0 right-0 w-[47%]">
 
-      {/* Línea diagonal sutil */}
+      {/* Luz MUY sutil */}
       <div
-        className="absolute left-0 top-0 h-full w-px"
+        className="absolute right-8 top-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full pointer-events-none"
         style={{
-          background: "linear-gradient(180deg, transparent 0%, rgba(194,84,10,.45) 20%, rgba(194,84,10,.25) 80%, transparent 100%)",
-          transform: "skewX(-18deg)",
-          transformOrigin: "top",
+          background:
+            "radial-gradient(circle, rgba(194,84,10,.07) 0%, rgba(194,84,10,.025) 45%, transparent 75%)",
         }}
       />
 
-      {/* Imagen sin recortes */}
       <img
         src="/liliana-hero-cutout.png"
         alt="Liliana Cirigliano"
-        className="absolute bottom-0 right-[-30px] h-[105%] w-auto max-w-none object-contain"
+        className="absolute bottom-[-10px] right-[-45px] h-[103%] w-auto max-w-none object-contain select-none"
+        draggable={false}
       />
 
-      {/* Degradado suave para integrarla */}
+      {/* Sombra inferior muy suave */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute bottom-0 right-24 w-[280px] h-10 rounded-full blur-2xl opacity-25"
         style={{
-          background: "linear-gradient(90deg, rgba(28,10,0,.35) 0%, transparent 25%, transparent 100%)",
+          background: "#000",
         }}
       />
+
     </div>
+
   </div>
 
   {/* Franja inferior */}
   <div className="bg-[#C2540A] border-t border-white/10 py-3 overflow-hidden">
+
     <div
       className="flex whitespace-nowrap"
-      style={{ animation: "marquee-scroll 22s linear infinite" }}
+      style={{
+        animation: "marquee-scroll 22s linear infinite",
+      }}
     >
       {[...Array(2)].map((_, i) => (
         <div key={i} className="flex items-center">
-          {
-            ["Terrenos", "Casas", "Departamentos", "Locales comerciales", "Tasación", "Alquiler", "Necochea, Buenos Aires"].map((item) => (
-              <span
-                key={item}
-                className="flex items-center text-white font-semibold text-sm tracking-wide"
-              >
-                {item}
-                <span className="mx-6 text-orange-200">•</span>
-              </span>
-            ))
-          }
+
+          {[
+            "Terrenos",
+            "Casas",
+            "Departamentos",
+            "Locales comerciales",
+            "Tasación",
+            "Alquiler",
+            "Necochea, Buenos Aires",
+          ].map((item) => (
+            <span
+              key={item}
+              className="flex items-center text-white font-semibold text-sm tracking-wide"
+            >
+              {item}
+              <span className="mx-6 text-orange-200">•</span>
+            </span>
+          ))}
+
         </div>
       ))}
     </div>
+
   </div>
+
 </section>
 
       {/* WRAPPER — une tiles + destacadas + quiénes somos en un solo fondo continuo */}
