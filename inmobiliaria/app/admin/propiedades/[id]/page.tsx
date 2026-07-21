@@ -6,20 +6,9 @@ import Link from "next/link"
 import { use } from "react"
 import { getSupabaseClient } from "@/lib/supabase-client"
 import { actualizarPropiedad, borrarImagenPropiedad, borrarPropiedad } from "@/lib/property-actions"
+import { comprimirImagen } from "@/lib/comprimir-imagen"
 
 const supabase = getSupabaseClient()
-
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => {
-      const result = reader.result as string
-      resolve(result.split(",")[1])
-    }
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
-}
 
 export default function EditarPropiedad({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -36,6 +25,7 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
     titulo: "",
     descripcion: "",
     tipo: "Terreno",
+    operacion: "Venta",
     precio: "",
     superficie: "",
     ubicacion: "",
@@ -52,13 +42,14 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
 
       if (propiedad) {
         const p = propiedad as never as {
-          titulo: string; descripcion: string; tipo: string
+          titulo: string; descripcion: string; tipo: string; operacion?: string
           precio: number; superficie: number; ubicacion: string; destacada: boolean
         }
         setForm({
           titulo: p.titulo || "",
           descripcion: p.descripcion || "",
           tipo: p.tipo || "Terreno",
+          operacion: p.operacion || "Venta",
           precio: p.precio?.toString() || "",
           superficie: p.superficie?.toString() || "",
           ubicacion: p.ubicacion || "",
@@ -105,7 +96,7 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
       const nuevasImagenesBase64 = await Promise.all(
         nuevasImagenes.map(async (img) => ({
           nombre: img.name,
-          base64: await fileToBase64(img),
+          base64: await comprimirImagen(img),
         }))
       )
 
@@ -167,16 +158,27 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
               style={{width: "100%", border: "1px solid #FFE4CC", borderRadius: "8px", padding: "10px 14px", fontSize: "14px", outline: "none", boxSizing: "border-box"}} />
           </div>
 
-          <div>
-            <label style={{display: "block", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px"}}>Tipo</label>
-            <select name="tipo" value={form.tipo} onChange={handleChange}
-              style={{width: "100%", border: "1px solid #FFE4CC", borderRadius: "8px", padding: "10px 14px", fontSize: "14px", outline: "none", background: "#fff", boxSizing: "border-box"}}>
-              <option>Terreno</option>
-              <option>Casa</option>
-              <option>Lote</option>
-              <option>Departamento</option>
-              <option>Local comercial</option>
-            </select>
+          <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px"}}>
+            <div>
+              <label style={{display: "block", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px"}}>Tipo</label>
+              <select name="tipo" value={form.tipo} onChange={handleChange}
+                style={{width: "100%", border: "1px solid #FFE4CC", borderRadius: "8px", padding: "10px 14px", fontSize: "14px", outline: "none", background: "#fff", boxSizing: "border-box"}}>
+                <option>Terreno</option>
+                <option>Casa</option>
+                <option>Lote</option>
+                <option>Departamento</option>
+                <option>Local comercial</option>
+              </select>
+            </div>
+            <div>
+              <label style={{display: "block", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px"}}>Operación</label>
+              <select name="operacion" value={form.operacion} onChange={handleChange}
+                style={{width: "100%", border: "1px solid #FFE4CC", borderRadius: "8px", padding: "10px 14px", fontSize: "14px", outline: "none", background: "#fff", boxSizing: "border-box"}}>
+                <option>Venta</option>
+                <option>Alquiler</option>
+                <option>Alquiler temporada</option>
+              </select>
+            </div>
           </div>
 
           <div>

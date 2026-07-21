@@ -44,8 +44,6 @@ export const getPropiedades = unstable_cache(
 
     return { data, count }
   },
-  // Antes esta key era ["propiedades"], igual a la de arriba: ambos cachés
-  // se pisaban entre sí. Ahora cada función tiene su propia key.
   ["propiedades-listado"],
   { revalidate: 300, tags: ["propiedades"] }
 )
@@ -61,6 +59,51 @@ export const getConteoPorTipo = unstable_cache(
     return conteo
   },
   ["propiedades-conteo-tipo"],
+  { revalidate: 300, tags: ["propiedades"] }
+)
+
+// NUEVO — Propiedades agrupadas por operación (Venta / Alquiler / Alquiler temporada).
+// Se usa en /propiedades para armar las tres secciones. Trae todas las columnas
+// necesarias para las cards, sin paginar (si el volumen crece mucho en el futuro
+// se puede paginar cada sección por separado, pero por ahora no hace falta).
+export const getPropiedadesPorOperacion = unstable_cache(
+  async () => {
+    const { data } = await supabase
+      .from("propiedades")
+      .select("*")
+      .order("created_at", { ascending: false })
+
+    const grupos: Record<string, typeof data> = {
+      Venta: [],
+      Alquiler: [],
+      "Alquiler temporada": [],
+    }
+
+    data?.forEach((p: { operacion?: string }) => {
+      const op = p.operacion || "Venta"
+      if (!grupos[op]) grupos[op] = []
+      grupos[op]!.push(p as never)
+    })
+
+    return grupos
+  },
+  ["propiedades-por-operacion"],
+  { revalidate: 300, tags: ["propiedades"] }
+)
+
+// NUEVO — Cantidad de propiedades por operación, para mostrar contadores
+// si hacen falta (ej: "Ventas (12)").
+export const getConteoPorOperacion = unstable_cache(
+  async () => {
+    const { data } = await supabase.from("propiedades").select("operacion")
+    const conteo: Record<string, number> = {}
+    data?.forEach((row: { operacion?: string }) => {
+      const op = row.operacion || "Venta"
+      conteo[op] = (conteo[op] || 0) + 1
+    })
+    return conteo
+  },
+  ["propiedades-conteo-operacion"],
   { revalidate: 300, tags: ["propiedades"] }
 )
 

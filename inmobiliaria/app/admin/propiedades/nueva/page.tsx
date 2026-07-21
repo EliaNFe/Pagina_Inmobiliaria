@@ -15,6 +15,7 @@ export default function NuevaPropiedad() {
     titulo: "",
     descripcion: "",
     tipo: "Terreno",
+    operacion: "Venta",
     precio: "",
     superficie: "",
     ubicacion: "",
@@ -81,16 +82,27 @@ export default function NuevaPropiedad() {
               placeholder="Ej: Casa en zona sur" />
           </div>
 
-          <div>
-            <label style={{display: "block", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px"}}>Tipo</label>
-            <select name="tipo" value={form.tipo} onChange={handleChange}
-              style={{width: "100%", border: "1px solid #FFE4CC", borderRadius: "8px", padding: "10px 14px", fontSize: "14px", outline: "none", background: "#fff", boxSizing: "border-box"}}>
-              <option>Terreno</option>
-              <option>Casa</option>
-              <option>Lote</option>
-              <option>Departamento</option>
-              <option>Local comercial</option>
-            </select>
+          <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px"}}>
+            <div>
+              <label style={{display: "block", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px"}}>Tipo</label>
+              <select name="tipo" value={form.tipo} onChange={handleChange}
+                style={{width: "100%", border: "1px solid #FFE4CC", borderRadius: "8px", padding: "10px 14px", fontSize: "14px", outline: "none", background: "#fff", boxSizing: "border-box"}}>
+                <option>Terreno</option>
+                <option>Casa</option>
+                <option>Lote</option>
+                <option>Departamento</option>
+                <option>Local comercial</option>
+              </select>
+            </div>
+            <div>
+              <label style={{display: "block", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px"}}>Operación</label>
+              <select name="operacion" value={form.operacion} onChange={handleChange}
+                style={{width: "100%", border: "1px solid #FFE4CC", borderRadius: "8px", padding: "10px 14px", fontSize: "14px", outline: "none", background: "#fff", boxSizing: "border-box"}}>
+                <option>Venta</option>
+                <option>Alquiler</option>
+                <option>Alquiler temporada</option>
+              </select>
+            </div>
           </div>
 
           <div>

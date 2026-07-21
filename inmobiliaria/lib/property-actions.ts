@@ -17,6 +17,7 @@ type FormPropiedad = {
   titulo: string
   descripcion: string
   tipo: string
+  operacion: string
   precio: string
   superficie: string
   ubicacion: string
@@ -54,6 +55,7 @@ export async function crearPropiedad(form: FormPropiedad, imagenesBase64: { nomb
       titulo: form.titulo,
       descripcion: form.descripcion,
       tipo: form.tipo,
+      operacion: form.operacion,
       precio: Number(form.precio),
       superficie: Number(form.superficie),
       ubicacion: form.ubicacion,
@@ -115,6 +117,7 @@ export async function actualizarPropiedad(
       titulo: form.titulo,
       descripcion: form.descripcion,
       tipo: form.tipo,
+      operacion: form.operacion,
       precio: Number(form.precio),
       superficie: Number(form.superficie),
       ubicacion: form.ubicacion,
