@@ -63,9 +63,8 @@ export const getConteoPorTipo = unstable_cache(
 )
 
 // NUEVO — Propiedades agrupadas por operación (Venta / Alquiler / Alquiler temporada).
-// Se usa en /propiedades para armar las tres secciones. Trae todas las columnas
-// necesarias para las cards, sin paginar (si el volumen crece mucho en el futuro
-// se puede paginar cada sección por separado, pero por ahora no hace falta).
+// OJO: esta versión trae TODO sin paginar. Se mantiene por si la necesitás
+// en otro lado, pero para /propiedades usá getPropiedadesPorOperacionPaginado.
 export const getPropiedadesPorOperacion = unstable_cache(
   async () => {
     const { data } = await supabase
@@ -88,6 +87,43 @@ export const getPropiedadesPorOperacion = unstable_cache(
     return grupos
   },
   ["propiedades-por-operacion"],
+  { revalidate: 300, tags: ["propiedades"] }
+)
+
+// NUEVO — Igual que getPropiedadesPorOperacion pero paginado: trae solo
+// las propiedades de UNA operación puntual, de a POR_PAGINA por vez, con
+// filtro opcional por tipo. Pensado para que cada sección de /propiedades
+// (Venta / Alquiler / Alquiler temporada) tenga su propia paginación
+// independiente sin traer toda la tabla de una.
+//
+// Las propiedades viejas sin "operacion" cargada se consideran "Venta"
+// (mismo criterio de fallback que se usa en el resto del sitio), por eso
+// el .or() especial para ese caso: operacion=null también cuenta como Venta.
+const POR_PAGINA_OPERACION = 6
+
+export const getPropiedadesPorOperacionPaginado = unstable_cache(
+  async (operacion: "Venta" | "Alquiler" | "Alquiler temporada", pagina: number = 1, tipo?: string) => {
+    const desde = (pagina - 1) * POR_PAGINA_OPERACION
+    const hasta = desde + POR_PAGINA_OPERACION - 1
+
+    let query = supabase
+      .from("propiedades")
+      .select("*", { count: "exact" })
+      .order("created_at", { ascending: false })
+
+    query = operacion === "Venta"
+      ? query.or("operacion.eq.Venta,operacion.is.null")
+      : query.eq("operacion", operacion)
+
+    if (tipo) {
+      query = query.eq("tipo", tipo)
+    }
+
+    const { data, count } = await query.range(desde, hasta)
+
+    return { data: data || [], count: count || 0 }
+  },
+  ["propiedades-por-operacion-paginado"],
   { revalidate: 300, tags: ["propiedades"] }
 )
 

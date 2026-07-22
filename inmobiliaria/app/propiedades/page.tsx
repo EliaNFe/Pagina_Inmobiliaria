@@ -1,25 +1,15 @@
-import { getPropiedadesPorOperacion, getConteoPorTipo } from "@/lib/supabase"
+import { getPropiedadesPorOperacionPaginado, getConteoPorTipo } from "@/lib/supabase"
 import Link from "next/link"
 
 const TIPOS = ["Casa", "Departamento", "Terreno", "Lote", "Local comercial"]
 
-const SECCIONES: { clave: "Venta" | "Alquiler" | "Alquiler temporada"; titulo: string; subtitulo: string }[] = [
-  { clave: "Venta", titulo: "En venta", subtitulo: "Propiedades disponibles para comprar" },
-  { clave: "Alquiler", titulo: "En alquiler", subtitulo: "Alquiler tradicional" },
-  { clave: "Alquiler temporada", titulo: "Alquiler por temporada", subtitulo: "Para tus vacaciones en Necochea" },
+// Cada sección tiene su propio parámetro de página en la URL (pv/pa/pt) para
+// que paginar "Alquiler" no reinicie ni afecte a "Venta" o "Alquiler temporada".
+const SECCIONES: { clave: "Venta" | "Alquiler" | "Alquiler temporada"; paramPagina: "pv" | "pa" | "pt"; titulo: string; subtitulo: string }[] = [
+  { clave: "Venta", paramPagina: "pv", titulo: "En venta", subtitulo: "Propiedades disponibles para comprar" },
+  { clave: "Alquiler", paramPagina: "pa", titulo: "En alquiler", subtitulo: "Alquiler tradicional" },
+  { clave: "Alquiler temporada", paramPagina: "pt", titulo: "Alquiler por temporada", subtitulo: "Para tus vacaciones en Necochea" },
 ]
-
-type Propiedad = {
-  id: string
-  titulo: string
-  tipo: string
-  operacion?: string
-  precio: number
-  superficie: number
-  ubicacion: string
-  imagen_url: string
-  created_at?: string
-}
 
 function esNueva(created_at?: string) {
   if (!created_at) return false
@@ -30,28 +20,51 @@ function esNueva(created_at?: string) {
 export default async function Propiedades({
   searchParams,
 }: {
-  searchParams: Promise<{ tipo?: string }>
+  searchParams: Promise<{ tipo?: string; pv?: string; pa?: string; pt?: string }>
 }) {
-  const { tipo } = await searchParams
+  const { tipo, pv, pa, pt } = await searchParams
 
-  const [grupos, conteoPorTipo] = await Promise.all([
-    getPropiedadesPorOperacion(),
+  const paginas: Record<"pv" | "pa" | "pt", number> = {
+    pv: Number(pv) || 1,
+    pa: Number(pa) || 1,
+    pt: Number(pt) || 1,
+  }
+
+  const [resultados, conteoPorTipo] = await Promise.all([
+    Promise.all(
+      SECCIONES.map((seccion) =>
+        getPropiedadesPorOperacionPaginado(seccion.clave, paginas[seccion.paramPagina], tipo)
+      )
+    ),
     getConteoPorTipo(),
   ])
 
   const totalGeneral = Object.values(conteoPorTipo).reduce((a, b) => a + b, 0)
   const tiposDisponibles = TIPOS.filter((t) => conteoPorTipo[t] > 0)
 
-  // Filtramos por tipo (si hay filtro activo) dentro de cada grupo de operación
-  const seccionesConDatos = SECCIONES.map((seccion) => {
-    const items = ((grupos[seccion.clave] || []) as Propiedad[]).filter(
-      (p) => !tipo || p.tipo === tipo
-    )
-    return { ...seccion, items }
-  })
+  const seccionesConDatos = SECCIONES.map((seccion, i) => ({
+    ...seccion,
+    items: resultados[i].data,
+    count: resultados[i].count,
+    totalPaginas: Math.ceil(resultados[i].count / 6),
+    paginaActual: paginas[seccion.paramPagina],
+  }))
 
-  const totalFiltrado = seccionesConDatos.reduce((acc, s) => acc + s.items.length, 0)
-  const hayAlgunaSeccionConDatos = seccionesConDatos.some((s) => s.items.length > 0)
+  const totalFiltrado = seccionesConDatos.reduce((acc, s) => acc + s.count, 0)
+  const hayAlgunaSeccionConDatos = seccionesConDatos.some((s) => s.count > 0)
+
+  // Arma el href de un link de paginación conservando el resto de los
+  // parámetros (tipo + las páginas de las OTRAS secciones intactas).
+  function hrefPagina(paramPagina: "pv" | "pa" | "pt", nuevaPagina: number) {
+    const params = new URLSearchParams()
+    if (tipo) params.set("tipo", tipo)
+    ;(["pv", "pa", "pt"] as const).forEach((p) => {
+      const valor = p === paramPagina ? nuevaPagina : paginas[p]
+      if (valor > 1) params.set(p, String(valor))
+    })
+    const qs = params.toString()
+    return `/propiedades${qs ? `?${qs}` : ""}`
+  }
 
   return (
     <main className="antialiased">
@@ -69,9 +82,11 @@ export default async function Propiedades({
 
       {/* HERO — mismo degradé y blobs que el home */}
       <section
-        className="relative overflow-hidden text-white pt-40 pb-20 px-6"
-        style={{ background: "linear-gradient(135deg, #7C2D12 0%, #C2540A 45%, #EA580C 100%)" }}
-      >
+  className="relative overflow-hidden text-white pt-44 pb-28 px-6"
+  style={{
+    background: "#1C0A00",
+  }}
+>
         <div style={{
           position: "absolute", right: "-100px", top: "-100px",
           width: "420px", height: "420px", borderRadius: "50%",
@@ -92,75 +107,73 @@ export default async function Propiedades({
         </div>
       </section>
 
-      {/* GRILLA — filtros + secciones por operación */}
-      <section className="relative py-20 overflow-hidden" style={{ background: "linear-gradient(180deg, #FFF7ED 0%, #FEF3E8 100%)" }}>
-        <div style={{
-          position: "absolute", top: "-60px", left: "-80px",
-          width: "320px", height: "320px", borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(194,84,10,0.12) 0%, transparent 70%)",
-          filter: "blur(30px)", pointerEvents: "none"
-        }} />
-        <div style={{
-          position: "absolute", bottom: "-100px", right: "-60px",
-          width: "360px", height: "360px", borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(234,88,12,0.14) 0%, transparent 70%)",
-          filter: "blur(30px)", pointerEvents: "none"
-        }} />
+      {/* GRILLA — filtros + secciones por operación — mismo fondo texturado
+          (fixed) que el Home, en vez de blobs difuminados */}
+      <section
+        className="relative py-20"
+        style={{
+          backgroundImage: `
+            url("data:image/svg+xml,%3Csvg width='48' height='48' viewBox='0 0 48 48' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='4' cy='4' r='2' fill='%23C2540A' fill-opacity='0.22'/%3E%3C/svg%3E"),
+            radial-gradient(circle at 92% 8%, rgba(194,84,10,0.16) 0%, transparent 42%),
+            radial-gradient(circle at 4% 55%, rgba(28,10,0,0.06) 0%, transparent 40%),
+            radial-gradient(circle at 85% 92%, rgba(194,84,10,0.14) 0%, transparent 42%),
+            linear-gradient(180deg, #FDFBF9 0%, #FFF7ED 55%, #FEF3E8 100%)
+          `,
+          backgroundAttachment: "fixed, fixed, fixed, fixed, scroll",
+          backgroundSize: "48px 48px, auto, auto, auto, auto",
+          backgroundRepeat: "repeat, no-repeat, no-repeat, no-repeat, no-repeat",
+        }}
+      >
 
         <div className="relative max-w-6xl mx-auto px-6">
 
-          {/* FILTRO POR TIPO — pills de vidrio */}
-          <div className="flex flex-wrap gap-2 mb-14 bg-white/30 backdrop-blur-xl border border-white/50 rounded-2xl p-2 w-fit" style={{ boxShadow: "0 8px 32px rgba(194,84,10,0.06)" }}>
+          {/* FILTRO POR TIPO — tabs de texto, sin pills de vidrio */}
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mb-10">
             <Link
               href="/propiedades"
-              className="px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+              className="text-sm font-semibold pb-1 transition-colors"
               style={{
                 textDecoration: "none",
-                background: !tipo ? "#C2540A" : "transparent",
-                color: !tipo ? "#fff" : "#78350F",
+                color: !tipo ? "#C2540A" : "#78350F",
+                borderBottom: !tipo ? "2px solid #C2540A" : "2px solid transparent",
               }}
             >
-              Todas <span className="opacity-70 font-normal">({totalGeneral})</span>
+              Todas <span className="opacity-60 font-normal">({totalGeneral})</span>
             </Link>
             {tiposDisponibles.map((t) => (
               <Link
                 key={t}
                 href={`/propiedades?tipo=${encodeURIComponent(t)}`}
-                className="px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+                className="text-sm font-semibold pb-1 transition-colors"
                 style={{
                   textDecoration: "none",
-                  background: tipo === t ? "#C2540A" : "transparent",
-                  color: tipo === t ? "#fff" : "#78350F",
+                  color: tipo === t ? "#C2540A" : "#78350F",
+                  borderBottom: tipo === t ? "2px solid #C2540A" : "2px solid transparent",
                 }}
               >
-                {t} <span className="opacity-70 font-normal">({conteoPorTipo[t]})</span>
+                {t} <span className="opacity-60 font-normal">({conteoPorTipo[t]})</span>
               </Link>
             ))}
           </div>
 
-          {/* NAV RÁPIDA — saltar directo a cada sección sin scrollear a ciegas.
-              Solo se muestra si hay más de una sección con datos (si solo hay
-              una, saltar a sí misma no sirve de nada). */}
-          {seccionesConDatos.filter((s) => s.items.length > 0).length > 1 && (
-            <div
-              className="flex flex-wrap gap-2 mb-10 sticky z-10 bg-[#FFF7ED]/90 backdrop-blur-md py-2"
-              style={{ top: "0px" }}
-            >
+          {/* NAV RÁPIDA — saltar directo a cada sección. Quieta (no sticky),
+              como botoncitos con borde — sin vidrio, sombra ni fondo sólido. */}
+          {seccionesConDatos.filter((s) => s.count > 0).length > 1 && (
+            <div className="flex flex-wrap gap-2 mb-12">
               {seccionesConDatos.map((seccion) =>
-                seccion.items.length === 0 ? null : (
+                seccion.count === 0 ? null : (
                   <a
                     key={seccion.clave}
                     href={`#${seccion.clave.replace(/\s+/g, "-").toLowerCase()}`}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold border transition-colors"
+                    className="text-[13px] font-semibold inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md transition-colors hover:bg-orange-50"
                     style={{
                       textDecoration: "none",
                       color: "#78350F",
-                      borderColor: "rgba(194,84,10,0.25)",
-                      background: "rgba(255,255,255,0.5)",
+                      border: "1px solid rgba(194,84,10,0.3)",
                     }}
                   >
                     {seccion.titulo}
-                    <span className="opacity-60 font-normal">({seccion.items.length})</span>
+                    <span className="opacity-60 font-normal">({seccion.count})</span>
                   </a>
                 )
               )}
@@ -181,7 +194,7 @@ export default async function Propiedades({
           ) : (
             <div className="flex flex-col gap-16">
               {seccionesConDatos.map((seccion) =>
-                seccion.items.length === 0 ? null : (
+                seccion.count === 0 ? null : (
                   <div key={seccion.clave} id={seccion.clave.replace(/\s+/g, "-").toLowerCase()} style={{ scrollMarginTop: "90px" }}>
                     <div className="flex items-center gap-3 mb-8">
                       <div style={{ width: "28px", height: "1.5px", background: "#C2540A" }} />
@@ -189,7 +202,7 @@ export default async function Propiedades({
                         <h2 className="font-display text-2xl font-bold text-[#1C0A00] tracking-tight">
                           {seccion.titulo}
                           <span className="text-orange-700/60 font-semibold text-base ml-2">
-                            ({seccion.items.length})
+                            ({seccion.count})
                           </span>
                         </h2>
                         <p className="text-stone-500 text-sm">{seccion.subtitulo}</p>
@@ -262,6 +275,45 @@ export default async function Propiedades({
                         </Link>
                       ))}
                     </div>
+
+                    {/* PAGINACIÓN — propia de esta sección, no afecta a las otras */}
+                    {seccion.totalPaginas > 1 && (
+                      <div className="flex justify-center items-center gap-2 mt-10 flex-wrap">
+                        {seccion.paginaActual > 1 && (
+                          <Link
+                            href={hrefPagina(seccion.paramPagina, seccion.paginaActual - 1)}
+                            className="bg-white/40 backdrop-blur-xl border border-white/60 text-orange-700 font-semibold px-4 py-2 rounded-xl text-sm transition-all hover:bg-white/60"
+                            style={{ textDecoration: "none" }}
+                          >
+                            ← Anterior
+                          </Link>
+                        )}
+                        {Array.from({ length: seccion.totalPaginas }, (_, i) => i + 1).map((p) => (
+                          <Link
+                            key={p}
+                            href={hrefPagina(seccion.paramPagina, p)}
+                            className="font-semibold px-3.5 py-2 rounded-xl text-sm transition-all backdrop-blur-xl border"
+                            style={{
+                              textDecoration: "none",
+                              background: p === seccion.paginaActual ? "#C2540A" : "rgba(255,255,255,0.4)",
+                              borderColor: p === seccion.paginaActual ? "#C2540A" : "rgba(255,255,255,0.6)",
+                              color: p === seccion.paginaActual ? "#fff" : "#92400E",
+                            }}
+                          >
+                            {p}
+                          </Link>
+                        ))}
+                        {seccion.paginaActual < seccion.totalPaginas && (
+                          <Link
+                            href={hrefPagina(seccion.paramPagina, seccion.paginaActual + 1)}
+                            className="bg-white/40 backdrop-blur-xl border border-white/60 text-orange-700 font-semibold px-4 py-2 rounded-xl text-sm transition-all hover:bg-white/60"
+                            style={{ textDecoration: "none" }}
+                          >
+                            Siguiente →
+                          </Link>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )
               )}
