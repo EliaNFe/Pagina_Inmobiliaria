@@ -1,6 +1,7 @@
-import { getPropiedad, getImagenesPropiedad } from "@/lib/supabase"
+import { getPropiedad, getImagenesPropiedad , getConfiguracion} from "@/lib/supabase"
 import Link from "next/link"
 import CarruselImagenes from "@/components/CarruselImagenes"
+
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -9,10 +10,20 @@ interface PageProps {
 export default async function DetallePropiedad({ params }: PageProps) {
   const { id } = await params
 
-  const [propiedad, imagenes] = await Promise.all([
-    getPropiedad(id),
-    getImagenesPropiedad(id)
-  ])
+  const [propiedad, imagenes, config] = await Promise.all([
+  getPropiedad(id),
+  getImagenesPropiedad(id),
+  getConfiguracion()
+])
+
+const mensajeWhatsapp = encodeURIComponent(
+  `Hola, quería consultar por la propiedad "${propiedad.titulo}" ubicada en ${propiedad.ubicacion}.`
+)
+
+const whatsappUrl =
+  config?.whatsapp
+    ? `https://wa.me/${config.whatsapp}?text=${mensajeWhatsapp}`
+    : "/contacto"
 
   if (!propiedad) {
     return (
@@ -84,13 +95,29 @@ export default async function DetallePropiedad({ params }: PageProps) {
               </div>
             )}
 
-            <Link
-              href="/contacto"
-              className="inline-flex items-center justify-center font-semibold text-white text-[15px] px-8 py-4 w-full transition-opacity hover:opacity-90"
-              style={{ background: "#C2540A", textDecoration: "none", borderRadius: "4px" }}
-            >
-              Consultar por esta propiedad
-            </Link>
+    <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group inline-flex items-center justify-center gap-2.5 px-5 py-3 font-semibold text-[14px] text-white transition-opacity hover:opacity-90"
+          style={{
+          background: "#C2540A",
+          borderRadius: "8px",
+          textDecoration: "none",
+          }}
+          >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        >
+          <path d="M20.52 3.48A11.8 11.8 0 0 0 12.04 0C5.42 0 .04 5.38.04 12c0 2.12.56 4.2 1.62 6.04L0 24l6.14-1.61A11.95 11.95 0 0 0 12.04 24C18.66 24 24 18.62 24 12c0-3.2-1.25-6.2-3.48-8.52ZM12.04 21.8a9.8 9.8 0 0 1-5-1.37l-.36-.21-3.64.95.97-3.55-.24-.37A9.8 9.8 0 1 1 21.84 12a9.8 9.8 0 0 1-9.8 9.8Zm5.39-7.36c-.3-.15-1.77-.87-2.05-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.17-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.39-1.47-.89-.79-1.49-1.76-1.67-2.06-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.48-.5-.67-.5h-.57c-.2 0-.52.08-.8.37-.27.3-1.05 1.02-1.05 2.5 0 1.47 1.07 2.89 1.22 3.09.15.2 2.1 3.2 5.08 4.48.71.31 1.27.5 1.7.64.71.23 1.36.2 1.87.12.57-.08 1.77-.72 2.02-1.42.25-.69.25-1.29.17-1.42-.08-.12-.28-.2-.58-.35Z" />
+          </svg>
+
+          <span>Consultar por WhatsApp</span>
+    </a>
             <p className="text-center text-stone-400 text-xs mt-3">Respondemos en menos de 24hs</p>
           </div>
         </div>
