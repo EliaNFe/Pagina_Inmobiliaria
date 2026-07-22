@@ -7,6 +7,7 @@ type Propiedad = {
   id: string
   titulo: string
   tipo: string
+  operacion?: string
   precio: number
   superficie: number
   ubicacion: string
@@ -14,6 +15,12 @@ type Propiedad = {
 }
 
 const INTERVALO = 5500
+
+const LABEL_OPERACION: Record<string, string> = {
+  "Venta": "En venta",
+  "Alquiler": "En alquiler",
+  "Alquiler temporada": "Alquiler temporada",
+}
 
 export default function SliderPropiedades({ propiedades }: { propiedades: Propiedad[] }) {
   const [actual, setActual] = useState(0)
@@ -91,6 +98,9 @@ export default function SliderPropiedades({ propiedades }: { propiedades: Propie
 
   if (propiedades.length === 0) return null
   const propiedad = propiedades[actual]
+  // Las propiedades viejas sin "operacion" cargada se consideran "Venta"
+  // (mismo criterio de fallback que se usa en el resto del sitio).
+  const operacionLabel = LABEL_OPERACION[propiedad.operacion || "Venta"] || propiedad.operacion
 
   return (
     <section
@@ -165,7 +175,7 @@ export default function SliderPropiedades({ propiedades }: { propiedades: Propie
         .scrim {
           position: absolute;
           inset: 0;
-          background: linear-gradient(180deg, rgba(27,19,13,0) 34%, rgba(27,19,13,0.5) 66%, rgba(27,19,13,0.88) 100%);
+          background: linear-gradient(180deg, rgba(27,19,13,0) 22%, rgba(27,19,13,0.55) 55%, rgba(27,19,13,0.94) 100%);
         }
 
         .overlay { position: absolute; inset: 0; pointer-events: none; z-index: 10; }
@@ -276,12 +286,19 @@ export default function SliderPropiedades({ propiedades }: { propiedades: Propie
             {String(actual + 1).padStart(2, "0")} — {String(propiedades.length).padStart(2, "0")}
           </span>
 
-          {/* Chip de tipo */}
-          <span
-            style={{ position: "absolute", top: 20, left: 24, fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.12em", padding: "7px 14px", borderRadius: 999, background: "rgba(255,251,246,0.9)", color: "var(--ink)" }}
-          >
-            {propiedad.tipo}
-          </span>
+          {/* Chips — tipo (relleno) + operación (contorno, para diferenciarlo) */}
+          <div style={{ position: "absolute", top: 20, left: 24, display: "flex", gap: 8, flexWrap: "wrap", maxWidth: "70%" }}>
+            <span
+              style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.12em", padding: "7px 14px", borderRadius: 999, background: "rgba(255,251,246,0.9)", color: "var(--ink)" }}
+            >
+              {propiedad.tipo}
+            </span>
+            <span
+              style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", padding: "7px 14px", borderRadius: 999, background: "rgba(27,19,13,0.75)", border: "1px solid rgba(242,178,122,0.5)", color: "var(--gold-mist)" }}
+            >
+              {operacionLabel}
+            </span>
+          </div>
 
           {propiedades.length > 1 && (
             <>
@@ -306,21 +323,21 @@ export default function SliderPropiedades({ propiedades }: { propiedades: Propie
 
           {/* Bloque de texto — se remonta con key={actual} para relanzar el reveal escalonado */}
           <div key={actual} style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "28px 24px", display: "flex", flexDirection: "column", gap: 10 }}>
-            <h3 className="display texto" style={{ color: "#fff", fontSize: "clamp(22px, 3.4vw, 34px)", fontWeight: 600, lineHeight: 1.1, margin: 0, maxWidth: 560 }}>
+            <h3 className="display texto" style={{ color: "#fff", fontSize: "clamp(22px, 3.4vw, 34px)", fontWeight: 600, lineHeight: 1.1, margin: 0, maxWidth: 560, textShadow: "0 2px 12px rgba(0,0,0,0.5)" }}>
               {propiedad.titulo}
             </h3>
 
-            <div className="texto" style={{ display: "flex", alignItems: "center", gap: 6, color: "rgba(255,255,255,0.78)", fontSize: 13 }}>
+            <div className="texto" style={{ display: "flex", alignItems: "center", gap: 6, color: "rgba(255,255,255,0.78)", fontSize: 13, textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>
               <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
               <span>{propiedad.ubicacion}</span>
             </div>
 
             <div className="texto" style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, paddingTop: 10, marginTop: 4, borderTop: "1px solid rgba(255,255,255,0.22)" }}>
               <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
-                <span className="display" style={{ color: "var(--gold-mist)", fontSize: "clamp(22px, 2.6vw, 28px)", fontWeight: 600 }}>
+                <span className="display" style={{ color: "var(--gold-mist)", fontSize: "clamp(22px, 2.6vw, 28px)", fontWeight: 600, textShadow: "0 2px 10px rgba(0,0,0,0.55)" }}>
                   ${propiedad.precio?.toLocaleString()}
                 </span>
-                <span style={{ color: "rgba(255,255,255,0.6)", fontSize: 11, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                <span style={{ color: "rgba(255,255,255,0.6)", fontSize: 11, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.06em", textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>
                   {propiedad.superficie} m²
                 </span>
               </div>
