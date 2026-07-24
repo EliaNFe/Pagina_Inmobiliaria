@@ -228,6 +228,27 @@ export async function borrarPropiedadesMultiples(ids: string[]) {
 }
 
 
+export async function guardarOrdenImagenes(propiedadId: string, orden: { id: string; orden: number }[]) {
+  const supabase = await requireUser()
+
+  for (const item of orden) {
+    await supabase
+      .from("propiedad_imagenes")
+      .update({ orden: item.orden } as never)
+      .eq("id", item.id)
+  }
+
+  // La foto que quedó en el orden más bajo pasa a ser la portada automáticamente.
+  await sincronizarImagenPrincipal(supabase, propiedadId)
+
+  revalidatePath("/")
+  revalidatePath("/propiedades")
+  revalidatePath(`/propiedades/${propiedadId}`)
+  revalidatePath("/admin")
+
+  return { success: true }
+}
+
 export async function guardarConfiguracion(config: Record<string, string>) {
   const supabase = await requireUser()
 

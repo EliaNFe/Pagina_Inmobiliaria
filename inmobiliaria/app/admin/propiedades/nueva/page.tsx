@@ -1,15 +1,18 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import Link from "next/link"
 import { crearPropiedad } from "@/lib/property-actions"
 import { comprimirImagen } from "@/lib/comprimir-imagen"
 
+type ArchivoImagen = { id: string; file: File; preview: string }
+
 export default function NuevaPropiedad() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
-  const [imagenes, setImagenes] = useState<File[]>([])
-  const [previews, setPreviews] = useState<string[]>([])
+  const [archivos, setArchivos] = useState<ArchivoImagen[]>([])
+  const dragIndexRef = useRef<number | null>(null)
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
 
   const [form, setForm] = useState({
     titulo: "",
@@ -29,8 +32,51 @@ export default function NuevaPropiedad() {
 
   function handleImagenes(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || [])
-    setImagenes(files)
-    setPreviews(files.map(f => URL.createObjectURL(f)))
+    setArchivos(
+      files.map((file) => ({
+        id: `${file.name}-${file.lastModified}-${Math.random().toString(36).slice(2)}`,
+        file,
+        preview: URL.createObjectURL(file),
+      }))
+    )
+  }
+
+  function quitarArchivo(id: string) {
+    setArchivos((prev) => prev.filter((a) => a.id !== id))
+  }
+
+  // --- Reordenar antes de subir: drag-and-drop + flechitas ---
+  function moverArchivo(index: number, direccion: -1 | 1) {
+    setArchivos((prev) => {
+      const nuevoIndex = index + direccion
+      if (nuevoIndex < 0 || nuevoIndex >= prev.length) return prev
+      const copia = [...prev]
+      const temp = copia[index]
+      copia[index] = copia[nuevoIndex]
+      copia[nuevoIndex] = temp
+      return copia
+    })
+  }
+
+  function onDragStart(index: number) {
+    dragIndexRef.current = index
+  }
+  function onDragOver(e: React.DragEvent, index: number) {
+    e.preventDefault()
+    setDragOverIndex(index)
+  }
+  function onDrop(e: React.DragEvent, index: number) {
+    e.preventDefault()
+    const from = dragIndexRef.current
+    setDragOverIndex(null)
+    dragIndexRef.current = null
+    if (from === null || from === index) return
+    setArchivos((prev) => {
+      const copia = [...prev]
+      const [item] = copia.splice(from, 1)
+      copia.splice(index, 0, item)
+      return copia
+    })
   }
 
   async function handleSubmit() {
@@ -45,9 +91,9 @@ export default function NuevaPropiedad() {
 
     try {
       const imagenesBase64 = await Promise.all(
-        imagenes.map(async (img) => ({
-          nombre: img.name,
-          base64: await comprimirImagen(img),
+        archivos.map(async (a) => ({
+          nombre: a.file.name,
+          base64: await comprimirImagen(a.file),
         }))
       )
 
@@ -138,13 +184,69 @@ export default function NuevaPropiedad() {
             <label style={{display: "block", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px"}}>Fotos (podés subir varias)</label>
             <input type="file" accept="image/*" multiple onChange={handleImagenes}
               style={{width: "100%", border: "1px solid #FFE4CC", borderRadius: "8px", padding: "10px 14px", fontSize: "14px", boxSizing: "border-box"}} />
-            {previews.length > 0 && (
-              <div style={{display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", marginTop: "12px"}}>
-                {previews.map((p, i) => (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img key={i} src={p} alt="preview" style={{width: "100%", aspectRatio: "1", objectFit: "cover", borderRadius: "8px", border: "1px solid #FFE4CC"}} />
-                ))}
-              </div>
+
+            {archivos.length > 0 && (
+              <>
+                <p style={{fontSize: "12px", color: "#A8A29E", marginTop: "12px", marginBottom: "8px"}}>
+                  Arrastrá una foto para reordenarla, o usá las flechitas. La primera va a ser la portada.
+                </p>
+                <div style={{display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px"}}>
+                  {archivos.map((a, i) => (
+                    <div
+                      key={a.id}
+                      draggable
+                      onDragStart={() => onDragStart(i)}
+                      onDragOver={(e) => onDragOver(e, i)}
+                      onDragLeave={() => setDragOverIndex((prev) => (prev === i ? null : prev))}
+                      onDrop={(e) => onDrop(e, i)}
+                      style={{
+                        position: "relative", borderRadius: "8px", overflow: "hidden", aspectRatio: "1",
+                        cursor: "grab",
+                        outline: dragOverIndex === i ? "2px solid #C2540A" : (i === 0 ? "2px solid #C2540A" : "1px solid #FFE4CC"),
+                        outlineOffset: "2px",
+                      }}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={a.preview} alt="preview" style={{width: "100%", height: "100%", objectFit: "cover", pointerEvents: "none"}} />
+                      {i === 0 && (
+                        <span style={{position: "absolute", top: "4px", left: "4px", background: "#C2540A", color: "#fff", fontSize: "10px", fontWeight: 700, padding: "2px 6px", borderRadius: "4px"}}>
+                          Principal
+                        </span>
+                      )}
+                      <button onClick={() => quitarArchivo(a.id)}
+                        style={{position: "absolute", top: "4px", right: "4px", background: "rgba(0,0,0,0.6)", color: "#fff", border: "none", borderRadius: "50%", width: "24px", height: "24px", cursor: "pointer", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "center"}}>
+                        ×
+                      </button>
+                      <div style={{position: "absolute", bottom: "4px", left: "4px", right: "4px", display: "flex", justifyContent: "space-between"}}>
+                        <button
+                          onClick={() => moverArchivo(i, -1)}
+                          disabled={i === 0}
+                          aria-label="Mover antes"
+                          style={{
+                            background: "rgba(0,0,0,0.6)", color: "#fff", border: "none", borderRadius: "50%",
+                            width: "24px", height: "24px", cursor: i === 0 ? "default" : "pointer",
+                            opacity: i === 0 ? 0.35 : 1, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px",
+                          }}
+                        >
+                          ‹
+                        </button>
+                        <button
+                          onClick={() => moverArchivo(i, 1)}
+                          disabled={i === archivos.length - 1}
+                          aria-label="Mover después"
+                          style={{
+                            background: "rgba(0,0,0,0.6)", color: "#fff", border: "none", borderRadius: "50%",
+                            width: "24px", height: "24px", cursor: i === archivos.length - 1 ? "default" : "pointer",
+                            opacity: i === archivos.length - 1 ? 0.35 : 1, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px",
+                          }}
+                        >
+                          ›
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
 

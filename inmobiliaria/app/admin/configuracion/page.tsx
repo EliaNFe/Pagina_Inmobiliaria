@@ -21,6 +21,7 @@ export default function Configuracion() {
     email: "",
     horario: "",
     direccion: "",
+    instagram: "",
   })
 
   useEffect(() => {
@@ -90,6 +91,12 @@ export default function Configuracion() {
                 <input value={config.whatsapp} onChange={e => setConfig(prev => ({...prev, whatsapp: e.target.value}))}
                   style={{width: "100%", border: "1px solid #FFE4CC", borderRadius: "8px", padding: "10px 14px", fontSize: "14px", outline: "none", boxSizing: "border-box"}}
                   placeholder="5492262000000" />
+              </div>
+              <div>
+                <label style={{display: "block", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px"}}>Instagram (usuario o link)</label>
+                <input value={config.instagram} onChange={e => setConfig(prev => ({...prev, instagram: e.target.value}))}
+                  style={{width: "100%", border: "1px solid #FFE4CC", borderRadius: "8px", padding: "10px 14px", fontSize: "14px", outline: "none", boxSizing: "border-box"}}
+                  placeholder="@inmobiliarialiliana" />
               </div>
               <div>
                 <label style={{display: "block", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px"}}>Email</label>

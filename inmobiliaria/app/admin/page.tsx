@@ -21,7 +21,7 @@ export default async function AdminDashboard() {
   const marcadasDestacadas = listaPropiedades.filter(p => p.destacada)
   const destacadas = marcadasDestacadas.length
 
-  const LIMITE_HOME = 6
+  const LIMITE_HOME = 10
   const idsVisiblesEnHome = marcadasDestacadas.slice(0, LIMITE_HOME).map(p => p.id)
   const excedenLimite = destacadas - idsVisiblesEnHome.length
 

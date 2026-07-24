@@ -1,14 +1,16 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { use } from "react"
 import { getSupabaseClient } from "@/lib/supabase-client"
-import { actualizarPropiedad, borrarImagenPropiedad, borrarPropiedad } from "@/lib/property-actions"
+import { actualizarPropiedad, borrarImagenPropiedad, borrarPropiedad, guardarOrdenImagenes } from "@/lib/property-actions"
 import { comprimirImagen } from "@/lib/comprimir-imagen"
 
 const supabase = getSupabaseClient()
+
+type ImagenPropiedad = { id: string; url: string; orden: number }
 
 export default function EditarPropiedad({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -17,7 +19,11 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
   const [loadingData, setLoadingData] = useState(true)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
-  const [imagenes, setImagenes] = useState<{ id: string; url: string; orden: number }[]>([])
+  const [imagenes, setImagenes] = useState<ImagenPropiedad[]>([])
+  const [ordenOriginal, setOrdenOriginal] = useState<string[]>([])
+  const [guardandoOrden, setGuardandoOrden] = useState(false)
+  const dragIndexRef = useRef<number | null>(null)
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
   const [nuevasImagenes, setNuevasImagenes] = useState<File[]>([])
   const [previews, setPreviews] = useState<string[]>([])
 
@@ -31,6 +37,8 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
     ubicacion: "",
     destacada: false,
   })
+
+  const ordenCambio = imagenes.map(i => i.id).join(",") !== ordenOriginal.join(",")
 
   useEffect(() => {
     async function cargarDatos() {
@@ -63,7 +71,10 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
         .eq("propiedad_id", id)
         .order("orden")
 
-      if (imgs) setImagenes(imgs as never)
+      if (imgs) {
+        setImagenes(imgs as never)
+        setOrdenOriginal((imgs as ImagenPropiedad[]).map(i => i.id))
+      }
       setLoadingData(false)
     }
     cargarDatos()
@@ -84,7 +95,56 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
     // Le pasamos el id de la propiedad para que la Server Action pueda
     // recalcular imagen_url y no queden "huecos" con la foto principal.
     await borrarImagenPropiedad(imagenId, url, id)
-    setImagenes(prev => prev.filter(i => i.id !== imagenId))
+    setImagenes(prev => {
+      const restantes = prev.filter(i => i.id !== imagenId)
+      setOrdenOriginal(restantes.map(i => i.id))
+      return restantes
+    })
+  }
+
+  // --- Reordenar fotos: drag-and-drop + flechitas como alternativa accesible ---
+  function moverImagen(index: number, direccion: -1 | 1) {
+    setImagenes(prev => {
+      const nuevoIndex = index + direccion
+      if (nuevoIndex < 0 || nuevoIndex >= prev.length) return prev
+      const copia = [...prev]
+      const temp = copia[index]
+      copia[index] = copia[nuevoIndex]
+      copia[nuevoIndex] = temp
+      return copia
+    })
+  }
+
+  function onDragStart(index: number) {
+    dragIndexRef.current = index
+  }
+  function onDragOver(e: React.DragEvent, index: number) {
+    e.preventDefault()
+    setDragOverIndex(index)
+  }
+  function onDrop(e: React.DragEvent, index: number) {
+    e.preventDefault()
+    const from = dragIndexRef.current
+    setDragOverIndex(null)
+    dragIndexRef.current = null
+    if (from === null || from === index) return
+    setImagenes(prev => {
+      const copia = [...prev]
+      const [item] = copia.splice(from, 1)
+      copia.splice(index, 0, item)
+      return copia
+    })
+  }
+
+  async function handleGuardarOrden() {
+    setGuardandoOrden(true)
+    const payload = imagenes.map((img, i) => ({ id: img.id, orden: i }))
+    const resultado = await guardarOrdenImagenes(id, payload)
+    if (resultado?.success) {
+      setOrdenOriginal(imagenes.map(i => i.id))
+      setSuccess("Orden de las fotos guardado")
+    }
+    setGuardandoOrden(false)
   }
 
   async function handleGuardar() {
@@ -111,7 +171,11 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
       setSuccess("Propiedad actualizada correctamente")
       setNuevasImagenes([])
       setPreviews([])
-      if (resultado.imagenes) setImagenes(resultado.imagenes as never)
+      if (resultado.imagenes) {
+        const imgs = resultado.imagenes as ImagenPropiedad[]
+        setImagenes(imgs)
+        setOrdenOriginal(imgs.map(i => i.id))
+      }
     } catch {
       setError("Error al guardar los cambios")
     } finally {
@@ -218,12 +282,36 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
 
           {imagenes.length > 0 && (
             <div>
-              <label style={{display: "block", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "12px"}}>Fotos actuales</label>
+              <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px"}}>
+                <label style={{display: "block", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.1em"}}>Fotos actuales</label>
+                {ordenCambio && (
+                  <button onClick={handleGuardarOrden} disabled={guardandoOrden}
+                    style={{background: "#1C0A00", color: "#fff", fontWeight: 600, padding: "6px 14px", borderRadius: "6px", border: "none", fontSize: "12px", cursor: "pointer", opacity: guardandoOrden ? 0.6 : 1}}>
+                    {guardandoOrden ? "Guardando..." : "Guardar orden"}
+                  </button>
+                )}
+              </div>
+              <p style={{fontSize: "12px", color: "#A8A29E", marginBottom: "12px"}}>
+                Arrastrá una foto para reordenarla, o usá las flechitas. La primera es la que se usa de portada.
+              </p>
               <div style={{display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px"}}>
                 {imagenes.map((img, i) => (
-                  <div key={img.id} style={{position: "relative", borderRadius: "8px", overflow: "hidden", aspectRatio: "1"}}>
+                  <div
+                    key={img.id}
+                    draggable
+                    onDragStart={() => onDragStart(i)}
+                    onDragOver={(e) => onDragOver(e, i)}
+                    onDragLeave={() => setDragOverIndex(prev => (prev === i ? null : prev))}
+                    onDrop={(e) => onDrop(e, i)}
+                    style={{
+                      position: "relative", borderRadius: "8px", overflow: "hidden", aspectRatio: "1",
+                      cursor: "grab",
+                      outline: dragOverIndex === i ? "2px solid #C2540A" : "none",
+                      outlineOffset: "2px",
+                    }}
+                  >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={img.url} alt="foto" style={{width: "100%", height: "100%", objectFit: "cover"}} />
+                    <img src={img.url} alt="foto" style={{width: "100%", height: "100%", objectFit: "cover", pointerEvents: "none"}} />
                     {i === 0 && (
                       <span style={{position: "absolute", top: "4px", left: "4px", background: "#C2540A", color: "#fff", fontSize: "10px", fontWeight: 700, padding: "2px 6px", borderRadius: "4px"}}>
                         Principal
@@ -233,6 +321,32 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
                       style={{position: "absolute", top: "4px", right: "4px", background: "rgba(0,0,0,0.6)", color: "#fff", border: "none", borderRadius: "50%", width: "24px", height: "24px", cursor: "pointer", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "center"}}>
                       ×
                     </button>
+                    <div style={{position: "absolute", bottom: "4px", left: "4px", right: "4px", display: "flex", justifyContent: "space-between"}}>
+                      <button
+                        onClick={() => moverImagen(i, -1)}
+                        disabled={i === 0}
+                        aria-label="Mover antes"
+                        style={{
+                          background: "rgba(0,0,0,0.6)", color: "#fff", border: "none", borderRadius: "50%",
+                          width: "24px", height: "24px", cursor: i === 0 ? "default" : "pointer",
+                          opacity: i === 0 ? 0.35 : 1, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px",
+                        }}
+                      >
+                        ‹
+                      </button>
+                      <button
+                        onClick={() => moverImagen(i, 1)}
+                        disabled={i === imagenes.length - 1}
+                        aria-label="Mover después"
+                        style={{
+                          background: "rgba(0,0,0,0.6)", color: "#fff", border: "none", borderRadius: "50%",
+                          width: "24px", height: "24px", cursor: i === imagenes.length - 1 ? "default" : "pointer",
+                          opacity: i === imagenes.length - 1 ? 0.35 : 1, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px",
+                        }}
+                      >
+                        ›
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>

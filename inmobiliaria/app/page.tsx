@@ -81,8 +81,8 @@ export default async function Home() {
       </h1>
 
       <p className="mt-10 text-lg leading-8 text-white/70 font-light max-w-md">
-        Años acompañando familias a encontrar el lugar donde vivir.
-        Terrenos, casas y departamentos en Necochea.
+        Te ayudamos a encontrar el lugar ideal donde vivir y te acompañamos a hacerlo realidad!
+        Terrenos, casas y departamentos en Necochea-Quequen
       </p>
 
       <div className="flex items-center gap-10 mt-12">

@@ -17,7 +17,7 @@ export const getPropiedadesDestacadas = unstable_cache(
       .select("*")
       .eq("destacada", true)
       .order("created_at", { ascending: false })
-      .limit(6)
+      .limit(10)
     return data
   },
   ["propiedades-destacadas"],
