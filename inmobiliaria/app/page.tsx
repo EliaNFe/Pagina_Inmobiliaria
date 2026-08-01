@@ -355,14 +355,24 @@ export default async function Home() {
                   Trabajamos con la convicción de que comprar o vender una propiedad es una decisión importante, y merece un trato directo, honesto y sin apuro.
                   Confiá en una profesional que tiene formación y se capacita constantemente con un Colegio Profesional que la respalda
                 </p>
-                <a
-                  href="/nosotros"
-                  className="inline-flex items-center gap-2 font-semibold text-[15px] text-orange-700 group"
-                  style={{ textDecoration: "none" }}
-                >
-                  Conocer más sobre nosotros
-                  <span className="transition-transform group-hover:translate-x-1">→</span>
-                </a>
+                <div className="flex flex-wrap items-center gap-3">
+                  <a
+                    href="https://martycorrnecochea.com.ar/colegiados/cirigliano-liliana-noemi/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-orange-700 transition-colors hover:text-[#E06A1B] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C2540A]"
+                  >
+                    Ver matrícula
+                    <span aria-hidden="true">↗</span>
+                  </a>
+                  <Link
+                    href="/nosotros"
+                    className="inline-flex items-center gap-2 rounded-full border border-orange-700/35 px-4 py-2.5 text-sm font-semibold text-orange-800 transition-all hover:-translate-y-0.5 hover:border-orange-700 hover:bg-orange-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C2540A]"
+                  >
+                    Conocenos
+                    <span aria-hidden="true">→</span>
+                  </Link>
+                </div>
                 </Reveal>
               </div>
         <div className="flex flex-col gap-4 md:pt-1">
