@@ -32,6 +32,7 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
     descripcion: "",
     tipo: "Terreno",
     operacion: "Venta",
+    moneda: "Pesos",
     precio: "",
     superficie: "",
     ubicacion: "",
@@ -50,7 +51,7 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
 
       if (propiedad) {
         const p = propiedad as never as {
-          titulo: string; descripcion: string; tipo: string; operacion?: string
+          titulo: string; descripcion: string; tipo: string; operacion?: string; moneda?: string
           precio: number; superficie: number; ubicacion: string; destacada: boolean
         }
         setForm({
@@ -58,6 +59,7 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
           descripcion: p.descripcion || "",
           tipo: p.tipo || "Terreno",
           operacion: p.operacion || "Venta",
+          moneda: p.moneda || "Pesos",
           precio: p.precio?.toString() || "",
           superficie: p.superficie?.toString() || "",
           ubicacion: p.ubicacion || "",
@@ -251,11 +253,19 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
               style={{width: "100%", border: "1px solid #FFE4CC", borderRadius: "8px", padding: "10px 14px", fontSize: "14px", outline: "none", resize: "none", boxSizing: "border-box"}} />
           </div>
 
-          <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px"}}>
+          <div style={{display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px"}}>
             <div>
-              <label style={{display: "block", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px"}}>Precio (USD)</label>
+              <label style={{display: "block", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px"}}>Precio</label>
               <input name="precio" type="number" value={form.precio} onChange={handleChange}
                 style={{width: "100%", border: "1px solid #FFE4CC", borderRadius: "8px", padding: "10px 14px", fontSize: "14px", outline: "none", boxSizing: "border-box"}} />
+            </div>
+            <div>
+              <label style={{display: "block", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px"}}>Moneda</label>
+              <select name="moneda" value={form.moneda} onChange={handleChange}
+                style={{width: "100%", border: "1px solid #FFE4CC", borderRadius: "8px", padding: "10px 14px", fontSize: "14px", outline: "none", background: "#fff", boxSizing: "border-box"}}>
+                <option>Pesos</option>
+                <option>Dólares</option>
+              </select>
             </div>
             <div>
               <label style={{display: "block", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px"}}>Superficie (m²)</label>

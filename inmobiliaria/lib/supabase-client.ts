@@ -5,6 +5,7 @@ export type Propiedad = {
   titulo: string
   descripcion: string
   tipo: string
+  moneda?: string
   precio: number
   superficie: number
   ubicacion: string

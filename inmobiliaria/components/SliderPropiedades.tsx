@@ -2,12 +2,14 @@
 
 import { useState, useEffect, useRef, useCallback } from "react"
 import Link from "next/link"
+import { formatearPrecio } from "@/lib/formatear-precio"
 
 type Propiedad = {
   id: string
   titulo: string
   tipo: string
   operacion?: string
+  moneda?: string
   precio: number
   superficie: number
   ubicacion: string
@@ -335,7 +337,7 @@ export default function SliderPropiedades({ propiedades }: { propiedades: Propie
             <div className="texto" style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, paddingTop: 10, marginTop: 4, borderTop: "1px solid rgba(255,255,255,0.22)" }}>
               <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
                 <span className="display" style={{ color: "var(--gold-mist)", fontSize: "clamp(22px, 2.6vw, 28px)", fontWeight: 600, textShadow: "0 2px 10px rgba(0,0,0,0.55)" }}>
-                  ${propiedad.precio?.toLocaleString()}
+                  {formatearPrecio(propiedad.precio, propiedad.moneda)}
                 </span>
                 <span style={{ color: "rgba(255,255,255,0.6)", fontSize: 11, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.06em", textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>
                   {propiedad.superficie} m²

@@ -1,4 +1,5 @@
 import { getPropiedad, getImagenesPropiedad , getConfiguracion} from "@/lib/supabase"
+import { formatearPrecio } from "@/lib/formatear-precio"
 import Link from "next/link"
 import CarruselImagenes from "@/components/CarruselImagenes"
 
@@ -77,7 +78,7 @@ const whatsappUrl =
               <div>
                 <p className="text-[11px] text-stone-400 uppercase tracking-wider mb-1.5">Precio</p>
                 <p className="font-display text-3xl font-extrabold" style={{ color: "#C2540A" }}>
-                  ${propiedad.precio?.toLocaleString()}
+                  {formatearPrecio(propiedad.precio, propiedad.moneda)}
                 </p>
               </div>
               <div>

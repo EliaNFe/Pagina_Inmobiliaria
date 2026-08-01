@@ -36,6 +36,18 @@ export default async function Home() {
           from { transform: translateX(0); }
           to { transform: translateX(-50%); }
         }
+        /* "fixed" en desktop se ve lindo, pero en mobile obliga a repintar
+           el fondo en cada frame de scroll y genera lag. Ahí lo dejamos
+           "scroll" (comportamiento normal), que es liviano. Esto es lo
+           único que toca este bloque — el resto del Home queda intacto. */
+        .fondo-texturado {
+          background-attachment: fixed, fixed, fixed, fixed, scroll;
+        }
+        @media (max-width: 768px) {
+          .fondo-texturado {
+            background-attachment: scroll, scroll, scroll, scroll, scroll;
+          }
+        }
       `}</style>
 
   {/* HERO */}
@@ -81,8 +93,8 @@ export default async function Home() {
       </h1>
 
       <p className="mt-10 text-lg leading-8 text-white/70 font-light max-w-md">
-        Te ayudamos a encontrar el lugar ideal donde vivir y te acompañamos a hacerlo realidad!
-        Terrenos, casas y departamentos en Necochea-Quequen
+        Años acompañando familias a encontrar el lugar donde vivir.
+        Terrenos, casas y departamentos en Necochea.
       </p>
 
       <div className="flex items-center gap-10 mt-12">
@@ -181,6 +193,7 @@ export default async function Home() {
 
       {/* WRAPPER — une tiles + destacadas + quiénes somos en un solo fondo continuo */}
       <div
+        className="fondo-texturado"
         style={{
           position: "relative",
           backgroundImage: `
@@ -190,7 +203,6 @@ export default async function Home() {
             radial-gradient(circle at 85% 92%, rgba(194,84,10,0.14) 0%, transparent 42%),
             linear-gradient(180deg, #FDFBF9 0%, #FFF7ED 55%, #FEF3E8 100%)
           `,
-          backgroundAttachment: "fixed, fixed, fixed, fixed, scroll",
           backgroundSize: "48px 48px, auto, auto, auto, auto",
           backgroundRepeat: "repeat, no-repeat, no-repeat, no-repeat, no-repeat",
         }}
@@ -321,7 +333,7 @@ export default async function Home() {
         {/* QUIÉNES SOMOS */}
         <section style={{ position: "relative", background: "transparent" }} className="pb-24">
           <div className="relative max-w-6xl mx-auto px-6">
-            <div className="grid md:grid-cols-2 gap-14 items-start">
+            <div className="grid md:grid-cols-2 gap-14 items-stretch">
 
               <div>
                 <Reveal>
@@ -332,14 +344,16 @@ export default async function Home() {
                   </span>
                 </div>
                 
-                <h2 className="font-display text-3xl md:text-4xl font-bold text-[#1C0A00] tracking-tight leading-[1.15] mb-6">
-                  Una inmobiliaria familiar, no una franquicia
+                <h2 className="font-display text-3xl md:text-3xl font-bold text-[#1C0A00] tracking-tight leading-[1.15] mb-6">
+                  UNA INMOBILIARIA DIRIGIDA POR  UNA MARTILLERA CORREDORA PUBLICA Y TASADORA MATRICULADA
                 </h2>
                 <p className="text-stone-600 leading-relaxed mb-4">
-                  Liliana Cirigliano lleva más de 20 años en el mercado inmobiliario de Necochea. No hay un call center ni un guion armado — cada consulta la atiende ella misma, conociendo la zona palmo a palmo.
+                  Una operación inmobiliaria es una decisión patrimonial muy importante, a la hora de hacerlo debes saber en manos de quien vas a dejar tu patrimonio.
+                  Liliana Cirigliano, desde 2019 está presente en el mercado inmobiliario de Necochea. No hay un call center ni un guion armado — cada consulta la atiende ella misma, conociendo la zona.
                 </p>
                 <p className="text-stone-600 leading-relaxed mb-8">
                   Trabajamos con la convicción de que comprar o vender una propiedad es una decisión importante, y merece un trato directo, honesto y sin apuro.
+                  Confiá en una profesional que tiene formación y se capacita constantemente con un Colegio Profesional que la respalda
                 </p>
                 <a
                   href="/nosotros"
@@ -351,7 +365,7 @@ export default async function Home() {
                 </a>
                 </Reveal>
               </div>
-        <div className="flex flex-col gap-6"> {/* Incrementamos el gap de 4 a 6 para darles más aire */}
+        <div className="flex flex-col gap-4 md:pt-1">
           {[
           { n: "01", t: "Primera charla", d: "Nos contás qué buscás, sin formularios largos ni compromisos." },
           { n: "02", t: "Propuestas reales", d: "Te mostramos opciones que se ajustan a lo que necesitás de verdad." },
@@ -361,14 +375,11 @@ export default async function Home() {
           <div
           className="flex items-start gap-4 backdrop-blur-sm"
           style={{
-              // Fondo semi-transparente para que se fusione con el fondo y se vean los puntos
-              background: "rgba(255, 255, 255, 0.35)", 
-              // Borde más suave con un sutil tono naranja/cálido
-              border: "1px solid rgba(194, 84, 10, 0.15)", 
+              background: "rgba(255, 255, 255, 0.62)",
+              border: "1px solid rgba(194, 84, 10, 0.18)",
               borderRadius: "12px", 
-              padding: "1.25rem",
-              // Una sombra muy suave para dar volumen sin ensuciar el diseño
-              boxShadow: "0 4px 20px -2px rgba(28, 10, 0, 0.02)" 
+              padding: "1.15rem 1.25rem",
+              boxShadow: "0 8px 24px -14px rgba(28, 10, 0, 0.24)"
               }}
               > 
               <span className="font-display font-extrabold text-orange-700" style={{ fontSize: "22px", lineHeight: 1 }}>

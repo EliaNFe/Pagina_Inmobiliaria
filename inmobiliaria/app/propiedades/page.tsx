@@ -1,4 +1,5 @@
 import { getPropiedadesPorOperacionPaginado, getConteoPorTipo } from "@/lib/supabase"
+import { formatearPrecio } from "@/lib/formatear-precio"
 import Link from "next/link"
 
 const TIPOS = ["Casa", "Departamento", "Terreno", "Lote", "Local comercial"]
@@ -78,15 +79,24 @@ export default async function Propiedades({
             scroll-behavior: auto;
           }
         }
+        /* "fixed" en desktop se ve lindo, pero en mobile obliga a repintar
+           el fondo en cada frame de scroll y genera lag. Ahí lo dejamos
+           "scroll" (comportamiento normal), que es liviano. */
+        .fondo-texturado {
+          background-attachment: fixed, fixed, fixed, fixed, scroll;
+        }
+        @media (max-width: 768px) {
+          .fondo-texturado {
+            background-attachment: scroll, scroll, scroll, scroll, scroll;
+          }
+        }
       `}</style>
 
       {/* HERO — mismo degradé y blobs que el home */}
       <section
-  className="relative overflow-hidden text-white pt-44 pb-28 px-6"
-  style={{
-    background: "#1C0A00",
-  }}
->
+        className="relative overflow-hidden text-white pt-40 pb-20 px-6"
+        style={{ background: "linear-gradient(135deg, #7C2D12 0%, #C2540A 45%, #EA580C 100%)" }}
+      >
         <div style={{
           position: "absolute", right: "-100px", top: "-100px",
           width: "420px", height: "420px", borderRadius: "50%",
@@ -108,9 +118,9 @@ export default async function Propiedades({
       </section>
 
       {/* GRILLA — filtros + secciones por operación — mismo fondo texturado
-          (fixed) que el Home, en vez de blobs difuminados */}
+          (fixed en desktop, scroll en mobile para evitar lag) que el Home */}
       <section
-        className="relative py-20"
+        className="relative py-20 fondo-texturado"
         style={{
           backgroundImage: `
             url("data:image/svg+xml,%3Csvg width='48' height='48' viewBox='0 0 48 48' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='4' cy='4' r='2' fill='%23C2540A' fill-opacity='0.22'/%3E%3C/svg%3E"),
@@ -119,7 +129,6 @@ export default async function Propiedades({
             radial-gradient(circle at 85% 92%, rgba(194,84,10,0.14) 0%, transparent 42%),
             linear-gradient(180deg, #FDFBF9 0%, #FFF7ED 55%, #FEF3E8 100%)
           `,
-          backgroundAttachment: "fixed, fixed, fixed, fixed, scroll",
           backgroundSize: "48px 48px, auto, auto, auto, auto",
           backgroundRepeat: "repeat, no-repeat, no-repeat, no-repeat, no-repeat",
         }}
@@ -241,7 +250,7 @@ export default async function Propiedades({
                               </div>
 
                               <span className="absolute bottom-3 right-4 text-white text-sm font-bold drop-shadow">
-                                ${propiedad.precio?.toLocaleString()}
+                                {formatearPrecio(propiedad.precio, propiedad.moneda)}
                               </span>
                             </div>
 

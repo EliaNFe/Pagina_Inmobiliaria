@@ -4,12 +4,14 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { borrarPropiedadesMultiples } from "@/lib/property-actions"
+import { formatearPrecio } from "@/lib/formatear-precio"
 
 type Propiedad = {
   id: string
   titulo: string
   ubicacion: string
   tipo: string
+  moneda?: string
   precio: number
   destacada: boolean
 }
@@ -153,7 +155,7 @@ export default function PropiedadesTable({
                 </span>
               </td>
               <td style={{ padding: "14px 24px 14px 0", fontWeight: 700, color: "#C2540A", fontSize: "14px" }}>
-                ${propiedad.precio?.toLocaleString()}
+                {formatearPrecio(propiedad.precio, propiedad.moneda)}
               </td>
               <td style={{ padding: "14px 24px 14px 0" }}>
                 {!propiedad.destacada ? (
