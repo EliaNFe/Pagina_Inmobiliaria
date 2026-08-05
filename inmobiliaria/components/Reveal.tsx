@@ -41,8 +41,8 @@ export default function Reveal({
       ref={ref}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(28px)",
-        transition: `opacity 1.3s ease ${delay}ms, transform 1.3s ease ${delay}ms`,
+        transform: visible ? "translate3d(0, 0, 0) scale(1)" : "translate3d(0, 20px, 0) scale(0.97)",
+        transition: `opacity 750ms cubic-bezier(0.22, 1, 0.36, 1) ${delay}ms, transform 750ms cubic-bezier(0.22, 1, 0.36, 1) ${delay}ms`,
       }}
     >
       {children}
