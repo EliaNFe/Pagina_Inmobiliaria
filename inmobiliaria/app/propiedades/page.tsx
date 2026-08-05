@@ -123,13 +123,13 @@ export default async function Propiedades({
         className="relative py-20 fondo-texturado"
         style={{
           backgroundImage: `
-            url("data:image/svg+xml,%3Csvg width='48' height='48' viewBox='0 0 48 48' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='4' cy='4' r='2' fill='%23C2540A' fill-opacity='0.22'/%3E%3C/svg%3E"),
+            url("data:image/svg+xml,%3Csvg width='72' height='72' viewBox='0 0 72 72' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 36C18 18 36 18 72 0M0 72C18 54 36 54 72 36' fill='none' stroke='%23C2540A' stroke-opacity='0.12' stroke-width='1'/%3E%3C/svg%3E"),
             radial-gradient(circle at 92% 8%, rgba(194,84,10,0.16) 0%, transparent 42%),
             radial-gradient(circle at 4% 55%, rgba(28,10,0,0.06) 0%, transparent 40%),
             radial-gradient(circle at 85% 92%, rgba(194,84,10,0.14) 0%, transparent 42%),
             linear-gradient(180deg, #FDFBF9 0%, #FFF7ED 55%, #FEF3E8 100%)
           `,
-          backgroundSize: "48px 48px, auto, auto, auto, auto",
+          backgroundSize: "72px 72px, auto, auto, auto, auto",
           backgroundRepeat: "repeat, no-repeat, no-repeat, no-repeat, no-repeat",
         }}
       >
@@ -222,8 +222,8 @@ export default async function Propiedades({
                       {seccion.items.map((propiedad) => (
                         <Link key={propiedad.id} href={`/propiedades/${propiedad.id}`} style={{ textDecoration: "none" }} className="group block">
                           <div
-                            className="bg-white/40 backdrop-blur-xl rounded-[24px] overflow-hidden border border-white/60 transition-all duration-300 hover:-translate-y-2 hover:bg-white/55"
-                            style={{ boxShadow: "0 8px 32px rgba(194,84,10,0.10)" }}
+                            className="bg-white/55 backdrop-blur-md rounded-[20px] overflow-hidden border border-white/70 transition-all duration-300 hover:-translate-y-1 hover:bg-white/70"
+                            style={{ boxShadow: "0 10px 28px rgba(194,84,10,0.10)" }}
                           >
                             <div className="relative overflow-hidden bg-orange-50/60" style={{ aspectRatio: "4/3" }}>
                               {propiedad.imagen_url ? (
@@ -274,7 +274,7 @@ export default async function Propiedades({
                                   </svg>
                                   {propiedad.superficie} m²
                                 </span>
-                                <span className="text-sm font-semibold text-orange-700 inline-flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <span className="text-sm font-semibold text-orange-700 inline-flex items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
                                   Ver detalle
                                   <span className="transition-transform group-hover:translate-x-1">→</span>
                                 </span>
