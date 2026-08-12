@@ -1,480 +1,115 @@
-import { getPropiedadesDestacadas, getConteoPorTipo } from "@/lib/supabase"
-import { supabase } from "@/lib/supabase"
 import Link from "next/link"
+import { ArrowDownRight, Building2, Home as HomeIcon, Send, Store, Trees } from "lucide-react"
+import { getConfiguracion, getPropiedadesDestacadas } from "@/lib/supabase"
 import SliderPropiedades from "@/components/SliderPropiedades"
 import ConsultaWhatsappForm from "@/components/ConsultaWhatsappForm"
 import Reveal from "@/components/Reveal"
 
-const CATEGORIAS = [
-  { tipo: "Casa", label: "Casas", icon: "M3 12l9-9 9 9M5 10v10h14V10" },
-  { tipo: "Departamento", label: "Departamentos", icon: "M4 21V3h16v18M9 21v-6h6v6M8 7h1M15 7h1M8 11h1M15 11h1" },
-  { tipo: "Terreno", label: "Terrenos", icon: "M2 20l6-12 4 7 3-5 7 10H2z" },
-  { tipo: "Local comercial", label: "Locales", icon: "M4 9l1-5h14l1 5M4 9v11h16V9M4 9h16M9 20v-6h6v6" },
+const TIPOS_PROPIEDAD = [
+  { number: "01", title: "Casas", text: "Viviendas familiares en distintos barrios de la ciudad.", icon: HomeIcon, href: "/propiedades?tipo=Casa" },
+  { number: "02", title: "Departamentos", text: "Unidades para vivir o invertir, en zonas céntricas y cercanas al mar.", icon: Building2, href: "/propiedades?tipo=Departamento" },
+  { number: "03", title: "Terrenos", text: "Lotes listos para construir el proyecto que tenés en mente.", icon: Trees, href: "/propiedades?tipo=Terreno" },
+  { number: "04", title: "Locales", text: "Espacios comerciales en puntos estratégicos de Necochea.", icon: Store, href: "/propiedades?tipo=Local%20comercial" },
 ]
 
 export default async function Home() {
-  const [propiedades, conteoPorTipo, configData] = await Promise.all([
-    getPropiedadesDestacadas(),
-    getConteoPorTipo(),
-    supabase.from("configuracion").select("*"),
-  ])
-
-  const whatsapp = configData.data?.find((c: any) => c.clave === "whatsapp")?.valor || ""
-
-  const imagenPorTipo: Record<string, string> = {}
-  propiedades?.forEach((p: any) => {
-    if (p.tipo && p.imagen_url && !imagenPorTipo[p.tipo]) {
-      imagenPorTipo[p.tipo] = p.imagen_url
-    }
-  })
+  const [propiedades, configuracion] = await Promise.all([getPropiedadesDestacadas(), getConfiguracion()])
 
   return (
-    <main className="antialiased">
-
+    <main className="overflow-hidden bg-[#F8F1E9] text-[#1C0A00]">
       <style>{`
-        @keyframes marquee-scroll {
-          from { transform: translateX(0); }
-          to { transform: translateX(-50%); }
-        }
-        /* "fixed" en desktop se ve lindo, pero en mobile obliga a repintar
-           el fondo en cada frame de scroll y genera lag. Ahí lo dejamos
-           "scroll" (comportamiento normal), que es liviano. Esto es lo
-           único que toca este bloque — el resto del Home queda intacto. */
-        .fondo-texturado {
-          background-attachment: fixed, fixed, fixed, fixed, scroll;
-        }
-        @media (max-width: 768px) {
-          .fondo-texturado {
-            background-attachment: scroll, scroll, scroll, scroll, scroll;
-          }
-        }
+        @keyframes home-reveal { from { opacity: 0; transform: translateY(18px) } to { opacity: 1; transform: translateY(0) } }
+        @keyframes home-drift { from { transform: translate3d(0, 0, 0) scale(1.02) } to { transform: translate3d(-1.5%, -1%, 0) scale(1.07) } }
+        @keyframes appear { from { opacity: .25; transform: scale(1.025) } to { opacity: 1; transform: scale(1) } }
+        @keyframes marquee-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        .home-reveal { animation: home-reveal .8s cubic-bezier(.2,.8,.2,1) both; }
+        .home-reveal-delay { animation-delay: .15s; }
+        .hero-image { animation: home-drift 15s ease-in-out alternate infinite; }
+        .marquee-track { animation: marquee-left 26s linear infinite; }
+        @media (prefers-reduced-motion: reduce) { .home-reveal, .hero-image, .marquee-track { animation: none; } }
       `}</style>
 
-  {/* HERO */}
-<section
-  className="relative overflow-hidden text-white"
-  style={{
-    background: "linear-gradient(180deg, #241005 0%, #1C0A00 100%)",
-  }}
->
-  <div className="relative max-w-7xl mx-auto min-h-[640px]">
-
-    {/* Línea diagonal */}
-    <div
-      className="absolute pointer-events-none hidden md:block"
-      style={{
-        left: "48%",
-        top: "-5%",
-        width: "1px",
-        height: "115%",
-        background:
-          "linear-gradient(180deg, transparent 0%, rgba(194,84,10,.22) 15%, rgba(194,84,10,.12) 85%, transparent 100%)",
-        transform: "rotate(12deg)",
-        transformOrigin: "top",
-      }}
-    />
-
-    {/* Contenido */}
-    <div className="relative z-10 flex flex-col justify-center px-6 md:px-12 py-24 max-w-xl min-h-[640px]">
-
-      <div className="flex items-center gap-4 mb-10">
-        <div className="w-10 h-px bg-[#C2540A]" />
-
-        <span className="text-xs tracking-[0.22em] font-semibold uppercase text-orange-400">
-          Necochea, Buenos Aires
-        </span>
-      </div>
-
-      <h1 className="font-display text-[3.5rem] md:text-[4.6rem] font-bold leading-[0.92] tracking-tight">
-        Tu próximo
-        <br />
-        hogar
-        <span className="text-[#C2540A]">.</span>
-      </h1>
-
-      <p className="mt-10 text-lg leading-8 text-white/70 font-light max-w-md">
-        Años acompañando familias a encontrar el lugar donde vivir.
-        Terrenos, casas y departamentos en Necochea.
-      </p>
-
-      <div className="flex items-center gap-10 mt-12">
-
-        <Link
-          href="/propiedades"
-          className="font-semibold text-white hover:text-[#C2540A] transition-colors"
-        >
-          Ver propiedades
-        </Link>
-
-        <Link
-          href="/contacto"
-          className="inline-flex items-center gap-2 font-semibold text-white group"
-        >
-          Hablar con Liliana
-
-          <span className="transition-transform duration-300 group-hover:translate-x-1">
-            →
-          </span>
-
-        </Link>
-
-      </div>
-
-    </div>
-
-    {/* Imagen */}
-    <div className="hidden md:block absolute inset-y-0 right-0 w-[47%]">
-
-      {/* Luz MUY sutil */}
-      <div
-        className="absolute right-8 top-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(194,84,10,.07) 0%, rgba(194,84,10,.025) 45%, transparent 75%)",
-        }}
-      />
-
-      <img
-        src="/liliana-hero-cutout.png"
-        alt="Liliana Cirigliano"
-        className="absolute bottom-[0px] right-[-45px] h-[103%] w-auto max-w-none object-contain select-none"
-        draggable={false}
-      />
-
-      {/* Sombra inferior muy suave */}
-      <div
-        className="absolute bottom-0 right-24 w-[280px] h-10 rounded-full blur-2xl opacity-25"
-        style={{
-          background: "#000",
-        }}
-      />
-
-    </div>
-
-  </div>
-
-  {/* Franja inferior */}
-  <div className="bg-[#C2540A] border-t border-white/10 py-3 overflow-hidden">
-
-    <div
-      className="flex whitespace-nowrap"
-      style={{
-        animation: "marquee-scroll 22s linear infinite",
-      }}
-    >
-      {[...Array(2)].map((_, i) => (
-        <div key={i} className="flex items-center">
-
-          {[
-            "Terrenos",
-            "Casas",
-            "Departamentos",
-            "Locales comerciales",
-            "Tasación",
-            "Alquiler",
-            "Necochea, Buenos Aires",
-          ].map((item) => (
-            <span
-              key={item}
-              className="flex items-center text-white font-semibold text-sm tracking-wide"
-            >
-              {item}
-              <span className="mx-6 text-orange-200">•</span>
-            </span>
-          ))}
-
+      <section className="relative overflow-hidden text-white" style={{ background: "linear-gradient(180deg, #241005 0%, #1C0A00 100%)" }}>
+        <div className="relative mx-auto min-h-[640px] max-w-7xl">
+          <div className="pointer-events-none absolute hidden md:block" style={{ left: "48%", top: "-5%", width: "1px", height: "115%", background: "linear-gradient(180deg, transparent 0%, rgba(194,84,10,.22) 15%, rgba(194,84,10,.12) 85%, transparent 100%)", transform: "rotate(12deg)", transformOrigin: "top" }} />
+          <div className="relative z-10 flex min-h-[640px] max-w-xl flex-col justify-center px-6 py-24 md:px-12">
+            <div className="mb-10 flex items-center gap-4"><div className="h-px w-10 bg-[#C2540A]" /><span className="text-xs font-semibold uppercase tracking-[0.22em] text-orange-400">Necochea, Buenos Aires</span></div>
+            <h1 className="font-display text-[3.5rem] font-bold leading-[0.92] tracking-tight md:text-[4.6rem]">Tu próximo<br />hogar<span className="text-[#C2540A]">.</span></h1>
+            <p className="mt-10 max-w-md text-lg font-light leading-8 text-white/70">Años acompañando familias a encontrar el lugar donde vivir. Terrenos, casas y departamentos en Necochea.</p>
+            <div className="mt-12 flex items-center gap-10"><Link href="/propiedades" className="font-semibold text-white transition-colors hover:text-[#C2540A]">Ver propiedades</Link><Link href="/contacto" className="group inline-flex items-center gap-2 font-semibold text-white">Hablar con Liliana <span className="transition-transform duration-300 group-hover:translate-x-1">→</span></Link></div>
+          </div>
+          <div className="absolute inset-y-0 right-0 hidden w-[47%] md:block"><div className="pointer-events-none absolute right-8 top-1/2 h-[520px] w-[520px] -translate-y-1/2 rounded-full" style={{ background: "radial-gradient(circle, rgba(194,84,10,.07) 0%, rgba(194,84,10,.025) 45%, transparent 75%)" }} />{/* eslint-disable-next-line @next/next/no-img-element */}<img src="/liliana-hero-cutout.png" alt="Liliana Cirigliano" className="absolute bottom-0 right-[-45px] h-[103%] max-w-none select-none object-contain" draggable={false} /></div>
         </div>
-      ))}
-    </div>
-
-  </div>
-
-</section>
-
-      {/* WRAPPER — une tiles + destacadas + quiénes somos en un solo fondo continuo */}
-      <div
-        className="fondo-texturado"
-        style={{
-          position: "relative",
-          backgroundImage: `
-            url("data:image/svg+xml,%3Csvg width='72' height='72' viewBox='0 0 72 72' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 36C18 18 36 18 72 0M0 72C18 54 36 54 72 36' fill='none' stroke='%23C2540A' stroke-opacity='0.12' stroke-width='1'/%3E%3C/svg%3E"),
-            radial-gradient(circle at 92% 8%, rgba(194,84,10,0.16) 0%, transparent 42%),
-            radial-gradient(circle at 4% 55%, rgba(28,10,0,0.06) 0%, transparent 40%),
-            radial-gradient(circle at 85% 92%, rgba(194,84,10,0.14) 0%, transparent 42%),
-            linear-gradient(180deg, #FDFBF9 0%, #FFF7ED 55%, #FEF3E8 100%)
-          `,
-          backgroundSize: "72px 72px, auto, auto, auto, auto",
-          backgroundRepeat: "repeat, no-repeat, no-repeat, no-repeat, no-repeat",
-        }}
-      >
-
-        {/* TILES POR CATEGORÍA */}
-        <section style={{ position: "relative", background: "transparent" }} className="py-16">
-          <div className="relative max-w-6xl mx-auto px-6">
-            <div className="flex items-center gap-3 mb-8">
-              <div style={{ width: "28px", height: "1.5px", background: "#C2540A" }} />
-              <span className="text-xs tracking-[0.2em] font-semibold text-orange-700 uppercase">
-                Explorá por tipo
+        <div className="overflow-hidden border-t border-white/10 bg-[#C2540A] py-3">
+          <div className="marquee-track flex w-max whitespace-nowrap text-sm font-semibold tracking-wide text-white">
+            {[0, 1].map((rep) => (
+              <span key={rep} className="flex shrink-0">
+                Terrenos <b className="mx-6 text-orange-200">•</b> Casas <b className="mx-6 text-orange-200">•</b> Departamentos <b className="mx-6 text-orange-200">•</b> Locales comerciales <b className="mx-6 text-orange-200">•</b> Tasación <b className="mx-6 text-orange-200">•</b> Alquiler <b className="mx-6 text-orange-200">•</b> Necochea, Buenos Aires <b className="mx-6 text-orange-200">•</b>
               </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="relative bg-[#EAD9C9] py-24 md:py-32">
+        <div className="mx-auto max-w-7xl px-6 md:px-10">
+          <Reveal><div className="grid gap-10 md:grid-cols-[.8fr_1.2fr] md:gap-20"><div><p className="mb-4 text-xs font-bold uppercase tracking-[.22em] text-[#C2540A]">Explorá por tipo</p><h2 className="font-display text-3xl font-bold leading-[1] tracking-[-.04em] md:text-4xl">Encontrá lo que estás buscando.</h2></div><div className="self-end border-l border-[#C2540A]/35 pl-6 text-base leading-7 text-[#4C382D] md:pb-2">Filtrá por tipo de propiedad y accedé directo a las opciones disponibles.</div></div></Reveal>
+          <div className="mt-20 grid border-y border-[#C2540A]/25 md:grid-cols-4">
+            {TIPOS_PROPIEDAD.map(({ number, title, text, icon: Icon, href }) => <Link href={href} key={number} className="group border-b border-[#C2540A]/20 p-5 transition-colors hover:bg-[#F0E2D5] md:border-b-0 md:border-r md:last:border-r-0 md:p-6"><div className="flex items-start justify-between"><span className="font-display text-lg text-[#C2540A]">{number}</span><Icon size={19} strokeWidth={1.4} className="transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" /></div><h3 className="mt-9 font-display text-xl font-bold tracking-[-.03em]">{title}</h3><p className="mt-2 max-w-[16rem] text-xs leading-5 text-[#6B5548]">{text}</p><span className="mt-5 inline-flex items-center gap-2 text-xs font-bold text-[#C2540A]">Ver propiedades <ArrowDownRight size={14} /></span></Link>)}
+          </div>
+        </div>
+      </section>
+
+      {propiedades && propiedades.length > 0 && (
+        <section className="relative overflow-hidden bg-[#1C0A00] py-24 text-white md:py-32">
+          <div className="pointer-events-none absolute inset-0" style={{ backgroundImage: "repeating-linear-gradient(115deg, transparent, transparent 38px, rgba(242,178,122,0.035) 38px, rgba(242,178,122,0.035) 39px)" }} />
+          <div className="relative mx-auto max-w-6xl px-6 md:px-10">
+            <div className="mb-10 flex items-end justify-between gap-6 md:mb-14">
+              <div>
+                <h2 className="font-display text-3xl font-bold tracking-[-.03em] text-white md:text-4xl">Selección destacada</h2>
+                <p className="mt-2 text-sm text-white/55">Propiedades elegidas para vos</p>
+              </div>
+              <Link href="/propiedades" className="hidden items-center gap-2 text-sm font-bold text-[#F2B27A] transition-colors hover:text-white sm:flex">Ver catálogo completo <ArrowDownRight size={16} /></Link>
             </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {CATEGORIAS.map((cat, i) => {
-                const destacado = i === CATEGORIAS.length - 1
-                const foto = imagenPorTipo[cat.tipo]
-
-                return (
-                  <Link
-                    key={cat.tipo}
-                    href={`/propiedades?tipo=${encodeURIComponent(cat.tipo)}`}
-                    className="group block"
-                    style={{ textDecoration: "none" }}
-                  >
-                    <div
-                      className="relative overflow-hidden transition-transform duration-300 group-hover:-translate-y-1"
-                      style={{
-                        background: foto ? undefined : (destacado ? "#C2540A" : "#1C0A00"),
-                        borderRadius: "8px",
-                        padding: "1.5rem 1.25rem",
-                        minHeight: "170px",
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      {foto && (
-                        <>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={foto}
-                            alt=""
-                            aria-hidden="true"
-                            className="absolute inset-0 w-full h-full transition-transform duration-500 group-hover:scale-110"
-                            style={{ objectFit: "cover" }}
-                          />
-                          <div style={{
-                            position: "absolute", inset: 0,
-                            background: "linear-gradient(180deg, rgba(28,10,0,0.35) 0%, rgba(28,10,0,0.75) 100%)",
-                          }} />
-                        </>
-                      )}
-
-                      <svg
-                        className="relative"
-                        width="26" height="26" viewBox="0 0 24 24" fill="none"
-                        stroke={foto ? "#FFD8B4" : (destacado ? "#1C0A00" : "#C2540A")}
-                        strokeWidth="1.8"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d={cat.icon} />
-                      </svg>
-
-                      <div className="relative">
-                        <div style={{
-                          width: "22px", height: "1.5px", marginBottom: "10px",
-                          background: foto ? "#FFD8B4" : (destacado ? "#1C0A00" : "#C2540A"),
-                        }} />
-                        <p
-                          className="font-display font-bold"
-                          style={{ color: foto ? "#fff" : (destacado ? "#1C0A00" : "#fff"), fontSize: "16px", marginBottom: "2px" }}
-                        >
-                          {cat.label}
-                        </p>
-                        <p style={{
-                          color: foto ? "rgba(255,255,255,0.7)" : (destacado ? "rgba(28,10,0,0.6)" : "rgba(255,255,255,0.4)"),
-                          fontSize: "12px",
-                        }}>
-                          {conteoPorTipo[cat.tipo] || 0} disponibles
-                        </p>
-                      </div>
-                    </div>
-                  </Link>
-                )
-              })}
-            </div>
+            <SliderPropiedades propiedades={propiedades as any} />
+            <Link href="/propiedades" className="mt-8 inline-flex items-center gap-2 text-sm font-bold text-[#F2B27A] sm:hidden">Ver catálogo completo <ArrowDownRight size={16} /></Link>
           </div>
         </section>
-<Reveal>
-        {/* PROPIEDADES DESTACADAS */}
-        {propiedades && propiedades.length > 0 && (
-          <section className="py-16">
-            <div className="max-w-6xl mx-auto px-6">
-              
-              {/* Encabezado más compacto y elegante */}
-              <div className="flex items-end justify-between mb-10">
-                <div>
-                  <h2 className="font-display text-2xl md:text-3xl font-bold text-[#1C0A00] tracking-tight mb-1">
-                    Selección destacada
-                  </h2>
-                  <p className="text-stone-500 text-sm">Propiedades elegidas para vos</p>
-                </div>
-                <Link 
-                  href="/propiedades" 
-                  className="hidden sm:flex text-sm font-semibold text-[#C2540A] hover:opacity-70 transition-opacity"
-                >
-                  Ver catálogo completo →
-                </Link>
-              </div>
+      )}
 
-              {/* Slider - Contenedor ajustado */}
-              <div className="relative">
-                <SliderPropiedades propiedades={propiedades as any} />
-              </div>
-
-              {/* Link móvil (para cuando no se ve el de arriba) */}
-              <div className="sm:hidden mt-6 text-center">
-                 <Link href="/propiedades" className="text-sm font-semibold text-[#C2540A]">
-                  Ver catálogo completo →
-                </Link>
-              </div>
-            </div>
-          </section>
-        )}
-</Reveal>
-        {/* QUIÉNES SOMOS */}
-        <section style={{ position: "relative", background: "transparent" }} className="pb-24">
-          <div className="relative max-w-6xl mx-auto px-6">
-            <div className="grid md:grid-cols-2 gap-14 items-stretch">
-
-              <div>
-                <Reveal>
-                <div className="flex items-center gap-3 mb-6">
-                  <div style={{ width: "28px", height: "1.5px", background: "#C2540A" }} />
-                  <span className="text-xs tracking-[0.2em] font-semibold text-orange-700 uppercase">
-                    Quiénes somos
-                  </span>
-                </div>
-                
-                <h2 className="font-display text-3xl md:text-3xl font-bold text-[#1C0A00] tracking-tight leading-[1.15] mb-6">
-                  UNA INMOBILIARIA DIRIGIDA POR  UNA MARTILLERA CORREDORA PUBLICA Y TASADORA MATRICULADA
-                </h2>
-                <p className="text-stone-600 leading-relaxed mb-4">
-                  Una operación inmobiliaria es una decisión patrimonial muy importante, a la hora de hacerlo debes saber en manos de quien vas a dejar tu patrimonio.
-                  Liliana Cirigliano, desde 2019 está presente en el mercado inmobiliario de Necochea. No hay un call center ni un guion armado — cada consulta la atiende ella misma, conociendo la zona.
-                </p>
-                <p className="text-stone-600 leading-relaxed mb-8">
-                  Trabajamos con la convicción de que comprar o vender una propiedad es una decisión importante, y merece un trato directo, honesto y sin apuro.
-                  Confiá en una profesional que tiene formación y se capacita constantemente con un Colegio Profesional que la respalda
-                </p>
-                <div className="flex flex-wrap items-center gap-3">
-                  <a
-                    href="https://martycorrnecochea.com.ar/colegiados/cirigliano-liliana-noemi/"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-orange-700 transition-colors hover:text-[#E06A1B] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C2540A]"
-                  >
-                    Ver matrícula
-                    <span aria-hidden="true">↗</span>
-                  </a>
-                  <Link
-                    href="/nosotros"
-                    className="inline-flex items-center gap-2 rounded-full border border-orange-700/35 px-4 py-2.5 text-sm font-semibold text-orange-800 transition-all hover:-translate-y-0.5 hover:border-orange-700 hover:bg-orange-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C2540A]"
-                  >
-                    Conocenos
-                    <span aria-hidden="true">→</span>
-                  </Link>
-                </div>
-                </Reveal>
-              </div>
-        <div className="flex flex-col gap-4 md:pt-1">
-          {[
-          { n: "01", t: "Primera charla", d: "Nos contás qué buscás, sin formularios largos ni compromisos." },
-          { n: "02", t: "Propuestas reales", d: "Te mostramos opciones que se ajustan a lo que necesitás de verdad." },
-          { n: "03", t: "Acompañamiento", d: "Desde la primera visita hasta la escritura, y después también." },
-          ].map((item) => (
-          <Reveal key={item.n}> {/* El Reveal ahora envuelve individualmente a cada tarjeta */}
-          <div
-          className="flex items-start gap-4 backdrop-blur-sm"
-          style={{
-              background: "rgba(255, 255, 255, 0.62)",
-              border: "1px solid rgba(194, 84, 10, 0.18)",
-              borderRadius: "12px", 
-              padding: "1.15rem 1.25rem",
-              boxShadow: "0 8px 24px -14px rgba(28, 10, 0, 0.24)"
+      <section className="bg-[#EAD9C9] py-20 md:py-24">
+        <div className="mx-auto grid max-w-7xl gap-14 px-6 md:grid-cols-[.95fr_1.05fr] md:px-10">
+          <Reveal><div><p className="mb-5 text-xs font-bold uppercase tracking-[.22em] text-[#C2540A]">Quiénes somos</p><h2 className="font-display text-3xl font-bold leading-[1.05] tracking-[-.035em] md:text-4xl">Una inmobiliaria dirigida por una martillera corredora pública y tasadora matriculada.</h2><p className="mt-7 max-w-xl leading-7 text-[#5D473B]">Una operación inmobiliaria es una decisión patrimonial muy importante; a la hora de hacerlo debés saber en manos de quién vas a dejar tu patrimonio. Liliana Cirigliano, desde 2019 está presente en el mercado inmobiliario de Necochea. No hay un call center ni un guion armado: cada consulta la atiende ella misma, conociendo la zona.</p><p className="mt-4 max-w-xl leading-7 text-[#5D473B]">Trabajamos con la convicción de que comprar o vender una propiedad es una decisión importante, y merece un trato directo, honesto y sin apuro. Confiá en una profesional que tiene formación y se capacita constantemente con un Colegio Profesional que la respalda.</p><a href="https://martycorrnecochea.com.ar/colegiados/cirigliano-liliana-noemi/" target="_blank" rel="noreferrer" className="mt-7 inline-flex border-b border-[#C2540A] pb-2 text-sm font-bold text-[#9A3E08]">Ver matrícula</a></div></Reveal>
+          <Reveal delay={120}>
+            <div
+              className="relative flex h-[320px] items-center justify-center overflow-hidden sm:h-[400px]"
+              style={{
+                border: "1px solid rgba(194,84,10,0.25)",
+                borderRadius: "16px",
+                background: "linear-gradient(160deg, #E8863F 0%, #C2540A 100%)",
+                boxShadow: "0 24px 48px rgba(28,10,0,0.16)",
               }}
-              > 
-              <span className="font-display font-extrabold text-orange-700" style={{ fontSize: "22px", lineHeight: 1 }}>
-              {item.n}
-              </span>
-              <div>
-                <p className="font-display font-bold text-stone-900 text-[15px] mb-1">{item.t}</p>
-                <p className="text-stone-500 text-sm leading-relaxed">{item.d}</p>
-                </div>
-              </div>
-            </Reveal>
-            ))}
+            >
+              <img src="/fachada-inmobiliaria.jpg" alt="Fachada de Inmobiliaria Liliana Cirigliano" className="absolute inset-0 h-full w-full object-cover object-top" />
+              <div className="pointer-events-none absolute inset-0" style={{ background: "linear-gradient(160deg, rgba(232,134,63,0.28) 0%, rgba(194,84,10,0.08) 40%, rgba(28,10,0,0.05) 65%, rgba(28,10,0,0.45) 100%)" }} />
+              <div className="pointer-events-none absolute inset-0" style={{ boxShadow: "inset 0 0 60px rgba(28,10,0,0.35)" }} />
+              <span style={{ position: "absolute", top: 16, left: 16, width: 22, height: 22, borderTop: "2px solid rgba(255,255,255,0.6)", borderLeft: "2px solid rgba(255,255,255,0.6)", borderTopLeftRadius: "4px" }} />
+              <span style={{ position: "absolute", top: 16, right: 16, width: 22, height: 22, borderTop: "2px solid rgba(255,255,255,0.6)", borderRight: "2px solid rgba(255,255,255,0.6)", borderTopRightRadius: "4px" }} />
+              <span style={{ position: "absolute", bottom: 16, left: 16, width: 22, height: 22, borderBottom: "2px solid rgba(255,255,255,0.6)", borderLeft: "2px solid rgba(255,255,255,0.6)", borderBottomLeftRadius: "4px" }} />
+              <span style={{ position: "absolute", bottom: 16, right: 16, width: 22, height: 22, borderBottom: "2px solid rgba(255,255,255,0.6)", borderRight: "2px solid rgba(255,255,255,0.6)", borderBottomRightRadius: "4px" }} />
             </div>
-
-            </div>
-          </div>
-        </section>
-      </div>
-
-      {/* CTA */}
-<section
-  className="border-t border-[#382015]"
-  style={{ background: "#1C0A00" }}
->
-  <div className="max-w-6xl mx-auto px-6 py-24">
-
-    <div className="grid md:grid-cols-2 gap-16 lg:gap-24 items-center">
-
-      {/* TEXTO */}
-      <Reveal>
-        <div>
-          <span className="text-xs uppercase tracking-[0.25em] text-[#C2540A] font-semibold">
-            Contacto
-          </span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-white leading-tight mt-6">
-            ¿Tenés una consulta?
-          </h2>
-          <p className="mt-6 text-lg text-white/60 leading-8 max-w-md">
-            Sin compromisos. Solo una conversación para entender qué estás buscando.
-          </p>
-          <Link
-            href="/contacto"
-            className="inline-flex items-center gap-2 mt-10 text-[#C2540A] font-semibold group"
-          >
-            También podés escribirnos
-            <span className="transition-transform group-hover:translate-x-1">
-              →
-            </span>
-          </Link>
+            <div className="mt-4 flex items-center gap-2">
+              <div style={{ width: "18px", height: "1.5px", background: "#C2540A" }} />
+              <p className="text-xs tracking-wide text-[#8A6A55]">Nuestro local — Necochea, Buenos Aires</p>
+            </div><div className="mt-8 border-l border-[#C2540A]/40 pl-6"><p className="font-display text-xl font-bold text-[#1C0A00]">01 — Primera charla</p><p className="mt-1 text-sm leading-6 text-[#5D473B]">Nos contás qué buscás, sin formularios largos ni compromisos.</p><p className="mt-5 font-display text-xl font-bold text-[#1C0A00]">02 — Propuestas reales</p><p className="mt-1 text-sm leading-6 text-[#5D473B]">Te mostramos opciones que se ajustan a lo que necesitás de verdad.</p><p className="mt-5 font-display text-xl font-bold text-[#1C0A00]">03 — Acompañamiento</p><p className="mt-1 text-sm leading-6 text-[#5D473B]">Desde la primera visita hasta la escritura, y después también.</p></div></Reveal>
         </div>
-      </Reveal>
+      </section>
 
-      {/* FORMULARIO */}
-      <Reveal delay={150}>
-        <div>
-          <ConsultaWhatsappForm numeroWhatsapp={whatsapp} />
-        </div>
-      </Reveal>
-    </div>
-  </div>
-</section>
+      <section className="bg-[#120602] py-24 text-white md:py-32">
+        <div className="mx-auto grid max-w-7xl gap-14 px-6 md:grid-cols-[1fr_.9fr] md:px-10"><Reveal><div><p className="mb-5 text-xs font-bold uppercase tracking-[.22em] text-[#F2B27A]">Contacto</p><h2 className="font-display text-4xl font-bold leading-[1] tracking-[-.04em] md:text-5xl">¿Tenés una consulta?</h2><p className="mt-8 max-w-md text-lg leading-8 text-white/60">Sin compromisos. Solo una conversación para entender qué estás buscando.</p><Link href="/contacto" className="mt-9 inline-flex items-center gap-2 border-b border-[#F2B27A]/60 pb-2 text-sm font-bold text-[#F2B27A]">También podés escribirnos <ArrowDownRight size={16} /></Link></div></Reveal><Reveal delay={120}><div className="border-t border-white/20 pt-7 md:border-l md:border-t-0 md:pl-12 md:pt-0"><ConsultaWhatsappForm numeroWhatsapp={configuracion.whatsapp || ""} /><div className="mt-5 flex items-center gap-2 text-xs text-white/40"><Send size={13} />Tu consulta llega directamente por WhatsApp.</div></div></Reveal></div>
+      </section>
 
-      {/* FOOTER */}
-      <footer className="py-12 border-t border-white/10" style={{ background: "#0A0300" }}>
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-white/40 text-sm font-medium">
-            © {new Date().getFullYear()} Inmobiliaria Liliana Cirigliano — Necochea, Buenos Aires
-          </p>
-          <nav className="flex gap-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-2 py-1.5">
-            {[
-              { href: "/propiedades", label: "Propiedades" },
-              { href: "/nosotros", label: "Nosotros" },
-              { href: "/contacto", label: "Contacto" },
-            ].map(link => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-white/50 text-sm font-medium hover:text-white hover:bg-white/10 transition-colors px-3 py-1.5 rounded-xl"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-      </footer>
+      <footer className="bg-[#090200] px-6 py-10 text-white/45 md:px-10"><div className="mx-auto flex max-w-7xl flex-col gap-5 text-sm md:flex-row md:items-center md:justify-between"><p>© {new Date().getFullYear()} Inmobiliaria Liliana Cirigliano</p><div className="flex gap-5"><Link href="/propiedades">Propiedades</Link><Link href="/nosotros">Nosotros</Link><Link href="/contacto">Contacto</Link></div><p>Necochea, Buenos Aires</p></div></footer>
     </main>
   )
 }
