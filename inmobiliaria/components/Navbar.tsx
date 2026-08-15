@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Building2, Users, MessageCircle } from "lucide-react"
+import { Home, Building2, Users, MessageCircle, ArrowUpRight } from "lucide-react"
 
 const links = [
   { href: "/", label: "Inicio", icon: Home },
@@ -18,78 +18,92 @@ export default function Navbar() {
   // el navbar público no debe superponerse ahí.
   if (pathname?.startsWith("/admin")) return null
 
+  // Si ya estamos en Home, hacemos scroll suave en vez de saltar de golpe.
+  // Si venimos de otra página, dejamos que el Link navegue normal (el ancla igual funciona).
+  const handleConsultaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (pathname === "/") {
+      e.preventDefault()
+      document.getElementById("consulta")?.scrollIntoView({ behavior: "smooth", block: "start" })
+    }
+  }
+
   return (
     <>
-      {/* NAV DESKTOP — logo, menú y CTA como tres piezas independientes */}
-      <header className="hidden md:block fixed top-5 inset-x-0 z-50 px-6 pointer-events-none">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
+      {/* NAV DESKTOP — barra sólida, elegante, sin glass */}
+      <header
+        className="hidden md:block fixed top-0 inset-x-0 z-50"
+        style={{
+          background: "#1C0A00",
+          borderBottom: "1px solid rgba(242,178,122,0.14)",
+        }}
+      >
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-10 h-20">
 
-          {/* Logo — separado, a la izquierda */}
-          <Link
-            href="/"
-            className="rounded-2xl px-5 py-2.5 flex flex-col leading-none shadow-lg shadow-black/15 pointer-events-auto"
-            style={{ 
-              textDecoration: "none",
-              // Vidrio oscuro templado que se fusiona con el fondo de la web
-              background: "rgba(28, 10, 0, 0.45)", 
-              backdropFilter: "blur(16px)",
-              WebkitBackdropFilter: "blur(16px)",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
-            }}
-          >
-            {/* Cambiado a un naranja más brillante para que destaque en fondo oscuro */}
-            <span className="text-[10px] tracking-[0.15em] text-orange-400 font-semibold uppercase">
+          {/* Logo */}
+          <Link href="/" className="flex flex-col leading-none" style={{ textDecoration: "none" }}>
+            <span className="text-[10px] tracking-[0.28em] text-[#C2540A] font-semibold uppercase">
               Inmobiliaria
             </span>
-            {/* Texto cambiado a stone-100 (casi blanco) para legibilidad */}
-            <span className="font-display text-[15px] font-bold text-stone-100 mt-1">
+            <span className="font-display text-[19px] font-bold text-white mt-1 tracking-[-0.01em]">
               Liliana Cirigliano
             </span>
           </Link>
 
-          {/* Pill de navegación — centrado, libre del logo y del CTA */}
-          <nav 
-            className="rounded-2xl px-2 py-2 flex items-center gap-1 shadow-lg shadow-black/15 pointer-events-auto"
-            style={{
-              // Mismo tono de vidrio oscuro templado
-              background: "rgba(28, 10, 0, 0.45)", 
-              backdropFilter: "blur(16px)",
-              WebkitBackdropFilter: "blur(16px)",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
-            }}
-          >
+          {/* Links — minimalistas, con línea inferior animada */}
+          <nav className="flex items-center gap-11">
             {links.map((link) => {
-              const Icon = link.icon
               const active = pathname === link.href
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all hover:text-white"
+                  className="group relative py-2 text-[13px] font-semibold uppercase tracking-[0.12em] transition-colors"
                   style={{
                     textDecoration: "none",
-                    background: active ? "#C2540A" : "transparent",
-                    // Los inactivos ahora son un blanco suave translúcido para que no compitan y se lean perfecto
-                    color: active ? "#fff" : "rgba(255, 255, 255, 0.7)", 
+                    color: active ? "#F2B27A" : "rgba(255,255,255,0.62)",
                   }}
                 >
-                  <Icon size={16} strokeWidth={2} />
                   {link.label}
+                  <span
+                    className="absolute -bottom-0.5 left-0 h-px bg-[#C2540A] transition-all duration-300"
+                    style={{ width: active ? "100%" : "0%" }}
+                  />
+                  <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-[#F2B27A] transition-all duration-300 group-hover:w-full" />
                 </Link>
               )
             })}
           </nav>
+
+          {/* CTA — lleva a la sección de consulta con scroll suave; efecto de relleno "wipe" al pasar el mouse */}
+          <Link
+            href="/#consulta"
+            onClick={handleConsultaClick}
+            className="group relative inline-flex items-center gap-2 overflow-hidden px-6 py-2.5 text-[13px] font-bold uppercase tracking-[0.08em] text-[#F2B27A]"
+            style={{
+              textDecoration: "none",
+              border: "1px solid rgba(194,84,10,0.55)",
+            }}
+          >
+            <span className="absolute inset-0 -translate-x-full bg-[#C2540A] transition-transform duration-500 ease-[cubic-bezier(.16,1,.3,1)] group-hover:translate-x-0" />
+            <span className="relative z-10 transition-colors duration-300 group-hover:text-white">Hablar con Liliana</span>
+            <ArrowUpRight
+              size={15}
+              strokeWidth={2.3}
+              className="relative z-10 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white"
+            />
+          </Link>
         </div>
       </header>
 
-      {/* NAV MOBILE — tab bar flotante inferior */}
+      {/* Espaciador para que el contenido no quede debajo de la barra fija */}
+      <div className="hidden md:block h-20" />
+
+      {/* NAV MOBILE — tab bar inferior, sólida, sin blur */}
       <nav
-        className="flex md:hidden fixed bottom-5 inset-x-4 z-50 rounded-[24px] px-2 py-2 shadow-2xl shadow-black/10 justify-between"
+        className="flex md:hidden fixed bottom-0 inset-x-0 z-50 justify-between px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2"
         style={{
-              background: "rgba(28, 10, 0, 0.45)", 
-              backdropFilter: "blur(16px)",
-              WebkitBackdropFilter: "blur(16px)",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
+          background: "#1C0A00",
+          borderTop: "1px solid rgba(242,178,122,0.14)",
         }}
       >
         {links.map((link) => {
@@ -99,16 +113,20 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="flex flex-col items-center gap-1 py-2 px-3 rounded-2xl flex-1 transition-all"
-              style={{
-                textDecoration: "none",
-                background: active ? "rgba(194,84,10,0.1)" : "transparent",
-              }}
+              className="relative flex flex-col items-center gap-1 py-2 px-3 flex-1"
+              style={{ textDecoration: "none" }}
             >
-              <Icon size={20} strokeWidth={2} color={active ? "#C2540A" : "#A8A29E"} />
               <span
-                className="text-[10px] font-semibold"
-                style={{ color: active ? "#C2540A" : "#A8A29E" }}
+                className="absolute top-0 h-px transition-all duration-300"
+                style={{
+                  width: active ? "28px" : "0px",
+                  background: "#C2540A",
+                }}
+              />
+              <Icon size={19} strokeWidth={1.8} color={active ? "#F2B27A" : "rgba(255,255,255,0.45)"} />
+              <span
+                className="text-[10px] font-semibold tracking-wide"
+                style={{ color: active ? "#F2B27A" : "rgba(255,255,255,0.45)" }}
               >
                 {link.label}
               </span>

@@ -105,7 +105,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="bg-[#120602] py-24 text-white md:py-32">
+      <section id="consulta" className="bg-[#120602] py-24 text-white md:py-32">
         <div className="mx-auto grid max-w-7xl gap-14 px-6 md:grid-cols-[1fr_.9fr] md:px-10"><Reveal><div><p className="mb-5 text-xs font-bold uppercase tracking-[.22em] text-[#F2B27A]">Contacto</p><h2 className="font-display text-4xl font-bold leading-[1] tracking-[-.04em] md:text-5xl">¿Tenés una consulta?</h2><p className="mt-8 max-w-md text-lg leading-8 text-white/60">Sin compromisos. Solo una conversación para entender qué estás buscando.</p><Link href="/contacto" className="mt-9 inline-flex items-center gap-2 border-b border-[#F2B27A]/60 pb-2 text-sm font-bold text-[#F2B27A]">También podés escribirnos <ArrowDownRight size={16} /></Link></div></Reveal><Reveal delay={120}><div className="border-t border-white/20 pt-7 md:border-l md:border-t-0 md:pl-12 md:pt-0"><ConsultaWhatsappForm numeroWhatsapp={configuracion.whatsapp || ""} /><div className="mt-5 flex items-center gap-2 text-xs text-white/40"><Send size={13} />Tu consulta llega directamente por WhatsApp.</div></div></Reveal></div>
       </section>
 
