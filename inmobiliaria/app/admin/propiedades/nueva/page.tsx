@@ -120,7 +120,7 @@ export default function NuevaPropiedad() {
 
         {error && <div style={{background: "#FEF2F2", border: "1px solid #FECACA", color: "#DC2626", padding: "12px 16px", borderRadius: "8px", marginBottom: "20px", fontSize: "14px"}}>{error}</div>}
 
-        <div style={{background: "#fff", borderRadius: "16px", border: "1px solid #FFE4CC", padding: "32px", display: "flex", flexDirection: "column", gap: "20px"}}>
+        <div className="p-5 sm:p-8" style={{background: "#fff", borderRadius: "16px", border: "1px solid #FFE4CC", display: "flex", flexDirection: "column", gap: "20px"}}>
 
           <div>
             <label style={{display: "block", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px"}}>Título</label>
@@ -129,7 +129,7 @@ export default function NuevaPropiedad() {
               placeholder="Ej: Casa en zona sur" />
           </div>
 
-          <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px"}}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label style={{display: "block", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px"}}>Tipo</label>
               <select name="tipo" value={form.tipo} onChange={handleChange}
@@ -159,7 +159,7 @@ export default function NuevaPropiedad() {
               placeholder="Describí la propiedad con detalle..." />
           </div>
 
-          <div style={{display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px"}}>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label style={{display: "block", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px"}}>Precio</label>
               <input name="precio" type="number" value={form.precio} onChange={handleChange}

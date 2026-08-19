@@ -110,7 +110,8 @@ export default function PropiedadesTable({
         )}
       </div>
 
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+      <table style={{ width: "100%", minWidth: "620px", borderCollapse: "collapse" }}>
         <thead>
           <tr style={{ background: "#FDFBF9" }}>
             <th style={{ padding: "10px 16px", width: "40px" }}>
@@ -182,6 +183,7 @@ export default function PropiedadesTable({
           ))}
         </tbody>
       </table>
+      </div>
 
       {propiedades.length === 0 && (
         <div style={{ padding: "48px 24px", textAlign: "center" }}>

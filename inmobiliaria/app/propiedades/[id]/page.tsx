@@ -52,7 +52,7 @@ const whatsappUrl =
     <main className="antialiased" style={{ background: "#FDFBF9", minHeight: "100vh" }}>
 
       {/* Franja superior oscura con breadcrumb y tipo */}
-      <div style={{ background: "#1C0A00" }} className="pt-32 pb-10 px-6">
+      <div style={{ background: "#1C0A00" }} className="pt-10 pb-8 px-6 md:pt-32 md:pb-10">
         <div className="max-w-5xl mx-auto">
           <Link href="/propiedades" className="text-white/50 text-sm inline-block mb-6 hover:text-white transition-colors" style={{ textDecoration: "none" }}>
             ← Volver al catálogo
@@ -66,15 +66,15 @@ const whatsappUrl =
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 py-14">
-        <div className="grid md:grid-cols-2 gap-12">
+      <div className="max-w-5xl mx-auto px-6 py-8 md:py-14">
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12">
 
-          <div>
+          <div style={{ minWidth: 0 }}>
             <CarruselImagenes imagenes={todasLasImagenes} titulo={propiedad.titulo} />
           </div>
 
           <div>
-            <div className="flex items-start gap-10 mb-8 pb-8" style={{ borderBottom: "1px solid #F0E4D8" }}>
+            <div className="flex items-start gap-6 sm:gap-10 mb-8 pb-8" style={{ borderBottom: "1px solid #F0E4D8" }}>
               <div>
                 <p className="text-[11px] text-stone-400 uppercase tracking-wider mb-1.5">Precio</p>
                 <p className="font-display text-3xl font-extrabold" style={{ color: "#C2540A" }}>

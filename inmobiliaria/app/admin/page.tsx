@@ -30,7 +30,7 @@ export default async function AdminDashboard() {
       <div className="max-w-6xl mx-auto py-10 px-6">
 
         {/* HEADER */}
-        <div className="flex justify-between items-start mb-10">
+        <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-start mb-10">
           <div>
             <div className="flex items-center gap-3 mb-3">
               <div style={{ width: "24px", height: "1.5px", background: "#C2540A" }} />
@@ -42,7 +42,7 @@ export default async function AdminDashboard() {
               Inmobiliaria Liliana Cirigliano
             </h1>
           </div>
-          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+          <div className="flex flex-wrap gap-2.5 items-center">
             <Link
               href="/admin/configuracion"
               style={{
@@ -72,7 +72,7 @@ export default async function AdminDashboard() {
         </div>
 
         {/* STATS */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", marginBottom: excedenLimite > 0 ? "16px" : "28px" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3" style={{ marginBottom: excedenLimite > 0 ? "16px" : "28px" }}>
           {[
             { label: "Total propiedades", value: total, dark: true },
             { label: `Destacadas (máx. ${LIMITE_HOME} en home)`, value: destacadas, dark: false, accent: true },

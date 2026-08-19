@@ -99,15 +99,41 @@ export default function CarruselImagenes({ imagenes, titulo }: { imagenes: strin
   return (
     <div className="carrusel-imagenes">
       <style jsx>{`
+        .carrusel-imagenes {
+          min-width: 0;
+          width: 100%;
+        }
         .viewer {
           position: relative;
           border-radius: 6px;
           overflow: hidden;
           border: 1px solid #F0E4D8;
-          aspect-ratio: 4 / 3;
+          background: #F5F0EA;
+          aspect-ratio: 1 / 1;
+        }
+        @media (min-width: 640px) {
+          .viewer { aspect-ratio: 4 / 3; }
         }
         @media (min-width: 768px) {
           .viewer { aspect-ratio: 16 / 9; }
+        }
+        .hint-ampliar {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          background: rgba(28,10,0,0.45);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          pointer-events: none;
+          z-index: 5;
+        }
+        @media (min-width: 640px) {
+          .hint-ampliar { display: none; }
         }
         .track {
           display: flex;
@@ -186,11 +212,13 @@ export default function CarruselImagenes({ imagenes, titulo }: { imagenes: strin
                 src={img}
                 alt={`${titulo} — foto ${i + 1} de ${imagenes.length}`}
                 onClick={() => setLightboxAbierto(true)}
-                style={{ width: "100%", height: "100%", objectFit: "cover", cursor: "zoom-in" }}
+                style={{ width: "100%", height: "100%", objectFit: "contain", cursor: "zoom-in" }}
               />
             </div>
           ))}
         </div>
+
+  
 
         {imagenes.length > 1 && (
           <>
@@ -252,7 +280,7 @@ export default function CarruselImagenes({ imagenes, titulo }: { imagenes: strin
       </div>
 
       {imagenes.length > 1 && (
-        <div style={{ display: "flex", gap: "10px", marginTop: "14px", overflowX: "auto" }}>
+        <div style={{ display: "flex", gap: "10px", marginTop: "14px", overflowX: "auto", width: "100%" }}>
           {imagenes.map((img, i) => (
             <button
               key={i}
