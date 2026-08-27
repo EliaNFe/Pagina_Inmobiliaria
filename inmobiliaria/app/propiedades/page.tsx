@@ -95,23 +95,29 @@ export default async function Propiedades({
       {/* HERO — mismo degradé y blobs que el home */}
       <section
         className="relative overflow-hidden text-white pt-40 pb-20 px-6"
-        style={{ background: "linear-gradient(135deg, #7C2D12 0%, #C2540A 45%, #EA580C 100%)" }}
+        style={{
+          background: `
+            radial-gradient(circle at 82% 18%, rgba(194,84,10,0.24) 0%, transparent 34%),
+            radial-gradient(circle at 12% 100%, rgba(234,88,12,0.10) 0%, transparent 30%),
+            linear-gradient(135deg, #120704 0%, #1C0A00 58%, #2A1007 100%)
+          `,
+        }}
       >
         <div style={{
           position: "absolute", right: "-100px", top: "-100px",
           width: "420px", height: "420px", borderRadius: "50%",
-          background: "rgba(255,255,255,0.05)", pointerEvents: "none", filter: "blur(40px)"
+          background: "rgba(194,84,10,0.10)", pointerEvents: "none", filter: "blur(40px)"
         }} />
         <div style={{
           position: "absolute", left: "10%", bottom: "-80px",
           width: "260px", height: "260px", borderRadius: "50%",
-          background: "rgba(255,255,255,0.04)", pointerEvents: "none", filter: "blur(20px)"
+          background: "rgba(255,247,237,0.035)", pointerEvents: "none", filter: "blur(20px)"
         }} />
 
         <div className="relative max-w-6xl mx-auto">
-          <p className="text-xs font-bold tracking-[0.15em] text-[#FED7AA] uppercase mb-3">Catálogo</p>
+          <p className="text-xs font-bold tracking-[0.15em] text-[#ECA56F] uppercase mb-3">Catálogo</p>
           <h1 className="font-display text-4xl md:text-5xl font-bold tracking-tight">Propiedades disponibles</h1>
-          <p className="text-white/70 mt-3">
+          <p className="text-white/55 mt-3">
             {totalFiltrado} {totalFiltrado === 1 ? "propiedad" : "propiedades"} en Necochea y alrededores
           </p>
         </div>
@@ -123,14 +129,12 @@ export default async function Propiedades({
         className="relative py-20 fondo-texturado"
         style={{
           backgroundImage: `
-            url("data:image/svg+xml,%3Csvg width='72' height='72' viewBox='0 0 72 72' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 36C18 18 36 18 72 0M0 72C18 54 36 54 72 36' fill='none' stroke='%23C2540A' stroke-opacity='0.12' stroke-width='1'/%3E%3C/svg%3E"),
-            radial-gradient(circle at 92% 8%, rgba(194,84,10,0.16) 0%, transparent 42%),
-            radial-gradient(circle at 4% 55%, rgba(28,10,0,0.06) 0%, transparent 40%),
-            radial-gradient(circle at 85% 92%, rgba(194,84,10,0.14) 0%, transparent 42%),
-            linear-gradient(180deg, #FDFBF9 0%, #FFF7ED 55%, #FEF3E8 100%)
+            radial-gradient(circle at 94% 4%, rgba(194,84,10,0.09) 0%, transparent 34%),
+            radial-gradient(circle at 3% 48%, rgba(28,10,0,0.035) 0%, transparent 32%),
+            radial-gradient(circle at 86% 96%, rgba(194,84,10,0.07) 0%, transparent 34%),
+            linear-gradient(180deg, #FDFBF9 0%, #FBF7F2 52%, #FFF9F2 100%)
           `,
-          backgroundSize: "72px 72px, auto, auto, auto, auto",
-          backgroundRepeat: "repeat, no-repeat, no-repeat, no-repeat, no-repeat",
+          backgroundRepeat: "no-repeat, no-repeat, no-repeat, no-repeat",
         }}
       >
 
@@ -143,7 +147,7 @@ export default async function Propiedades({
               className="text-sm font-semibold pb-1 transition-colors"
               style={{
                 textDecoration: "none",
-                color: !tipo ? "#C2540A" : "#78350F",
+                color: !tipo ? "#C2540A" : "#5C463B",
                 borderBottom: !tipo ? "2px solid #C2540A" : "2px solid transparent",
               }}
             >
@@ -156,7 +160,7 @@ export default async function Propiedades({
                 className="text-sm font-semibold pb-1 transition-colors"
                 style={{
                   textDecoration: "none",
-                  color: tipo === t ? "#C2540A" : "#78350F",
+                  color: tipo === t ? "#C2540A" : "#5C463B",
                   borderBottom: tipo === t ? "2px solid #C2540A" : "2px solid transparent",
                 }}
               >
@@ -174,11 +178,11 @@ export default async function Propiedades({
                   <a
                     key={seccion.clave}
                     href={`#${seccion.clave.replace(/\s+/g, "-").toLowerCase()}`}
-                    className="text-[13px] font-semibold inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md transition-colors hover:bg-orange-50"
+                    className="text-[13px] font-semibold inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md transition-colors hover:bg-[#F6E9DD]"
                     style={{
                       textDecoration: "none",
-                      color: "#78350F",
-                      border: "1px solid rgba(194,84,10,0.3)",
+                      color: "#5C3322",
+                      border: "1px solid rgba(194,84,10,0.22)",
                     }}
                   >
                     {seccion.titulo}
@@ -222,16 +226,16 @@ export default async function Propiedades({
                       {seccion.items.map((propiedad) => (
                         <Link key={propiedad.id} href={`/propiedades/${propiedad.id}`} style={{ textDecoration: "none" }} className="group block">
                           <div
-                            className="bg-white/55 backdrop-blur-md rounded-[20px] overflow-hidden border border-white/70 transition-all duration-300 hover:-translate-y-1 hover:bg-white/70"
-                            style={{ boxShadow: "0 10px 28px rgba(194,84,10,0.10)" }}
+                            className="bg-[#FFFCF8]/90 backdrop-blur-md rounded-[20px] overflow-hidden border border-[#E9DDD2] transition-all duration-300 hover:-translate-y-1 hover:bg-white"
+                            style={{ boxShadow: "0 12px 32px rgba(28,10,0,0.08)" }}
                           >
-                            <div className="relative overflow-hidden bg-orange-50/60" style={{ aspectRatio: "4/3" }}>
+                            <div className="relative overflow-hidden bg-[#F3EAE2]" style={{ aspectRatio: "4/3" }}>
                               {propiedad.imagen_url ? (
                                 // eslint-disable-next-line @next/next/no-img-element
                                 <img src={propiedad.imagen_url} alt={propiedad.titulo} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center">
-                                  <span className="text-orange-300 text-sm">Sin imagen</span>
+                                  <span className="text-[#B98A6D] text-sm">Sin imagen</span>
                                 </div>
                               )}
 
@@ -239,11 +243,11 @@ export default async function Propiedades({
                               <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/35 to-transparent pointer-events-none" />
 
                               <div className="absolute top-4 left-4 flex gap-2">
-                                <span className="bg-white/70 backdrop-blur-md border border-white/50 text-stone-800 text-xs font-bold px-3 py-1.5 rounded-full shadow-sm tracking-wide">
+                                <span className="bg-[#FFFDFC]/85 backdrop-blur-md border border-white/60 text-[#3D2A21] text-xs font-bold px-3 py-1.5 rounded-full shadow-sm tracking-wide">
                                   {propiedad.tipo}
                                 </span>
                                 {esNueva(propiedad.created_at) && (
-                                  <span className="bg-orange-600/90 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm tracking-wide">
+                                  <span className="bg-[#C2540A]/95 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm tracking-wide">
                                     Nuevo
                                   </span>
                                 )}
@@ -255,11 +259,11 @@ export default async function Propiedades({
                             </div>
 
                             <div className="p-6">
-                              <h3 className="font-bold text-stone-900 mb-1.5 text-[16px] leading-tight line-clamp-1 group-hover:text-orange-700 transition-colors">
+                              <h3 className="font-bold text-[#1C0A00] mb-1.5 text-[16px] leading-tight line-clamp-1 group-hover:text-[#C2540A] transition-colors">
                                 {propiedad.titulo}
                               </h3>
 
-                              <div className="flex items-center gap-1.5 text-stone-500 text-sm mb-4">
+                              <div className="flex items-center gap-1.5 text-[#766158] text-sm mb-4">
                                 <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -267,14 +271,14 @@ export default async function Propiedades({
                                 <span className="truncate">{propiedad.ubicacion}</span>
                               </div>
 
-                              <div className="flex justify-between items-center pt-4 border-t border-white/60">
-                                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-800 bg-white/50 border border-white/50 rounded-full px-3 py-1.5">
+                              <div className="flex justify-between items-center pt-4 border-t border-[#EDE2D8]">
+                                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#6B3B24] bg-[#F8EFE7] border border-[#EAD8C8] rounded-full px-3 py-1.5">
                                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4" />
                                   </svg>
                                   {propiedad.superficie} m²
                                 </span>
-                                <span className="text-sm font-semibold text-orange-700 inline-flex items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+                                <span className="text-sm font-semibold text-[#B64B08] inline-flex items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
                                   Ver detalle
                                   <span className="transition-transform group-hover:translate-x-1">→</span>
                                 </span>
@@ -291,7 +295,7 @@ export default async function Propiedades({
                         {seccion.paginaActual > 1 && (
                           <Link
                             href={hrefPagina(seccion.paramPagina, seccion.paginaActual - 1)}
-                            className="bg-white/40 backdrop-blur-xl border border-white/60 text-orange-700 font-semibold px-4 py-2 rounded-xl text-sm transition-all hover:bg-white/60"
+                            className="bg-[#FFFCF8] border border-[#E4D4C5] text-[#B64B08] font-semibold px-4 py-2 rounded-xl text-sm transition-all hover:bg-white"
                             style={{ textDecoration: "none" }}
                           >
                             ← Anterior
@@ -304,9 +308,9 @@ export default async function Propiedades({
                             className="font-semibold px-3.5 py-2 rounded-xl text-sm transition-all backdrop-blur-xl border"
                             style={{
                               textDecoration: "none",
-                              background: p === seccion.paginaActual ? "#C2540A" : "rgba(255,255,255,0.4)",
-                              borderColor: p === seccion.paginaActual ? "#C2540A" : "rgba(255,255,255,0.6)",
-                              color: p === seccion.paginaActual ? "#fff" : "#92400E",
+                              background: p === seccion.paginaActual ? "#C2540A" : "#FFFCF8",
+                              borderColor: p === seccion.paginaActual ? "#C2540A" : "#E4D4C5",
+                              color: p === seccion.paginaActual ? "#fff" : "#7A3B1C",
                             }}
                           >
                             {p}
@@ -315,7 +319,7 @@ export default async function Propiedades({
                         {seccion.paginaActual < seccion.totalPaginas && (
                           <Link
                             href={hrefPagina(seccion.paramPagina, seccion.paginaActual + 1)}
-                            className="bg-white/40 backdrop-blur-xl border border-white/60 text-orange-700 font-semibold px-4 py-2 rounded-xl text-sm transition-all hover:bg-white/60"
+                            className="bg-[#FFFCF8] border border-[#E4D4C5] text-[#B64B08] font-semibold px-4 py-2 rounded-xl text-sm transition-all hover:bg-white"
                             style={{ textDecoration: "none" }}
                           >
                             Siguiente →
