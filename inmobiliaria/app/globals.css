@@ -21,7 +21,7 @@ body {
 }
 
 h1, h2, h3, h4, .font-display {
-  font-family: var(--font-display), sans-serif;
+  font-family: var(--font-display), Georgia, serif;
 }
 
 /* Utilidades de vidrio esmerilado */

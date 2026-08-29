@@ -117,18 +117,15 @@ export default function SliderPropiedades({ propiedades }: { propiedades: Propie
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
-      `}</style>
       <style jsx>{`
         .stage-slider {
           --clay: #c2540a;
           --ink: #1b130d;
           --sand: #e9ddc8;
           --gold-mist: #f2b27a;
-          font-family: "Inter", sans-serif;
+          font-family: var(--font-body), sans-serif;
         }
-        .display { font-family: "Fraunces", serif; font-optical-sizing: auto; }
+        .display { font-family: var(--font-display), Georgia, serif; }
 
         .stage {
           position: relative;

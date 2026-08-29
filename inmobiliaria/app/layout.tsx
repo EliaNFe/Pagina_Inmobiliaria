@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { Sora, Inter } from "next/font/google";
+import { Lora, Manrope } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 
-const sora = Sora({
+const lora = Lora({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
+  weight: ["500", "600", "700"],
 });
 
-const inter = Inter({
+const manrope = Manrope({
   variable: "--font-body",
   subsets: ["latin"],
 });
@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${sora.variable} ${inter.variable} h-full antialiased`}>
+    <html lang="es" className={`${lora.variable} ${manrope.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col pb-24 md:pb-0" style={{ fontFamily: "var(--font-body)" }}>
         <Navbar />
         {children}
