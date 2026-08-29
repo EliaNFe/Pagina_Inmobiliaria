@@ -1,0 +1,2 @@
+import styles from "./propiedades.module.css"
+export default function Loading(){return <main aria-label="Cargando propiedades" aria-busy="true"><div style={{height:330,background:"#1c0a00"}}/><section className={styles.catalogue}><div className={styles.container}><div className={`${styles.toolbar} property-skeleton`} style={{height:92}}/><div className={styles.grid}>{Array.from({length:6},(_,i)=><div key={i} className="property-skeleton" style={{aspectRatio:"4/5"}}/>)}</div></div></section></main>}

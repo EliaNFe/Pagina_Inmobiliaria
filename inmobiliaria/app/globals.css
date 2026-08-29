@@ -52,3 +52,7 @@ h1, h2, h3, h4, .font-display {
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(194, 84, 10, 0.15);
 }
+
+.property-skeleton { background: linear-gradient(100deg, #eee5dc 30%, #f8f3ee 50%, #eee5dc 70%); background-size: 200% 100%; animation: property-shimmer 1.4s ease-in-out infinite; }
+@keyframes property-shimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+@media (prefers-reduced-motion: reduce) { .property-skeleton { animation: none; } }
