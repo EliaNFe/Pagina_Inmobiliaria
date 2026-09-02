@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowDownRight, Building2, Home as HomeIcon, Send, Store, Trees } from "lucide-react"
+import { ArrowDownRight, Building2, Home as HomeIcon, Send, Trees } from "lucide-react"
 import { getConfiguracion, getPropiedadesDestacadas } from "@/lib/supabase"
 import SliderPropiedades from "@/components/SliderPropiedades"
 import ConsultaWhatsappForm from "@/components/ConsultaWhatsappForm"
@@ -9,7 +9,7 @@ const TIPOS_PROPIEDAD = [
   { number: "01", title: "Casas", text: "Viviendas familiares en distintos barrios de la ciudad.", icon: HomeIcon, href: "/propiedades?tipo=Casa" },
   { number: "02", title: "Departamentos", text: "Unidades para vivir o invertir, en zonas céntricas y cercanas al mar.", icon: Building2, href: "/propiedades?tipo=Departamento" },
   { number: "03", title: "Terrenos", text: "Lotes listos para construir el proyecto que tenés en mente.", icon: Trees, href: "/propiedades?tipo=Terreno" },
-  { number: "04", title: "Locales", text: "Espacios comerciales en puntos estratégicos de Necochea.", icon: Store, href: "/propiedades?tipo=Local%20comercial" },
+  { number: "04", title: "Lotes", text: "Lotes disponibles para construir el proyecto que tenés en mente.", icon: Trees, href: "/propiedades?tipo=Lote" },
 ]
 
 export default async function Home() {
