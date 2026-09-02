@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Lora, Manrope } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import ScrollToTop from "@/components/ScrollToTop";
 
 const lora = Lora({
   variable: "--font-display",
@@ -28,6 +30,9 @@ export default function RootLayout({
     <html lang="es" className={`${lora.variable} ${manrope.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col pb-24 md:pb-0" style={{ fontFamily: "var(--font-body)" }}>
         <Navbar />
+        <Suspense fallback={null}>
+          <ScrollToTop />
+        </Suspense>
         {children}
       </body>
     </html>
