@@ -51,12 +51,59 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="relative bg-[#EAD9C9] py-24 md:py-32">
-        <div className="mx-auto max-w-7xl px-6 md:px-10">
-          <Reveal><div className="grid gap-10 md:grid-cols-[.8fr_1.2fr] md:gap-20"><div><p className="mb-4 text-xs font-bold uppercase tracking-[.22em] text-[#C2540A]">Explorá por tipo</p><h2 className="font-display text-3xl font-bold leading-[1] tracking-[-.04em] md:text-4xl">Encontrá lo que estás buscando.</h2></div><div className="self-end border-l border-[#C2540A]/35 pl-6 text-base leading-7 text-[#4C382D] md:pb-2">Filtrá por tipo de propiedad y accedé directo a las opciones disponibles.</div></div></Reveal>
-          <div className="mt-20 grid border-y border-[#C2540A]/25 md:grid-cols-4">
-            {TIPOS_PROPIEDAD.map(({ number, title, text, icon: Icon, href }) => <Link href={href} key={number} className="group border-b border-[#C2540A]/20 p-5 transition-colors hover:bg-[#F0E2D5] md:border-b-0 md:border-r md:last:border-r-0 md:p-6"><div className="flex items-start justify-between"><span className="font-display text-lg text-[#C2540A]">{number}</span><Icon size={19} strokeWidth={1.4} className="transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" /></div><h3 className="mt-9 font-display text-xl font-bold tracking-[-.03em]">{title}</h3><p className="mt-2 max-w-[16rem] text-xs leading-5 text-[#6B5548]">{text}</p><span className="mt-5 inline-flex items-center gap-2 text-xs font-bold text-[#C2540A]">Ver propiedades <ArrowDownRight size={14} /></span></Link>)}
-          </div>
+      <section className="relative overflow-hidden bg-[#EAD9C9] py-24 md:py-32">
+        <div className="pointer-events-none absolute -left-40 top-16 h-[440px] w-[440px] rounded-full border border-[#C2540A]/10 md:h-[620px] md:w-[620px]" />
+        <div className="pointer-events-none absolute -left-20 top-36 h-[300px] w-[300px] rounded-full border border-[#C2540A]/10 md:h-[440px] md:w-[440px]" />
+
+        <div className="relative mx-auto grid max-w-7xl gap-16 px-6 md:grid-cols-[.68fr_1.32fr] md:gap-20 md:px-10 lg:gap-28">
+          <Reveal>
+            <div className="md:sticky md:top-28 md:self-start">
+              <p className="mb-5 flex items-center gap-3 text-xs font-bold uppercase tracking-[.22em] text-[#C2540A]">
+                <span className="h-px w-8 bg-[#C2540A]" />
+                Explorá por tipo
+              </p>
+              <h2 className="max-w-sm font-display text-4xl font-bold leading-[.98] tracking-[-.045em] md:text-5xl">
+                Cada búsqueda empieza por un lugar.
+              </h2>
+              <p className="mt-7 max-w-xs text-sm leading-6 text-[#5D473B]">
+                Elegí el tipo de propiedad y descubrí las oportunidades disponibles en Necochea.
+              </p>
+              <div className="mt-10 hidden items-center gap-3 text-[11px] font-semibold uppercase tracking-[.18em] text-[#8A6A55] md:flex">
+                Deslizá para explorar
+                <ArrowDownRight size={15} strokeWidth={1.5} />
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={100}>
+            <nav aria-label="Tipos de propiedad" className="border-b border-[#9A3E08]/25">
+              {TIPOS_PROPIEDAD.map(({ number, title, text, icon: Icon, href }) => (
+                <Link
+                  href={href}
+                  key={number}
+                  className="group relative grid gap-4 border-t border-[#9A3E08]/25 py-7 sm:grid-cols-[3rem_1fr_auto] sm:items-center sm:gap-6 md:py-8"
+                >
+                  <span className="absolute inset-x-0 bottom-[-1px] h-px origin-left scale-x-0 bg-[#C2540A] transition-transform duration-500 ease-out group-hover:scale-x-100" />
+                  <span className="self-start font-display text-sm text-[#C2540A] sm:self-center">{number}</span>
+
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-4">
+                      <h3 className="font-display text-[2rem] font-bold leading-none tracking-[-.04em] transition-transform duration-500 ease-out group-hover:translate-x-2 md:text-[2.65rem]">
+                        {title}
+                      </h3>
+                      <Icon size={20} strokeWidth={1.25} className="shrink-0 text-[#8A6A55] transition-all duration-500 group-hover:rotate-[-6deg] group-hover:text-[#C2540A]" />
+                    </div>
+                    <p className="mt-3 max-w-md text-sm leading-6 text-[#6B5548]">{text}</p>
+                  </div>
+
+                  <span className="inline-flex w-fit items-center gap-2 border-b border-[#8A6A55]/40 pb-1 text-[11px] font-semibold uppercase tracking-[.12em] text-[#6B5548] transition-colors duration-300 group-hover:border-[#1C0A00] group-hover:text-[#1C0A00]">
+                    Ver propiedades
+                    <ArrowDownRight size={13} strokeWidth={1.5} />
+                  </span>
+                </Link>
+              ))}
+            </nav>
+          </Reveal>
         </div>
       </section>
 

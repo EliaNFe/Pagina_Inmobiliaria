@@ -127,16 +127,44 @@ export default function SliderPropiedades({ propiedades }: { propiedades: Propie
         }
         .display { font-family: var(--font-display), Georgia, serif; }
 
+        .feature-layout {
+          display: grid;
+          gap: 30px;
+        }
+        @media (min-width: 900px) {
+          .feature-layout {
+            grid-template-columns: minmax(0, 1.72fr) minmax(260px, .58fr);
+            align-items: stretch;
+            gap: clamp(32px, 5vw, 68px);
+          }
+        }
+
+        .visual-stage {
+          position: relative;
+          isolation: isolate;
+        }
+        .visual-stage::before {
+          content: "";
+          position: absolute;
+          z-index: 5;
+          inset: 10px;
+          border: 1px solid rgba(255,255,255,.22);
+          pointer-events: none;
+        }
+
         .stage {
           position: relative;
-          border-radius: 22px;
           overflow: hidden;
-          aspect-ratio: 4 / 5;
+          aspect-ratio: 16 / 11;
           background: var(--ink);
-          box-shadow: 0 20px 50px rgba(27,19,13,0.22);
+          box-shadow: 0 24px 65px rgba(8,2,0,0.26);
         }
-        @media (min-width: 640px) { .stage { aspect-ratio: 16 / 9; } }
-        @media (min-width: 1024px) { .stage { aspect-ratio: 21 / 9; } }
+        @media (min-width: 640px) {
+          .stage { aspect-ratio: 16 / 9; }
+        }
+        @media (min-width: 1024px) {
+          .stage { aspect-ratio: 16 / 9; }
+        }
 
         .capa-imgs {
           position: absolute;
@@ -159,6 +187,7 @@ export default function SliderPropiedades({ propiedades }: { propiedades: Propie
           height: 100%;
           object-fit: cover;
           transform: scale(1.09);
+          filter: saturate(.92) contrast(1.02);
         }
         .layer[data-activo="true"] img {
           animation: kenburns 7s ease-out forwards;
@@ -174,7 +203,7 @@ export default function SliderPropiedades({ propiedades }: { propiedades: Propie
         .scrim {
           position: absolute;
           inset: 0;
-          background: linear-gradient(180deg, rgba(27,19,13,0) 22%, rgba(27,19,13,0.55) 55%, rgba(27,19,13,0.94) 100%);
+          background: linear-gradient(180deg, rgba(27,19,13,0.2), transparent 25%, transparent 70%, rgba(27,19,13,0.16));
         }
 
         .overlay { position: absolute; inset: 0; pointer-events: none; z-index: 10; }
@@ -192,6 +221,20 @@ export default function SliderPropiedades({ propiedades }: { propiedades: Propie
           .texto { animation: none; }
         }
 
+        .details {
+          display: flex;
+          min-width: 0;
+          flex-direction: column;
+          justify-content: center;
+          padding: 4px 0;
+        }
+        .details-rule {
+          width: 42px;
+          height: 1px;
+          margin: 22px 0;
+          background: rgba(242,178,122,.55);
+        }
+
         .flecha {
           opacity: 0;
           transition: opacity 200ms ease, background 200ms ease;
@@ -200,36 +243,35 @@ export default function SliderPropiedades({ propiedades }: { propiedades: Propie
 
         .film-track {
           display: flex;
-          gap: 10px;
+          gap: 18px;
           overflow-x: auto;
           -ms-overflow-style: none;
           scrollbar-width: none;
-          padding: 2px 2px 4px;
+          padding: 20px 2px 4px;
+          border-bottom: 1px solid rgba(255,255,255,.12);
         }
         .film-track::-webkit-scrollbar { display: none; }
         .thumb {
           flex: 0 0 auto;
-          width: 72px;
+          width: 48px;
           cursor: pointer;
           background: none;
           border: none;
           padding: 0;
+          color: rgba(255,255,255,.35);
+          text-align: left;
+          transition: color 250ms ease;
         }
+        .thumb[data-activo="true"] { color: var(--gold-mist); }
         .thumb-img {
-          width: 72px;
-          height: 56px;
-          border-radius: 8px;
-          overflow: hidden;
-          opacity: 0.5;
-          transition: opacity 250ms ease;
+          display: none;
         }
-        .thumb[data-activo="true"] .thumb-img { opacity: 1; }
+        .thumb-number { font-family: var(--font-display), Georgia, serif; font-size: 13px; }
         .thumb-bar {
           position: relative;
           height: 2.5px;
-          margin-top: 6px;
-          border-radius: 2px;
-          background: var(--sand);
+          margin-top: 8px;
+          background: rgba(255,255,255,.14);
           overflow: hidden;
         }
         .thumb-fill {
@@ -247,7 +289,10 @@ export default function SliderPropiedades({ propiedades }: { propiedades: Propie
         Propiedad {actual + 1} de {propiedades.length}: {propiedad.titulo}
       </p>
 
-      <div className="stage">
+      <div className="feature-layout">
+        <div>
+        <div className="visual-stage">
+        <div className="stage">
         <div
           className="capa-imgs"
           tabIndex={0}
@@ -280,24 +325,10 @@ export default function SliderPropiedades({ propiedades }: { propiedades: Propie
           {/* Índice — orden real dentro del carrusel */}
           <span
             className="display"
-            style={{ position: "absolute", top: 20, right: 24, color: "rgba(255,255,255,0.7)", fontSize: 14, fontWeight: 600, letterSpacing: "0.04em", textShadow: "0 1px 6px rgba(0,0,0,0.4)" }}
+            style={{ position: "absolute", bottom: 20, left: 24, color: "rgba(255,255,255,0.72)", fontSize: 13, fontWeight: 600, letterSpacing: "0.06em", textShadow: "0 1px 6px rgba(0,0,0,0.4)" }}
           >
             {String(actual + 1).padStart(2, "0")} — {String(propiedades.length).padStart(2, "0")}
           </span>
-
-          {/* Chips — tipo (relleno) + operación (contorno, para diferenciarlo) */}
-          <div style={{ position: "absolute", top: 20, left: 24, display: "flex", gap: 8, flexWrap: "wrap", maxWidth: "70%" }}>
-            <span
-              style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.12em", padding: "7px 14px", borderRadius: 999, background: "rgba(255,251,246,0.9)", color: "var(--ink)" }}
-            >
-              {propiedad.tipo}
-            </span>
-            <span
-              style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", padding: "7px 14px", borderRadius: 999, background: "rgba(27,19,13,0.75)", border: "1px solid rgba(242,178,122,0.5)", color: "var(--gold-mist)" }}
-            >
-              {operacionLabel}
-            </span>
-          </div>
 
           {propiedades.length > 1 && (
             <>
@@ -319,41 +350,8 @@ export default function SliderPropiedades({ propiedades }: { propiedades: Propie
               </button>
             </>
           )}
-
-          {/* Bloque de texto — se remonta con key={actual} para relanzar el reveal escalonado */}
-          <div key={actual} style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "28px 24px", display: "flex", flexDirection: "column", gap: 10 }}>
-            <h3 className="display texto" style={{ color: "#fff", fontSize: "clamp(22px, 3.4vw, 34px)", fontWeight: 600, lineHeight: 1.1, margin: 0, maxWidth: 560, textShadow: "0 2px 12px rgba(0,0,0,0.5)" }}>
-              {propiedad.titulo}
-            </h3>
-
-            <div className="texto" style={{ display: "flex", alignItems: "center", gap: 6, color: "rgba(255,255,255,0.78)", fontSize: 13, textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>
-              <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-              <span>{propiedad.ubicacion}</span>
-            </div>
-
-            <div className="texto" style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, paddingTop: 10, marginTop: 4, borderTop: "1px solid rgba(255,255,255,0.22)" }}>
-              <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
-                <span className="display" style={{ color: "var(--gold-mist)", fontSize: "clamp(22px, 2.6vw, 28px)", fontWeight: 600, textShadow: "0 2px 10px rgba(0,0,0,0.55)" }}>
-                  {formatearPrecio(propiedad.precio, propiedad.moneda)}
-                </span>
-                <span style={{ color: "rgba(255,255,255,0.6)", fontSize: 11, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.06em", textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>
-                  {propiedad.superficie} m²
-                </span>
-              </div>
-
-              <Link
-                href={`/propiedades/${propiedad.id}`}
-                className="group"
-                style={{ color: "#fff", fontSize: 13, fontWeight: 600, textDecoration: "none", display: "flex", alignItems: "center", gap: 6, whiteSpace: "nowrap" }}
-              >
-                Ver propiedad
-                <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" className="transition-transform group-hover:translate-x-1">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
-            </div>
-          </div>
         </div>
+      </div>
       </div>
 
       {/* Filmstrip — navegación + progreso del autoplay integrado en la miniatura activa */}
@@ -371,14 +369,7 @@ export default function SliderPropiedades({ propiedades }: { propiedades: Propie
                 aria-label={`Ir a propiedad ${i + 1}: ${p.titulo}`}
                 aria-current={activo}
               >
-                <div className="thumb-img">
-                  {p.imagen_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={p.imagen_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                  ) : (
-                    <div style={{ width: "100%", height: "100%", background: "#F2E9DC" }} />
-                  )}
-                </div>
+                <span className="thumb-number">{String(i + 1).padStart(2, "0")}</span>
                 <div className="thumb-bar">
                   {activo && !reducedMotion && (
                     <span
@@ -397,6 +388,47 @@ export default function SliderPropiedades({ propiedades }: { propiedades: Propie
           })}
         </div>
       )}
+        </div>
+
+        <aside key={actual} className="details" aria-label="Información de la propiedad seleccionada">
+          <div className="texto" style={{ display: "flex", alignItems: "center", gap: 10, color: "var(--gold-mist)", fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase" }}>
+            <span>{propiedad.tipo}</span>
+            <span style={{ width: 18, height: 1, background: "rgba(242,178,122,.5)" }} />
+            <span>{operacionLabel}</span>
+          </div>
+
+          <h3 className="display texto" style={{ color: "#fff", fontSize: "clamp(27px, 3vw, 39px)", fontWeight: 600, lineHeight: 1.08, letterSpacing: "-.025em", margin: "18px 0 0" }}>
+            {propiedad.titulo}
+          </h3>
+
+          <div className="details-rule texto" />
+
+          <div className="texto" style={{ display: "flex", alignItems: "flex-start", gap: 9, color: "rgba(255,255,255,.58)", fontSize: 13, lineHeight: 1.55 }}>
+            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ flex: "none", marginTop: 2 }}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            <span>{propiedad.ubicacion}</span>
+          </div>
+
+          <div className="texto" style={{ display: "flex", alignItems: "baseline", gap: 14, marginTop: 24, flexWrap: "wrap" }}>
+            <span className="display" style={{ color: "#fff", fontSize: "clamp(23px, 2.4vw, 30px)", fontWeight: 600 }}>
+              {formatearPrecio(propiedad.precio, propiedad.moneda)}
+            </span>
+            <span style={{ color: "rgba(255,255,255,.42)", fontSize: 10, fontWeight: 650, letterSpacing: ".1em", textTransform: "uppercase" }}>
+              {propiedad.superficie} m²
+            </span>
+          </div>
+
+          <Link
+            href={`/propiedades/${propiedad.id}`}
+            className="texto group"
+            style={{ alignItems: "center", alignSelf: "flex-start", borderBottom: "1px solid rgba(242,178,122,.55)", color: "var(--gold-mist)", display: "inline-flex", fontSize: 12, fontWeight: 650, gap: 8, marginTop: 34, paddingBottom: 7, textDecoration: "none" }}
+          >
+            Ver propiedad
+            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" className="transition-transform group-hover:translate-x-1">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </aside>
+      </div>
     </section>
   )
 }
