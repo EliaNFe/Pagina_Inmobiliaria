@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
+import { createPortal } from "react-dom"
 
 export default function CarruselImagenes({ imagenes, titulo }: { imagenes: string[]; titulo: string }) {
   const [actual, setActual] = useState(0)
@@ -13,7 +14,10 @@ export default function CarruselImagenes({ imagenes, titulo }: { imagenes: strin
   const lightboxItemRefs = useRef<(HTMLDivElement | null)[]>([])
 
   const irA = useCallback((i: number, smooth = true) => {
-    mainItemRefs.current[i]?.scrollIntoView({ behavior: smooth ? "smooth" : "auto", inline: "center", block: "nearest" })
+    const track = mainTrackRef.current
+    if (track) {
+      track.scrollTo({ left: track.clientWidth * i, behavior: smooth ? "smooth" : "auto" })
+    }
     setActual(i)
   }, [])
 
@@ -40,7 +44,12 @@ export default function CarruselImagenes({ imagenes, titulo }: { imagenes: strin
 
   // Mantiene la miniatura activa visible dentro de su tira
   useEffect(() => {
-    thumbRefs.current[actual]?.scrollIntoView({ behavior: "smooth", inline: "nearest", block: "nearest" })
+    const thumb = thumbRefs.current[actual]
+    const strip = thumb?.parentElement
+    if (thumb && strip) {
+      const left = thumb.offsetLeft - (strip.clientWidth - thumb.clientWidth) / 2
+      strip.scrollTo({ left, behavior: "smooth" })
+    }
   }, [actual])
 
   // Lightbox: bloquea el scroll del body, sincroniza posición y cierra con Escape
@@ -105,17 +114,17 @@ export default function CarruselImagenes({ imagenes, titulo }: { imagenes: strin
         }
         .viewer {
           position: relative;
-          border-radius: 6px;
+          border-radius: 2px;
           overflow: hidden;
-          border: 1px solid #F0E4D8;
-          background: #F5F0EA;
-          aspect-ratio: 1 / 1;
+          border: 1px solid rgba(255,255,255,.18);
+          background: #21130c;
+          height: clamp(520px, 68vh, 780px);
         }
-        @media (min-width: 640px) {
-          .viewer { aspect-ratio: 4 / 3; }
+        @media (max-width: 900px) {
+          .viewer { height: clamp(440px, 60vh, 620px); }
         }
-        @media (min-width: 768px) {
-          .viewer { aspect-ratio: 16 / 9; }
+        @media (max-width: 640px) {
+          .viewer { height: clamp(330px, 52vh, 460px); }
         }
         .hint-ampliar {
           position: absolute;
@@ -148,7 +157,13 @@ export default function CarruselImagenes({ imagenes, titulo }: { imagenes: strin
           flex: 0 0 100%;
           scroll-snap-align: center;
           height: 100%;
+          overflow: hidden;
         }
+        .main-image {
+          transition: transform .8s cubic-bezier(.22,1,.36,1);
+        }
+        .slide:hover .main-image { transform: scale(1.018); }
+        .lightbox { animation: lightbox-in .25s ease both; }
         .arrow {
           display: none;
         }
@@ -171,6 +186,12 @@ export default function CarruselImagenes({ imagenes, titulo }: { imagenes: strin
           display: flex;
           align-items: center;
           justify-content: center;
+        }
+        @keyframes lightbox-in { from { opacity: 0; } to { opacity: 1; } }
+        @media (prefers-reduced-motion: reduce) {
+          .main-image { transition: none; }
+          .slide:hover .main-image { transform: none; }
+          .lightbox { animation: none; }
         }
       `}</style>
 
@@ -210,8 +231,12 @@ export default function CarruselImagenes({ imagenes, titulo }: { imagenes: strin
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={img}
+                className="main-image"
                 alt={`${titulo} — foto ${i + 1} de ${imagenes.length}`}
                 onClick={() => setLightboxAbierto(true)}
+                loading={i === 0 ? "eager" : "lazy"}
+                fetchPriority={i === 0 ? "high" : "auto"}
+                decoding="async"
                 style={{ width: "100%", height: "100%", objectFit: "contain", cursor: "zoom-in" }}
               />
             </div>
@@ -310,8 +335,9 @@ export default function CarruselImagenes({ imagenes, titulo }: { imagenes: strin
       )}
 
       {/* Lightbox de pantalla completa */}
-      {lightboxAbierto && (
+      {lightboxAbierto && createPortal(
         <div
+          className="lightbox"
           role="dialog"
           aria-modal="true"
           aria-label={`Galería de fotos — ${titulo}`}
@@ -371,7 +397,8 @@ export default function CarruselImagenes({ imagenes, titulo }: { imagenes: strin
               ))}
             </div>
           )}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
