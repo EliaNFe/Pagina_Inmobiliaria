@@ -12,6 +12,30 @@ const supabase = getSupabaseClient()
 
 type ImagenPropiedad = { id: string; url: string; orden: number }
 
+type FormPropiedad = {
+  titulo: string
+  descripcion: string
+  tipo: string
+  operacion: string
+  moneda: string
+  precio: string
+  superficie: string
+  ubicacion: string
+  destacada: boolean
+}
+
+const FORM_INICIAL: FormPropiedad = {
+  titulo: "",
+  descripcion: "",
+  tipo: "Terreno",
+  operacion: "Venta",
+  moneda: "Pesos",
+  precio: "",
+  superficie: "",
+  ubicacion: "",
+  destacada: false,
+}
+
 export default function EditarPropiedad({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
@@ -27,19 +51,11 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
   const [nuevasImagenes, setNuevasImagenes] = useState<File[]>([])
   const [previews, setPreviews] = useState<string[]>([])
 
-  const [form, setForm] = useState({
-    titulo: "",
-    descripcion: "",
-    tipo: "Terreno",
-    operacion: "Venta",
-    moneda: "Pesos",
-    precio: "",
-    superficie: "",
-    ubicacion: "",
-    destacada: false,
-  })
+  const [form, setForm] = useState<FormPropiedad>(FORM_INICIAL)
+  const [formOriginal, setFormOriginal] = useState<FormPropiedad>(FORM_INICIAL)
 
   const ordenCambio = imagenes.map(i => i.id).join(",") !== ordenOriginal.join(",")
+  const hayCambios = JSON.stringify(form) !== JSON.stringify(formOriginal) || nuevasImagenes.length > 0
 
   useEffect(() => {
     async function cargarDatos() {
@@ -54,7 +70,7 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
           titulo: string; descripcion: string; tipo: string; operacion?: string; moneda?: string
           precio: number; superficie: number; ubicacion: string; destacada: boolean
         }
-        setForm({
+        const valoresIniciales = {
           titulo: p.titulo || "",
           descripcion: p.descripcion || "",
           tipo: p.tipo || "Terreno",
@@ -64,7 +80,9 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
           superficie: p.superficie?.toString() || "",
           ubicacion: p.ubicacion || "",
           destacada: p.destacada || false,
-        })
+        }
+        setForm(valoresIniciales)
+        setFormOriginal(valoresIniciales)
       }
 
       const { data: imgs } = await supabase
@@ -171,6 +189,7 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
       }
 
       setSuccess("Propiedad actualizada correctamente")
+      setFormOriginal(form)
       setNuevasImagenes([])
       setPreviews([])
       if (resultado.imagenes) {
@@ -378,9 +397,9 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
             )}
           </div>
 
-          <button onClick={handleGuardar} disabled={loading}
-            style={{background: "#C2540A", color: "#fff", fontWeight: 700, padding: "14px", borderRadius: "10px", border: "none", fontSize: "15px", cursor: "pointer", opacity: loading ? 0.6 : 1}}>
-            {loading ? "Guardando..." : "Guardar cambios"}
+          <button onClick={handleGuardar} disabled={loading || !hayCambios}
+            style={{background: "#C2540A", color: "#fff", fontWeight: 700, padding: "14px", borderRadius: "10px", border: "none", fontSize: "15px", cursor: loading || !hayCambios ? "not-allowed" : "pointer", opacity: loading || !hayCambios ? 0.5 : 1}}>
+            {loading ? "Guardando..." : hayCambios ? "Guardar cambios" : "No hay cambios para guardar"}
           </button>
         </div>
       </div>

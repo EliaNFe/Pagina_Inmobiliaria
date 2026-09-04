@@ -44,6 +44,16 @@ export default async function AdminDashboard() {
           </div>
           <div className="flex flex-wrap gap-2.5 items-center">
             <Link
+              href="/admin/actividad"
+              style={{
+                background: "#fff", color: "#1C0A00", border: "1px solid #F0E4D8",
+                fontWeight: 600, padding: "10px 18px", borderRadius: "4px",
+                textDecoration: "none", fontSize: "13px"
+              }}
+            >
+              Actividad
+            </Link>
+            <Link
               href="/admin/configuracion"
               style={{
                 background: "#fff", color: "#1C0A00", border: "1px solid #F0E4D8",

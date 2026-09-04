@@ -1,6 +1,7 @@
 "use server"
 
 import { createClient } from "@/lib/supabase-server"
+import { registrarActividad } from "@/lib/auditoria"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
@@ -10,7 +11,7 @@ async function requireUser() {
   if (!user) {
     throw new Error("No autenticado")
   }
-  return supabase
+  return { supabase, user }
 }
 
 type FormPropiedad = {
@@ -23,6 +24,22 @@ type FormPropiedad = {
   superficie: string
   ubicacion: string
   destacada: boolean
+}
+
+type Cambio = { antes: unknown; despues: unknown }
+
+function obtenerCambios(
+  anterior: Record<string, unknown>,
+  nuevo: Record<string, unknown>
+) {
+  const detalle: Record<string, Cambio> = {}
+
+  for (const [campo, despues] of Object.entries(nuevo)) {
+    const antes = anterior[campo]
+    if (antes !== despues) detalle[campo] = { antes, despues }
+  }
+
+  return detalle
 }
 
 // Recalcula imagen_url en base a la foto de menor "orden" en propiedad_imagenes.
@@ -48,7 +65,7 @@ async function sincronizarImagenPrincipal(
 }
 
 export async function crearPropiedad(form: FormPropiedad, imagenesBase64: { nombre: string; base64: string }[]) {
-  const supabase = await requireUser()
+  const { supabase, user } = await requireUser()
 
   const { data: propiedad, error: insertError } = await supabase
     .from("propiedades")
@@ -98,6 +115,14 @@ export async function crearPropiedad(form: FormPropiedad, imagenesBase64: { nomb
 
   await sincronizarImagenPrincipal(supabase, propiedadId)
 
+  await registrarActividad(supabase, {
+    usuarioEmail: user.email ?? "Sin email",
+    accion: "crear",
+    entidad: "propiedad",
+    entidadId: propiedadId,
+    entidadTitulo: form.titulo,
+  })
+
   revalidatePath("/")
   revalidatePath("/propiedades")
   revalidatePath("/admin")
@@ -111,27 +136,36 @@ export async function actualizarPropiedad(
   nuevasImagenesBase64: { nombre: string; base64: string }[],
   ordenInicial: number
 ) {
-  const supabase = await requireUser()
+  const { supabase, user } = await requireUser()
+
+  const { data: propiedadAnterior } = await supabase
+    .from("propiedades")
+    .select("titulo, descripcion, tipo, operacion, moneda, precio, superficie, ubicacion, destacada")
+    .eq("id", id)
+    .maybeSingle()
+
+  const nuevosValores = {
+    titulo: form.titulo,
+    descripcion: form.descripcion,
+    tipo: form.tipo,
+    operacion: form.operacion,
+    moneda: form.moneda,
+    precio: Number(form.precio),
+    superficie: Number(form.superficie),
+    ubicacion: form.ubicacion,
+    destacada: form.destacada,
+  }
 
   const { error: updateError } = await supabase
     .from("propiedades")
-    .update({
-      titulo: form.titulo,
-      descripcion: form.descripcion,
-      tipo: form.tipo,
-      operacion: form.operacion,
-      moneda: form.moneda,
-      precio: Number(form.precio),
-      superficie: Number(form.superficie),
-      ubicacion: form.ubicacion,
-      destacada: form.destacada,
-    } as never)
+    .update(nuevosValores as never)
     .eq("id", id)
 
   if (updateError) {
     return { error: "Error al guardar los cambios" }
   }
 
+  let fotosAgregadas = 0
   for (let i = 0; i < nuevasImagenesBase64.length; i++) {
     const img = nuevasImagenesBase64[i]
     const ext = img.nombre.split(".").pop()
@@ -144,16 +178,40 @@ export async function actualizarPropiedad(
 
     if (!uploadError) {
       const { data: urlData } = supabase.storage.from("propiedades").getPublicUrl(filename)
-      await supabase.from("propiedad_imagenes").insert({
+      const { error: insertImagenError } = await supabase.from("propiedad_imagenes").insert({
         propiedad_id: id,
         url: urlData.publicUrl,
         orden: ordenInicial + i,
       } as never)
+      if (!insertImagenError) fotosAgregadas += 1
     }
   }
 
   if (nuevasImagenesBase64.length > 0) {
     await sincronizarImagenPrincipal(supabase, id)
+  }
+
+  await registrarActividad(supabase, {
+    usuarioEmail: user.email ?? "Sin email",
+    accion: "editar",
+    entidad: "propiedad",
+    entidadId: id,
+    entidadTitulo: form.titulo,
+    detalle: obtenerCambios(
+      (propiedadAnterior ?? {}) as Record<string, unknown>,
+      nuevosValores
+    ),
+  })
+
+  if (fotosAgregadas > 0) {
+    await registrarActividad(supabase, {
+      usuarioEmail: user.email ?? "Sin email",
+      accion: "agregar_fotos",
+      entidad: "imagen",
+      entidadId: id,
+      entidadTitulo: form.titulo,
+      detalle: { cantidad: fotosAgregadas },
+    })
   }
 
   revalidatePath("/")
@@ -171,17 +229,37 @@ export async function actualizarPropiedad(
 }
 
 export async function borrarImagenPropiedad(imagenId: string, url: string, propiedadId: string) {
-  const supabase = await requireUser()
+  const { supabase, user } = await requireUser()
+
+  const { data: propiedad } = await supabase
+    .from("propiedades")
+    .select("titulo")
+    .eq("id", propiedadId)
+    .maybeSingle()
 
   const filename = url.split("/").pop()
   if (filename) {
     await supabase.storage.from("propiedades").remove([filename])
   }
-  await supabase.from("propiedad_imagenes").delete().eq("id", imagenId)
+  const { error: deleteError } = await supabase
+    .from("propiedad_imagenes")
+    .delete()
+    .eq("id", imagenId)
 
   // Acá está el fix del "hueco": después de borrar, recalculamos imagen_url
   // para que apunte a la foto que quedó primera, o quede vacía si no queda ninguna.
   await sincronizarImagenPrincipal(supabase, propiedadId)
+
+  if (!deleteError) {
+    await registrarActividad(supabase, {
+      usuarioEmail: user.email ?? "Sin email",
+      accion: "borrar_foto",
+      entidad: "imagen",
+      entidadId: propiedadId,
+      entidadTitulo: (propiedad as { titulo?: string } | null)?.titulo,
+      detalle: { imagen_id: imagenId },
+    })
+  }
 
   revalidatePath("/")
   revalidatePath("/propiedades")
@@ -190,13 +268,32 @@ export async function borrarImagenPropiedad(imagenId: string, url: string, propi
 }
 
 export async function borrarPropiedad(id: string, imagenes: { url: string }[]) {
-  const supabase = await requireUser()
+  const { supabase, user } = await requireUser()
+
+  const { data: propiedad } = await supabase
+    .from("propiedades")
+    .select("titulo")
+    .eq("id", id)
+    .maybeSingle()
 
   for (const img of imagenes) {
     const filename = img.url.split("/").pop()
     if (filename) await supabase.storage.from("propiedades").remove([filename])
   }
-  await supabase.from("propiedades").delete().eq("id", id)
+  const { error: deleteError } = await supabase
+    .from("propiedades")
+    .delete()
+    .eq("id", id)
+
+  if (!deleteError) {
+    await registrarActividad(supabase, {
+      usuarioEmail: user.email ?? "Sin email",
+      accion: "borrar",
+      entidad: "propiedad",
+      entidadId: id,
+      entidadTitulo: (propiedad as { titulo?: string } | null)?.titulo,
+    })
+  }
 
   revalidatePath("/")
   revalidatePath("/propiedades")
@@ -206,7 +303,16 @@ export async function borrarPropiedad(id: string, imagenes: { url: string }[]) {
 }
 
 export async function borrarPropiedadesMultiples(ids: string[]) {
-  const supabase = await requireUser()
+  const { supabase, user } = await requireUser()
+
+  const { data: propiedades } = await supabase
+    .from("propiedades")
+    .select("id, titulo")
+    .in("id", ids)
+  const titulos = new Map(
+    ((propiedades || []) as { id: string; titulo: string }[])
+      .map((propiedad) => [propiedad.id, propiedad.titulo])
+  )
 
   for (const id of ids) {
     const { data: imgs } = await supabase
@@ -220,7 +326,20 @@ export async function borrarPropiedadesMultiples(ids: string[]) {
       if (filename) await supabase.storage.from("propiedades").remove([filename])
     }
 
-    await supabase.from("propiedades").delete().eq("id", id)
+    const { error: deleteError } = await supabase
+      .from("propiedades")
+      .delete()
+      .eq("id", id)
+
+    if (!deleteError) {
+      await registrarActividad(supabase, {
+        usuarioEmail: user.email ?? "Sin email",
+        accion: "borrar",
+        entidad: "propiedad",
+        entidadId: id,
+        entidadTitulo: titulos.get(id),
+      })
+    }
   }
 
   revalidatePath("/")
@@ -232,17 +351,35 @@ export async function borrarPropiedadesMultiples(ids: string[]) {
 
 
 export async function guardarOrdenImagenes(propiedadId: string, orden: { id: string; orden: number }[]) {
-  const supabase = await requireUser()
+  const { supabase, user } = await requireUser()
 
+  const { data: propiedad } = await supabase
+    .from("propiedades")
+    .select("titulo")
+    .eq("id", propiedadId)
+    .maybeSingle()
+
+  let ordenGuardado = true
   for (const item of orden) {
-    await supabase
+    const { error } = await supabase
       .from("propiedad_imagenes")
       .update({ orden: item.orden } as never)
       .eq("id", item.id)
+    if (error) ordenGuardado = false
   }
 
   // La foto que quedó en el orden más bajo pasa a ser la portada automáticamente.
   await sincronizarImagenPrincipal(supabase, propiedadId)
+
+  if (ordenGuardado) {
+    await registrarActividad(supabase, {
+      usuarioEmail: user.email ?? "Sin email",
+      accion: "reordenar_fotos",
+      entidad: "propiedad",
+      entidadId: propiedadId,
+      entidadTitulo: (propiedad as { titulo?: string } | null)?.titulo,
+    })
+  }
 
   revalidatePath("/")
   revalidatePath("/propiedades")
@@ -253,7 +390,15 @@ export async function guardarOrdenImagenes(propiedadId: string, orden: { id: str
 }
 
 export async function guardarConfiguracion(config: Record<string, string>) {
-  const supabase = await requireUser()
+  const { supabase, user } = await requireUser()
+
+  const { data: configuracionAnterior } = await supabase
+    .from("configuracion")
+    .select("clave, valor")
+  const valoresAnteriores = Object.fromEntries(
+    ((configuracionAnterior || []) as { clave: string; valor: string }[])
+      .map(({ clave, valor }) => [clave, valor])
+  )
 
   const entries = Object.entries(config)
   for (const [clave, valor] of entries) {
@@ -265,6 +410,13 @@ export async function guardarConfiguracion(config: Record<string, string>) {
       return { error: "Error al guardar la configuración" }
     }
   }
+
+  await registrarActividad(supabase, {
+    usuarioEmail: user.email ?? "Sin email",
+    accion: "guardar_configuracion",
+    entidad: "configuracion",
+    detalle: obtenerCambios(valoresAnteriores, config),
+  })
 
   revalidatePath("/")
   revalidatePath("/contacto")
