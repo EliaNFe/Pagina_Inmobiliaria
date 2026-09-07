@@ -6,7 +6,7 @@ import { ArrowRight, ChevronLeft, ChevronRight, Heart, MapPin, Scan } from "luci
 import { formatearPrecio } from "@/lib/formatear-precio"
 import s from "@/app/home.module.css"
 
-type Property = { id: string; titulo: string; tipo: string; operacion?: string; precio: number; moneda?: string; ubicacion?: string; superficie?: number }
+type Property = { id: string; titulo: string; tipo: string; operacion?: string; precio: number; moneda?: string; ubicacion?: string; superficie?: number; imagen_url?: string }
 const favoriteKey = "inmobiliaria-favoritas"
 function snapshot() { try { return localStorage.getItem(favoriteKey) || "[]" } catch { return "[]" } }
 function subscribe(callback: () => void) {
@@ -40,6 +40,14 @@ export default function HomeFeatured({ propiedades, destacadas }: { propiedades:
       {propiedades.length ? <div id="home-properties" className={s.properties} aria-live="polite">
         {propiedades.slice(start, start + 3).map(p => (
           <article key={p.id} className={s.property}>
+            <div className={s.propertyImage}>
+              {p.imagen_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={p.imagen_url} alt={p.titulo} loading="lazy" decoding="async" />
+              ) : (
+                <div className={s.propertyNoImage}>Sin imagen</div>
+              )}
+            </div>
             <div className={s.propertyTop}><span className={s.operation}>{p.operacion || "Venta"}</span><button className={s.favorite} aria-label={`${favorites.includes(p.id) ? "Quitar de" : "Guardar en"} favoritas: ${p.titulo}`} aria-pressed={favorites.includes(p.id)} onClick={() => toggle(p.id)}><Heart size={22} strokeWidth={1.5} fill={favorites.includes(p.id) ? "currentColor" : "none"} /></button></div>
             <Link href={`/propiedades/${p.id}`} className={s.propertyBody}>
               <h3>{p.titulo}</h3>

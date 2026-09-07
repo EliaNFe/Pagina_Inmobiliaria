@@ -1,7 +1,7 @@
 ﻿import Image from "next/image"
 import { Caveat } from "next/font/google"
 import Link from "next/link"
-import { ArrowRight, ArrowUpRight, Building2, Home as House, Mail, MapPin, MessageCircle, ShieldCheck, Trees } from "lucide-react"
+import { ArrowRight, ArrowUpRight, Building2, Home as House, Mail, MapPin, MessageCircle, Trees } from "lucide-react"
 import { getConfiguracion, getPropiedadesDestacadas, getPropiedades } from "@/lib/supabase"
 import HomeFeatured from "@/components/HomeFeatured"
 import HomeBotanical from "@/components/HomeBotanical"
@@ -35,11 +35,6 @@ export default async function Home() {
             <div className={s.actions}>
               <Link href="/propiedades" className={s.button}>Ver propiedades <ArrowRight size={17} /></Link>
               <a href="#consulta" className={s.outlineButton}>Contactar <MessageCircle size={17} /></a>
-            </div>
-            <div className={s.heroServices}>
-              <span><House size={27} strokeWidth={1.2} />Asesoramiento<br />personalizado</span>
-              <span><MapPin size={27} strokeWidth={1.2} />Conocemos<br />la zona</span>
-              <span><ShieldCheck size={27} strokeWidth={1.2} />Atención directa<br />y profesional</span>
             </div>
           </div>
           <p className={s.heroNote}>Más que<br />propiedades,<br />historias en<br /><span>Necochea.</span></p>

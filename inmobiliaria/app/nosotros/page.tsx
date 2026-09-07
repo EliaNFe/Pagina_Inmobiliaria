@@ -1,121 +1,76 @@
+import Image from "next/image"
 import Link from "next/link"
+import { Fraunces } from "next/font/google"
+import { ArrowRight, House, MapPin } from "lucide-react"
+import s from "./nosotros.module.css"
+
+const display = Fraunces({ subsets: ["latin"], weight: ["500", "600"], style: ["normal", "italic"], variable: "--font-nosotros-display" })
+
+const MATRICULA_URL = "https://martillerosnecochea.com.ar/colegiados/cirigliano-liliana-noemi/"
 
 export default function Nosotros() {
   return (
-    <main className="antialiased">
-
+    <main className={`${s.nosotros} ${display.variable}`}>
       {/* HERO */}
-      <section style={{ background: "#1C0A00" }} className="relative text-white pt-40 pb-16 px-6">
-        <div className="relative max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 mb-6">
-            <div style={{ width: "28px", height: "1.5px", background: "#C2540A" }} />
-            <span className="text-xs tracking-[0.2em] font-semibold text-orange-500 uppercase">
-              Sobre nosotros
-            </span>
+      <section className={s.hero} aria-labelledby="nosotros-title">
+        <div className={s.heroPhoto}>
+          <Image src="/fachada-nosotros.jpg" alt="Local de Liliana Cirigliano en Necochea" fill sizes="(max-width: 760px) 100vw, 56vw" style={{ objectFit: "cover" }} />
+        </div>
+        <div className={s.container}>
+          <div className={s.heroCopy}>
+            <p className={s.eyebrow}>Sobre nosotros</p>
+            <h1 id="nosotros-title">Necochea es chica.<br />Acá te atiendo<br /><span>yo, en persona.</span></h1>
+            <p className={s.heroIntro}>Soy Liliana Cirigliano, martillera y corredora pública. Desde 2019 llevo la inmobiliaria yo misma: sin call center, sin formularios genéricos, con una sola persona respondiendo cada consulta.</p>
+            <div className={s.heroActions}>
+              <Link href="/contacto" className={s.button}>Hablar con Liliana <ArrowRight size={17} /></Link>
+              <a href={MATRICULA_URL} target="_blank" rel="noopener noreferrer" className={s.textLink}>Ver matrícula <ArrowRight size={15} /></a>
+            </div>
+            <p className={s.heroLocation}><MapPin size={15} strokeWidth={1.4} />Necochea, Buenos Aires</p>
           </div>
-          <h1 className="font-display text-4xl md:text-5xl font-bold tracking-tight leading-[1.02] mb-4">
-            Liliana Cirigliano
-          </h1>
-          <p className="text-white/50 text-[15px] max-w-lg">
-            Gestión inmobiliaria integral y transparente en la ciudad de Necochea.
-          </p>
         </div>
       </section>
 
-      {/* HISTORIA — panel de marca + texto */}
-      <section style={{ background: "#FDFBF9" }} className="py-24">
-        <div className="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-start">
-
-          {/* Panel de marca — hasta que haya una foto real, se presenta
-              como tarjeta de isotipo (no como retrato). Sin mix-blend-mode:
-              el logo tiene fondo propio y "multiply" contra el fondo del
-              contenedor era justo lo que generaba el rectángulo destiñido. */}
-          <div>
-            <div
-              className="relative overflow-hidden flex items-center justify-center"
-              style={{
-                border: "1px solid #E6D9CC",
-                borderRadius: "12px",
-                aspectRatio: "4 / 3",
-                background: "linear-gradient(160deg, #FFFFFF 0%, #FBF1E4 100%)",
-                boxShadow: "0 24px 48px rgba(28,10,0,0.08)",
-                padding: "40px",
-              }}
-            >
-              {/* Detalle de esquinas — le da lectura de "sello/tarjeta" intencional */}
-              <span style={{ position: "absolute", top: 18, left: 18, width: 22, height: 22, borderTop: "2px solid #C2540A", borderLeft: "2px solid #C2540A", borderTopLeftRadius: "4px" }} />
-              <span style={{ position: "absolute", top: 18, right: 18, width: 22, height: 22, borderTop: "2px solid #C2540A", borderRight: "2px solid #C2540A", borderTopRightRadius: "4px" }} />
-              <span style={{ position: "absolute", bottom: 18, left: 18, width: 22, height: 22, borderBottom: "2px solid #C2540A", borderLeft: "2px solid #C2540A", borderBottomLeftRadius: "4px" }} />
-              <span style={{ position: "absolute", bottom: 18, right: 18, width: 22, height: 22, borderBottom: "2px solid #C2540A", borderRight: "2px solid #C2540A", borderBottomRightRadius: "4px" }} />
-
-              <img
-                src="/liliana-nosotros.png"
-                alt="Liliana Cirigliano — Gestiones Inmobiliarias"
-                className="object-contain"
-                style={{ maxWidth: "76%", maxHeight: "76%" }}
-              />
+      {/* HISTORIA */}
+      <section className={s.historia} aria-labelledby="historia-title">
+        <div className={`${s.container} ${s.historiaGrid}`}>
+          <figure>
+            <div className={s.photoFrame}>
+              <span className={`${s.corner} ${s.cornerTL}`} />
+              <span className={`${s.corner} ${s.cornerTR}`} />
+              <span className={`${s.corner} ${s.cornerBL}`} />
+              <span className={`${s.corner} ${s.cornerBR}`} />
+              <Image src="/liliana-nosotros.png" alt="Liliana Cirigliano — Gestiones Inmobiliarias" width={340} height={255} style={{ maxWidth: "78%", height: "auto", objectFit: "contain" }} />
             </div>
-            <div className="flex items-center gap-2 mt-4">
-              <div style={{ width: "18px", height: "1.5px", background: "#C2540A" }} />
-              <p className="text-xs text-stone-500 tracking-wide">Necochea, Buenos Aires</p>
-            </div>
-          </div>
+            <figcaption className={s.photoCaption}><span />Necochea, Buenos Aires</figcaption>
+          </figure>
 
-          <div>
-            <div className="flex items-center gap-3 mb-5">
-              <div style={{ width: "24px", height: "1.5px", background: "#C2540A" }} />
-              <span className="text-xs tracking-[0.15em] font-semibold text-orange-700 uppercase">Atención personalizada</span>
-            </div>
-            <h2 className="font-display text-2xl md:text-3xl font-bold text-stone-900 mb-6 leading-tight">
-              Conocemos el mercado, entendemos lo que buscás
-            </h2>
-            <p className="text-stone-600 leading-relaxed mb-4">
-              El rubro inmobiliario requiere mucho más que simplemente mostrar propiedades; se trata de escuchar y entender la necesidad real de cada persona que entra a la oficina. Ese es el enfoque principal de nuestra inmobiliaria: un trato directo, realista y sin vueltas.
-            </p>
-            <p className="text-stone-600 leading-relaxed mb-4">
-              Ya sea para tasaciones, ventas o alquileres, nos enfocamos en que el proceso sea dinámico y ordenado. Sabemos que el papeleo y los trámites pueden ser estresantes, por lo que nos ocupamos de filtrar el ruido y dejar las condiciones claras desde el primer momento.
-            </p>
-            <p className="text-stone-600 leading-relaxed mb-8">
-              Trabajar de forma personalizada nos permite estar encima de cada detalle de la operación. Acá hablás siempre con la misma persona, asegurando respuestas concretas y priorizando la tranquilidad de tu inversión.
-            </p>
-            <Link
-              href="/contacto"
-              className="inline-flex font-semibold text-stone-900 pb-1 border-b-2 border-transparent hover:border-[#C2540A] hover:text-[#C2540A] transition-all duration-300"
-              >
-              Hablar con Liliana
-            </Link>
+          <div className={s.historiaCopy}>
+            <p className={s.eyebrow}>Atención personalizada</p>
+            <h2 id="historia-title">Conocemos el mercado,<br /><span>entendemos lo que buscás.</span></h2>
+            <p>El rubro inmobiliario requiere mucho más que simplemente mostrar propiedades; se trata de escuchar y entender la necesidad real de cada persona que entra a la oficina. Ese es el enfoque principal de nuestra inmobiliaria: un trato directo, realista y sin vueltas.</p>
+            <p>Ya sea para tasaciones, ventas o alquileres, nos enfocamos en que el proceso sea dinámico y ordenado. Sabemos que el papeleo y los trámites pueden ser estresantes, por lo que nos ocupamos de filtrar el ruido y dejar las condiciones claras desde el primer momento.</p>
+            <p>Trabajar de forma personalizada nos permite estar encima de cada detalle de la operación. Acá hablás siempre con la misma persona, asegurando respuestas concretas y priorizando la tranquilidad de tu inversión.</p>
+            <Link href="/contacto" className={s.textLink}>Hablar con Liliana <ArrowRight size={15} /></Link>
           </div>
         </div>
       </section>
 
       {/* CÓMO TRABAJAMOS */}
-      <section style={{ background: "#FFF7ED" }} className="py-24">
-        <div className="max-w-5xl mx-auto px-6">
-          <div className="flex items-center gap-3 mb-16 justify-center">
-            <div style={{ width: "24px", height: "1.5px", background: "#C2540A" }} />
-            <span className="text-xs tracking-[0.15em] font-semibold text-orange-700 uppercase">Cómo trabajamos</span>
-            <div style={{ width: "24px", height: "1.5px", background: "#C2540A" }} />
+      <section className={s.trabajo} aria-labelledby="trabajo-title">
+        <div className={s.container}>
+          <div className={s.trabajoHead}>
+            <p className={s.eyebrow} id="trabajo-title">Cómo trabajamos</p>
           </div>
-
-          <div className="grid md:grid-cols-3 gap-12 md:gap-8">
+          <div className={s.steps}>
             {[
               { num: "01", titulo: "Asesoramiento inicial", desc: "Escuchamos qué estás buscando comprar, vender o alquilar para entender tus prioridades y presupuesto real desde el primer día." },
               { num: "02", titulo: "Búsqueda y gestión", desc: "Seleccionamos propiedades o compradores adecuados. Filtramos las opciones para que no pierdas tiempo en visitas innecesarias." },
               { num: "03", titulo: "Cierre de operación", desc: "Nos ocupamos de la documentación, escribanía y coordinación. Un proceso prolijo y sin sorpresas de último momento." },
             ].map((item) => (
-              <div key={item.num} className="relative pt-6">
-                {/* Línea divisoria superior completa (sutil) */}
-                <div className="absolute top-0 left-0 w-full h-[1px] bg-orange-900/10" />
-                {/* Acento naranja corto sobre la línea */}
-                <div className="absolute top-0 left-0 w-12 h-[2px] bg-[#C2540A]" />
-                
-                <div className="mb-4">
-                  <span className="font-display font-light text-5xl text-[#C2540A]/40 tracking-tighter">
-                    {item.num}
-                  </span>
-                </div>
-                <h4 className="font-display font-bold text-stone-900 mb-3 text-lg">{item.titulo}</h4>
-                <p className="text-stone-600 leading-relaxed">{item.desc}</p>
+              <div key={item.num} className={s.step}>
+                <span className={s.stepNum}>{item.num}</span>
+                <h4>{item.titulo}</h4>
+                <p>{item.desc}</p>
               </div>
             ))}
           </div>
@@ -123,22 +78,15 @@ export default function Nosotros() {
       </section>
 
       {/* FOOTER */}
-      <footer className="py-12 border-t border-white/10" style={{ background: "#0A0300" }}>
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-white/40 text-sm font-medium">
-            © {new Date().getFullYear()} Inmobiliaria Liliana Cirigliano — Necochea, Buenos Aires
-          </p>
-          <nav className="flex gap-6">
-            {[
-              { href: "/propiedades", label: "Propiedades" },
-              { href: "/nosotros", label: "Nosotros" },
-              { href: "/contacto", label: "Contacto" },
-            ].map(link => (
-              <Link key={link.href} href={link.href} className="text-white/40 text-sm font-medium hover:text-white transition-colors" style={{ textDecoration: "none" }}>
-                {link.label}
-              </Link>
-            ))}
-          </nav>
+      <footer className={s.footer}>
+        <div className={`${s.container}`}>
+          <div className={s.footerBrand}><House size={32} strokeWidth={1.1} /><div><p className={s.eyebrow}>Inmobiliaria</p><span className={s.footerName}>Liliana Cirigliano</span></div></div>
+          <nav aria-label="Navegación al pie"><Link href="/">Inicio</Link><Link href="/propiedades">Propiedades</Link><Link href="/nosotros">Nosotros</Link><Link href="/contacto">Contacto</Link></nav>
+          <p>Necochea, Buenos Aires</p>
+        </div>
+        <div className={`${s.container} ${s.footerBottom}`}>
+          <p>© {new Date().getFullYear()} Inmobiliaria Liliana Cirigliano.</p>
+          <p className={s.matricInline}>Martillera y corredora pública matriculada · <a href={MATRICULA_URL} target="_blank" rel="noopener noreferrer">Ver matrícula</a></p>
         </div>
       </footer>
     </main>
