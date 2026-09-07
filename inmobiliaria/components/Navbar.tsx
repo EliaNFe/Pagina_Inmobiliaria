@@ -23,7 +23,8 @@ export default function Navbar() {
   const handleConsultaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (pathname === "/") {
       e.preventDefault()
-      document.getElementById("consulta")?.scrollIntoView({ behavior: "smooth", block: "start" })
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      document.getElementById("consulta")?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" })
     }
   }
 
@@ -37,27 +38,31 @@ export default function Navbar() {
           borderBottom: "1px solid rgba(242,178,122,0.14)",
         }}
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-10 h-20">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-5 px-8 lg:px-12 h-[72px]">
 
           {/* Logo */}
-          <Link href="/" className="flex flex-col leading-none" style={{ textDecoration: "none" }}>
+          <Link href="/" className="flex items-center gap-3 leading-none" style={{ textDecoration: "none" }}>
+            <Home size={38} strokeWidth={1.1} className="hidden lg:block text-[#e79754]" aria-hidden="true" />
+            <span className="flex flex-col">
             <span className="text-[10px] tracking-[0.28em] text-[#C2540A] font-semibold uppercase">
               Inmobiliaria
             </span>
             <span className="font-display text-[19px] font-bold text-white mt-1 tracking-[-0.01em]">
               Liliana Cirigliano
             </span>
+            </span>
           </Link>
 
           {/* Links — minimalistas, con línea inferior animada */}
-          <nav className="flex items-center gap-11">
+          <nav aria-label="Navegación principal" className="flex items-center gap-5 lg:gap-9">
             {links.map((link) => {
               const active = pathname === link.href
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="group relative py-2 text-[13px] font-semibold uppercase tracking-[0.12em] transition-colors"
+                  aria-current={active ? "page" : undefined}
+                  className="group relative py-2 text-[12px] font-medium transition-colors"
                   style={{
                     textDecoration: "none",
                     color: active ? "#F2B27A" : "rgba(255,255,255,0.62)",
@@ -78,7 +83,7 @@ export default function Navbar() {
           <Link
             href="/#consulta"
             onClick={handleConsultaClick}
-            className="group relative inline-flex items-center gap-2 overflow-hidden px-6 py-2.5 text-[13px] font-bold uppercase tracking-[0.08em] text-[#F2B27A]"
+            className="group relative inline-flex shrink-0 items-center gap-3 overflow-hidden rounded-[3px] bg-[#bd521d] px-5 py-3 text-[12px] font-semibold text-white"
             style={{
               textDecoration: "none",
               border: "1px solid rgba(194,84,10,0.55)",
@@ -96,10 +101,16 @@ export default function Navbar() {
       </header>
 
       {/* Espaciador para que el contenido no quede debajo de la barra fija */}
-      <div className="hidden md:block h-20" />
+      <div className="hidden md:block h-[72px]" />
+
+      <header className="flex md:hidden items-center justify-between gap-4 bg-[#1C0A00] px-5 py-5 text-[#F7F2EA] border-b border-white/15">
+        <Link href="/" className="flex flex-col gap-1"><span className="text-[9px] uppercase tracking-[.2em] text-[#dba37b]">Inmobiliaria</span><span className="font-display text-[17px]">Liliana Cirigliano</span></Link>
+        <Link href="/#consulta" onClick={handleConsultaClick} className="text-xs border-b border-[#dba37b] pb-1">Hablemos</Link>
+      </header>
 
       {/* NAV MOBILE — tab bar inferior, sólida, sin blur */}
       <nav
+        aria-label="Navegación móvil"
         className="flex md:hidden fixed bottom-0 inset-x-0 z-50 justify-between px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2"
         style={{
           background: "#1C0A00",
@@ -113,6 +124,7 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
+              aria-current={active ? "page" : undefined}
               className="relative flex flex-col items-center gap-1 py-2 px-3 flex-1"
               style={{ textDecoration: "none" }}
             >

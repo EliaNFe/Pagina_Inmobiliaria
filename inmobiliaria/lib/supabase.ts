@@ -6,6 +6,25 @@ const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 export const supabase = createClient(supabaseUrl, supabaseKey)
 
+// Selecciones independientes y acotadas para los dos carruseles del home.
+export const getPropiedadesHome = unstable_cache(
+  async (operacion: "Venta" | "Alquiler") => {
+    let query = supabase.from("propiedades")
+      .select("id,titulo,tipo,operacion,precio,moneda,ubicacion,superficie,imagen_url")
+      .order("created_at", { ascending: false })
+      .limit(12)
+
+    query = operacion === "Venta"
+      ? query.or("operacion.eq.Venta,operacion.is.null")
+      : query.in("operacion", ["Alquiler", "Alquiler temporada"])
+
+    const { data, error } = await query
+    return { data: data || [], unavailable: Boolean(error) }
+  },
+  ["propiedades-home-por-operacion"],
+  { revalidate: 300, tags: ["propiedades"] }
+)
+
 // Propiedades destacadas para el home — caché de 5 minutos
 // LÍMITE: muestra máximo 6. Si hay más de 6 marcadas como "destacada",
 // se priorizan las más recientes (created_at descendente). El admin
