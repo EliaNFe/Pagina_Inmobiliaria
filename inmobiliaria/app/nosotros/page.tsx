@@ -13,20 +13,22 @@ export default function Nosotros() {
     <main className={`${s.nosotros} ${display.variable}`}>
       {/* HERO */}
       <section className={s.hero} aria-labelledby="nosotros-title">
-        <div className={s.heroPhoto}>
-          <Image src="/fachada-nosotros.jpg" alt="Local de Liliana Cirigliano en Necochea" fill sizes="(max-width: 760px) 100vw, 56vw" style={{ objectFit: "cover" }} />
-        </div>
-        <div className={s.container}>
+        <div className={s.container + ' ' + s.heroGrid}>
           <div className={s.heroCopy}>
-            <p className={s.eyebrow}>Sobre nosotros</p>
-            <h1 id="nosotros-title">Necochea es chica.<br />Acá te atiendo<br /><span>yo, en persona.</span></h1>
-            <p className={s.heroIntro}>Soy Liliana Cirigliano, martillera y corredora pública. Desde 2019 llevo la inmobiliaria yo misma: sin call center, sin formularios genéricos, con una sola persona respondiendo cada consulta.</p>
+            <p className={s.eyebrow}>Liliana Cirigliano · Desde 2019</p>
+            <h1 id="nosotros-title">Cada historia<br />merece un lugar.<br /><span>La tuya, también.</span></h1>
+            <p className={s.heroIntro}>Soy Liliana. Te acompaño a encontrar tu lugar en Necochea con la cercanía de conocernos y la tranquilidad de sentirte bien asesorado.</p>
             <div className={s.heroActions}>
-              <Link href="/contacto" className={s.button}>Hablar con Liliana <ArrowRight size={17} /></Link>
+              <Link href="/contacto" className={s.button}>Conversemos <span className={s.buttonArrow}><ArrowRight size={18} /></span></Link>
               <a href={MATRICULA_URL} target="_blank" rel="noopener noreferrer" className={s.textLink}>Ver matrícula <ArrowRight size={15} /></a>
             </div>
-            <p className={s.heroLocation}><MapPin size={15} strokeWidth={1.4} />Necochea, Buenos Aires</p>
+            <div className={s.heroSignature}><span className={s.signatureName}>Liliana Cirigliano</span><span>Martillera y corredora pública</span></div>
           </div>
+          <figure className={s.heroVisual}>
+            <div className={s.heroPhoto}><Image src="/fachada-nosotros.jpg" alt="Nuestra oficina de Liliana Cirigliano en Necochea" fill sizes="(max-width: 760px) 90vw, 42vw" preload /></div>
+            <span className={s.photoSeal}>Desde<strong>2019</strong>junto a vos</span>
+            <figcaption className={s.heroLocation}><MapPin size={15} strokeWidth={1.4} /><span>Un lugar donde empezar a conocernos.<small>Necochea, Buenos Aires</small></span></figcaption>
+          </figure>
         </div>
       </section>
 

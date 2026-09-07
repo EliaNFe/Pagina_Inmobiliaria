@@ -4,6 +4,14 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Home, Building2, Users, MessageCircle, ArrowUpRight } from "lucide-react"
 
+function BrandHouse() {
+  return <svg viewBox="0 0 410 255" fill="currentColor" className="h-9 w-11 shrink-0 text-[#e79754]" aria-hidden="true">
+    <path d="M20 225V112L205 0l120 73V46l31-9v55l34 20v113h-22V125L205 26 42 125v100Z" />
+    <path d="M65 225V137L205 54l140 83v88h-17v-78L205 74 82 147v78Z" />
+    <path d="M171 133h30v30h-30zM210 133h30v30h-30zM171 173h30v30h-30zM210 173h30v30h-30zM0 234h410v18H0z" />
+  </svg>
+}
+
 const links = [
   { href: "/", label: "Inicio", icon: Home },
   { href: "/propiedades", label: "Propiedades", icon: Building2 },
@@ -42,7 +50,7 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 leading-none" style={{ textDecoration: "none" }}>
-            <Home size={38} strokeWidth={1.1} className="hidden lg:block text-[#e79754]" aria-hidden="true" />
+            <BrandHouse />
             <span className="flex flex-col">
             <span className="text-[10px] tracking-[0.28em] text-[#C2540A] font-semibold uppercase">
               Inmobiliaria
@@ -104,7 +112,7 @@ export default function Navbar() {
       <div className="hidden md:block h-[72px]" />
 
       <header className="flex md:hidden items-center justify-between gap-4 bg-[#1C0A00] px-5 py-5 text-[#F7F2EA] border-b border-white/15">
-        <Link href="/" className="flex flex-col gap-1"><span className="text-[9px] uppercase tracking-[.2em] text-[#dba37b]">Inmobiliaria</span><span className="font-display text-[17px]">Liliana Cirigliano</span></Link>
+        <Link href="/" className="flex items-center gap-2.5"><BrandHouse /><span className="flex flex-col gap-1"><span className="text-[9px] uppercase tracking-[.2em] text-[#dba37b]">Inmobiliaria</span><span className="font-display text-[17px]">Liliana Cirigliano</span></span></Link>
         <Link href="/#consulta" onClick={handleConsultaClick} className="text-xs border-b border-[#dba37b] pb-1">Hablemos</Link>
       </header>
 

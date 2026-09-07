@@ -37,7 +37,6 @@ export default async function Home() {
               <a href="#consulta" className={s.outlineButton}>Contactar <MessageCircle size={17} /></a>
             </div>
           </div>
-          <p className={s.heroNote}>Más que<br />propiedades,<br />historias en<br /><span>Necochea.</span></p>
           <Link className={s.heroCaption} href="/propiedades"><span>Vivir cerca del mar<strong>también es posible</strong></span><ArrowUpRight size={20} strokeWidth={1.5} /></Link>
         </div>
       </section>
