@@ -1,32 +1,14 @@
 ﻿"use client"
 
-import { useState, useSyncExternalStore } from "react"
+import { useState } from "react"
 import Link from "next/link"
-import { ArrowRight, ChevronLeft, ChevronRight, Heart, MapPin, Scan } from "lucide-react"
+import { ArrowRight, ChevronLeft, ChevronRight, MapPin, Scan } from "lucide-react"
 import { formatearPrecio } from "@/lib/formatear-precio"
 import s from "@/app/home.module.css"
 
 type Property = { id: string; titulo: string; tipo: string; operacion?: string; precio: number; moneda?: string; ubicacion?: string; superficie?: number; imagen_url?: string }
-const favoriteKey = "inmobiliaria-favoritas"
-function snapshot() { try { return localStorage.getItem(favoriteKey) || "[]" } catch { return "[]" } }
-function subscribe(callback: () => void) {
-  window.addEventListener("storage", callback)
-  window.addEventListener("favoritas-change", callback)
-  return () => { window.removeEventListener("storage", callback); window.removeEventListener("favoritas-change", callback) }
-}
-
 export default function HomeFeatured({ propiedades, destacadas }: { propiedades: Property[]; destacadas: boolean }) {
   const [start, setStart] = useState(0)
-  const saved = useSyncExternalStore(subscribe, snapshot, () => "[]")
-  const [temporary, setTemporary] = useState<string[] | null>(null)
-  let favorites: string[] = []
-  try { const parsed: unknown = JSON.parse(saved); if (Array.isArray(parsed)) favorites = parsed.filter((id): id is string => typeof id === "string") } catch {}
-  favorites = temporary || favorites
-  const toggle = (id: string) => {
-    const next = favorites.includes(id) ? favorites.filter(value => value !== id) : [...favorites, id]
-    try { localStorage.setItem(favoriteKey, JSON.stringify(next)); window.dispatchEvent(new Event("favoritas-change")); setTemporary(null) } catch { setTemporary(next) }
-  }
-
   return (
     <>
       <div className={s.sectionHeading}>
@@ -48,7 +30,7 @@ export default function HomeFeatured({ propiedades, destacadas }: { propiedades:
                 <div className={s.propertyNoImage}>Sin imagen</div>
               )}
             </div>
-            <div className={s.propertyTop}><span className={s.operation}>{p.operacion || "Venta"}</span><button className={s.favorite} aria-label={`${favorites.includes(p.id) ? "Quitar de" : "Guardar en"} favoritas: ${p.titulo}`} aria-pressed={favorites.includes(p.id)} onClick={() => toggle(p.id)}><Heart size={22} strokeWidth={1.5} fill={favorites.includes(p.id) ? "currentColor" : "none"} /></button></div>
+            <div className={s.propertyTop}><span className={s.operation}>{p.operacion || "Venta"}</span></div>
             <Link href={`/propiedades/${p.id}`} className={s.propertyBody}>
               <h3>{p.titulo}</h3>
               <p className={s.propertyLocation}><MapPin size={13} />{p.ubicacion || "Necochea, Buenos Aires"}</p>

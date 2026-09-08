@@ -58,9 +58,10 @@
 .propertyNoImage { display:grid; place-items:center; width:100%; height:100%; color:#a58b76; font-size:12px; background:#f3e9dc; }
 .propertyTop { position:absolute; top:14px; left:14px; right:14px; z-index:2; display:flex; align-items:center; justify-content:space-between; }
 .operation { background:#ac4819; color:#fff; padding:6px 11px; font-size:10px; border-radius:3px; }
-.favorite { display:grid; place-items:center; width:40px; height:40px; color:#a75a2c; cursor:pointer; border-radius:50%; background:rgba(255,250,244,.9); -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px); }
-.favorite:hover { background:#fff; }
 .propertyBody { display:block; padding:17px 22px 21px; }
+.propertyBody::after { content:""; position:absolute; inset:0; z-index:1; }
+.propertyTop { pointer-events:none; }
+.property:has(.propertyBody:focus-visible) { outline:2px solid var(--clay); outline-offset:4px; }
 .property h3 { font-size:22px; line-height:1.35; overflow-wrap:anywhere; }
 .propertyLocation { display:flex; align-items:center; gap:6px; margin-top:9px !important; font-size:11px; color:#796a5d; }
 .propertyLocation svg { flex-shrink:0; }
