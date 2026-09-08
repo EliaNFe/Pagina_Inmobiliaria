@@ -103,11 +103,8 @@
 .contact .eyebrow { color:#efb987; }
 .contact h2 { margin-top:17px; font-size:clamp(30px,2.85vw,40px); }
 .contactIntro { color:#e1cdbb; font-size:14px; line-height:1.65; margin-top:18px !important; }
-.contactDetails { display:flex; flex-wrap:wrap; gap:22px; margin-top:48px; }
-.contactDetails a { display:flex; flex-direction:column; gap:10px; font-size:11px; min-width:0; }
-.contactDetails a > span { min-width:0; }
-.contactDetails svg { color:#e9944d; }
-.contactDetails small { display:block; font-size:9px; color:#e3cdb7; margin-top:4px; overflow-wrap:anywhere; }
+.contactLink { margin-top:28px; max-width:100%; }
+.contactLink svg { flex-shrink:0; }
 .form { border-left:1px solid #b5865860; padding-left:30px; padding-bottom:34px; }
 .formNote { color:#dac2ac; font-size:9px; line-height:1.6; margin-top:12px !important; }
 .person { align-self:end; position:relative; }
@@ -143,7 +140,6 @@
 .botanical { right:-70px; width:145px; }
 .contactGrid { grid-template-columns:1.05fr 1fr .65fr; gap:18px; }
 .form { padding-left:18px; }
-.contactDetails { margin-top:28px; gap:17px; }
 .personNote { right:-20px; top:10px; font-size:23px; }
 .portrait { height:330px; }
 .footer > div { flex-wrap:wrap; }
@@ -186,7 +182,6 @@
 .contact::before { background-position:62% center; opacity:.12; }
 .contactGrid { grid-template-columns:minmax(0,1fr); gap:27px; }
 .contact h2 { font-size:33px; }
-.contactDetails { margin-top:27px; gap:25px; }
 .form { padding:25px 0 0; border-left:0; border-top:1px solid #b5865860; }
 .person { justify-self:center; width:320px; max-width:100%; }
 .personNote { right:0; top:0; font-size:25px; }

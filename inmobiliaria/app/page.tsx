@@ -1,7 +1,7 @@
 ﻿import Image from "next/image"
 import { Caveat } from "next/font/google"
 import Link from "next/link"
-import { ArrowRight, ArrowUpRight, Building2, Home as House, Mail, MapPin, MessageCircle, Trees } from "lucide-react"
+import { ArrowRight, ArrowUpRight, Building2, Home as House, MapPin, MessageCircle, Trees } from "lucide-react"
 import { getConfiguracion, getPropiedadesDestacadas, getPropiedades } from "@/lib/supabase"
 import HomeFeatured from "@/components/HomeFeatured"
 import HomeBotanical from "@/components/HomeBotanical"
@@ -19,7 +19,6 @@ const categorias = [
 export default async function Home() {
   const [destacadas, config] = await Promise.all([getPropiedadesDestacadas(), getConfiguracion()])
   const propiedades = destacadas?.length ? destacadas : (await getPropiedades()).data || []
-  const whatsapp = config.whatsapp?.replace(/\D/g, "")
 
   return (
     <main className={`${s.home} ${handwriting.variable}`}>
@@ -91,11 +90,9 @@ export default async function Home() {
             <p className={s.eyebrow}>Contacto directo</p>
             <h2 id="contact-title">¿Tenés una consulta?</h2>
             <p className={s.contactIntro}>Hablemos. Estoy para ayudarte a encontrar<br />lo que estás buscando.</p>
-            <div className={s.contactDetails}>
-              {whatsapp && <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noopener noreferrer"><MessageCircle size={24} strokeWidth={1.3} /><span>WhatsApp<small>+{whatsapp}</small></span></a>}
-              {config.email && <a href={`mailto:${config.email}`}><Mail size={24} strokeWidth={1.3} /><span>Email<small>{config.email}</small></span></a>}
-              <Link href="/contacto"><MapPin size={24} strokeWidth={1.3} /><span>Zona de atención<small>Necochea, Buenos Aires</small></span></Link>
-            </div>
+            <Link href="/contacto" className={`${s.outlineButton} ${s.contactLink}`}>
+              Conocé nuestros medios de contacto <ArrowRight size={17} aria-hidden="true" />
+            </Link>
           </div>
           <div className={s.form}>
             <ConsultaWhatsappForm numeroWhatsapp={config.whatsapp || ""} />
