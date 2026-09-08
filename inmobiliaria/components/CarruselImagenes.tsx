@@ -117,14 +117,14 @@ export default function CarruselImagenes({ imagenes, titulo }: { imagenes: strin
           border-radius: 2px;
           overflow: hidden;
           border: 1px solid rgba(255,255,255,.18);
-          background: #21130c;
-          height: clamp(520px, 68vh, 780px);
+          background: #e8e0d5;
+          height: clamp(380px, 52vw, 560px);
         }
         @media (max-width: 900px) {
-          .viewer { height: clamp(440px, 60vh, 620px); }
+          .viewer { height: clamp(340px, 52vw, 500px); }
         }
         @media (max-width: 640px) {
-          .viewer { height: clamp(330px, 52vh, 460px); }
+          .viewer { height: clamp(300px, 85vw, 420px); }
         }
         .hint-ampliar {
           position: absolute;
@@ -216,7 +216,7 @@ export default function CarruselImagenes({ imagenes, titulo }: { imagenes: strin
                 onClick={() => irA(i)}
                 style={{
                   flex: 1, height: "2.5px", border: "none", cursor: "pointer",
-                  background: i === actual ? "#C2540A" : "rgba(255,255,255,0.5)",
+                  background: i === actual ? "#8e806c" : "rgba(255,255,255,0.5)",
                   transition: "background 0.2s", padding: 0,
                 }}
                 aria-label={`Ir a foto ${i + 1}`}
@@ -253,7 +253,7 @@ export default function CarruselImagenes({ imagenes, titulo }: { imagenes: strin
               style={{
                 position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)",
                 background: "rgba(28,10,0,0.55)", color: "#fff", border: "1px solid rgba(255,255,255,0.25)",
-                borderRadius: "4px", width: "38px", height: "38px", cursor: "pointer",
+                borderRadius: "50%", width: "42px", height: "42px", cursor: "pointer",
                 fontSize: "18px", alignItems: "center", justifyContent: "center", zIndex: 10,
               }}
               aria-label="Foto anterior"
@@ -266,7 +266,7 @@ export default function CarruselImagenes({ imagenes, titulo }: { imagenes: strin
               style={{
                 position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)",
                 background: "rgba(28,10,0,0.55)", color: "#fff", border: "1px solid rgba(255,255,255,0.25)",
-                borderRadius: "4px", width: "38px", height: "38px", cursor: "pointer",
+                borderRadius: "50%", width: "42px", height: "42px", cursor: "pointer",
                 fontSize: "18px", alignItems: "center", justifyContent: "center", zIndex: 10,
               }}
               aria-label="Foto siguiente"
@@ -279,8 +279,8 @@ export default function CarruselImagenes({ imagenes, titulo }: { imagenes: strin
         {/* Contador tipográfico */}
         <div style={{
           position: "absolute", bottom: "14px", left: "14px",
-          background: "#1C0A00", color: "#fff",
-          fontSize: "13px", fontWeight: 700, padding: "6px 12px", borderRadius: "4px",
+          background: "#f6f2eb", color: "#30291f",
+          fontSize: "11px", fontWeight: 500, padding: "9px 13px", borderRadius: "2px",
           letterSpacing: "0.02em", zIndex: 10,
         }}>
           {String(actual + 1).padStart(2, "0")} / {String(imagenes.length).padStart(2, "0")}
@@ -291,8 +291,8 @@ export default function CarruselImagenes({ imagenes, titulo }: { imagenes: strin
           onClick={() => setLightboxAbierto(true)}
           style={{
             position: "absolute", bottom: "14px", right: "14px",
-            background: "#1C0A00", color: "#fff", border: "none",
-            fontSize: "12px", fontWeight: 600, padding: "6px 12px", borderRadius: "4px",
+            background: "#f6f2eb", color: "#30291f", border: "none",
+            fontSize: "11px", fontWeight: 500, padding: "10px 14px", borderRadius: "2px",
             cursor: "pointer", zIndex: 10, display: "flex", alignItems: "center", gap: "6px",
           }}
           aria-label="Ver todas las fotos en pantalla completa"
@@ -313,13 +313,13 @@ export default function CarruselImagenes({ imagenes, titulo }: { imagenes: strin
               onClick={() => irA(i)}
               style={{
                 cursor: "pointer", padding: 0, background: "none", border: "none",
-                flexShrink: 0, width: "68px",
+                flexShrink: 0, width: "84px",
               }}
               aria-label={`Ir a foto ${i + 1}`}
               aria-current={i === actual}
             >
               <div style={{
-                width: "68px", height: "68px", borderRadius: "4px", overflow: "hidden",
+                width: "84px", height: "62px", borderRadius: "2px", overflow: "hidden",
                 opacity: i === actual ? 1 : 0.5, transition: "opacity 0.2s",
               }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -327,7 +327,7 @@ export default function CarruselImagenes({ imagenes, titulo }: { imagenes: strin
               </div>
               <div style={{
                 height: "2px", marginTop: "6px",
-                background: i === actual ? "#C2540A" : "transparent",
+                background: i === actual ? "#8e806c" : "transparent",
               }} />
             </button>
           ))}
@@ -386,7 +386,7 @@ export default function CarruselImagenes({ imagenes, titulo }: { imagenes: strin
                   style={{
                     flexShrink: 0, width: "52px", height: "52px", borderRadius: "4px", overflow: "hidden",
                     padding: 0, cursor: "pointer",
-                    border: i === actual ? "2px solid #C2540A" : "2px solid transparent",
+                    border: i === actual ? "2px solid #bbae99" : "2px solid transparent",
                     opacity: i === actual ? 1 : 0.5,
                   }}
                   aria-label={`Ir a foto ${i + 1}`}
