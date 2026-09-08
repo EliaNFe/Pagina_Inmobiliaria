@@ -24,7 +24,7 @@ export default async function Home() {
     <main className={`${s.home} ${handwriting.variable}`}>
       <section className={s.hero} aria-labelledby="home-title">
         <div className={s.heroPhoto}>
-          <Image src="/hero-necochea.png" alt="Imagen de ambientación generada: terraza frente al mar, inspirada en la costa de Necochea" fill sizes="100vw" preload />
+          <Image src="/hero-necochea-gaviotas.png" alt="Imagen generada inspirada en la costa de Necochea: atardecer dorado sobre el mar, olas y gaviotas" fill sizes="100vw" preload />
         </div>
         <div className={`${s.container} ${s.heroInner}`}>
           <div className={s.heroCopy}>
