@@ -147,16 +147,23 @@
 }
 @media (max-width:760px) {
 .container { width:calc(100% - 40px); }
-.heroInner { min-height:740px; align-items:start; padding-block:35px 245px; }
-.heroPhoto { inset:auto 0 0; height:300px; }
-.heroPhoto img { object-position:right center; }
-.hero::after { background:linear-gradient(180deg,#1c0a00 54%,rgba(28,10,0,.7) 60%,transparent 72%,transparent 88%,rgba(28,10,0,.65)); }
-.heroCopy { max-width:100%; }
-.hero h1 { font-size:clamp(30px,8vw,42px); margin-top:17px; }
-.intro { font-size:14px; margin-top:20px !important; max-width:340px; }
-.actions { gap:12px; margin-top:21px; }
+.heroInner { min-height:580px; min-height:clamp(560px, calc(100svh - 160px), 660px); flex-direction:column; align-items:stretch; justify-content:space-between; gap:64px; padding-block:36px 28px; }
+.heroPhoto { inset:0; }
+.heroPhoto img { object-position:78% center; }
+.hero::after { background:linear-gradient(180deg,#1c0a00 0%,rgba(28,10,0,.8) 12%,rgba(28,10,0,.46) 48%,rgba(28,10,0,.08) 72%,rgba(28,10,0,.7) 100%),linear-gradient(90deg,rgba(28,10,0,.5),rgba(28,10,0,.12)); }
+.heroCopy { max-width:440px; }
+.hero .eyebrow { font-size:9px; letter-spacing:.2em; }
+.hero h1 { font-size:clamp(36px,9.5vw,48px); line-height:1.08; letter-spacing:-.035em; margin-top:18px; text-wrap:balance; }
+.hero h1 span { color:#f2a66d; }
+.intro { font-size:14px; line-height:1.7; margin-top:19px !important; max-width:330px; color:#f3e6da; }
+.actions { display:grid; grid-template-columns:1.25fr 1fr; gap:10px; margin-top:24px; max-width:360px; }
+.hero .actions a { min-height:50px; padding:12px 10px; gap:8px; font-size:12px; border-radius:6px; }
+.hero .actions svg { flex-shrink:0; }
+.hero .outlineButton { background:rgba(28,10,0,.35); border-color:rgba(240,218,198,.6); }
+.hero .outlineButton:hover { background:rgba(89,52,35,.8); }
 .button,.outlineButton { padding:11px 15px; gap:11px; }
-.heroCaption { bottom:24px; left:0; right:auto; }
+.heroCaption { position:static; align-self:flex-start; gap:12px; min-height:44px; font-size:11px; }
+.heroCaption::before { width:24px; }
 .heroNote { top:auto; bottom:94px; right:5px; font-size:28px; color:#fff2dc; text-shadow:0 2px 6px #160a00; }
 .types { display:grid; grid-template-columns:1fr 1fr; gap:5px 20px; padding-block:20px; }
 .types > span { grid-column:1 / -1; margin-bottom:8px; }
