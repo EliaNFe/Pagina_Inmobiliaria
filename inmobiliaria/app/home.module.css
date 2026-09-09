@@ -32,12 +32,12 @@
 .heroCaption { position:absolute; right:0; bottom:30px; display:flex; align-items:center; gap:17px; color:white; font-size:11px; line-height:1.7; text-shadow:0 1px 6px #1c0a00; }
 .heroCaption strong { display:block; font-weight:500; font-size:12px; }
 .heroCaption::before { content:""; width:30px; height:1px; background:var(--accent); }
-.categoryBand { border-bottom:1px solid #e4d7c9; background:#f6ece1; }
+.categoryBand { border-bottom:1px solid #d9bea3; background:#f1e2d1; }
 .types { display:flex; align-items:center; justify-content:space-between; gap:20px; padding-block:20px; font-size:12px; }
-.types > span { color:var(--clay); font-weight:600; }
-.types a { display:inline-flex; gap:15px; align-items:center; padding-block:9px; }
+.types > span { color:var(--clay); font-weight:700; }
+.types a { display:inline-flex; gap:15px; align-items:center; padding-block:9px; font-weight:600; text-decoration:underline; text-decoration-color:#b34c1c45; text-underline-offset:6px; text-decoration-thickness:1px; transition:color .2s,text-decoration-color .2s; }
 .types svg { color:var(--clay); }
-.types a:hover { color:var(--clay); }
+.types a:hover { color:var(--clay); text-decoration-color:var(--clay); }
 .types .allTypes { padding-left:30px; border-left:1px solid #dfcab6; color:var(--clay); }
 .featured { position:relative; isolation:isolate; padding-block:46px 54px; }
 .featured::before { content:""; position:absolute; left:-175px; top:0; width:160px; height:160px; border:1px solid #dec4a580; border-radius:50%; box-shadow:0 0 0 24px #f7eee3,0 0 0 25px #dec4a540; z-index:-1; pointer-events:none; }
