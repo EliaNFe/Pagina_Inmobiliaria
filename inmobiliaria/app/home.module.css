@@ -107,7 +107,7 @@
 .contactIntro { color:#e1cdbb; font-size:14px; line-height:1.65; margin-top:18px !important; }
 .contactLink { margin-top:28px; max-width:100%; }
 .contactLink svg { flex-shrink:0; }
-.form { border-left:1px solid #b5865860; padding-left:30px; padding-bottom:34px; }
+.form { position:relative; z-index:3; border-left:1px solid #b5865860; padding-left:30px; padding-bottom:34px; }
 .formNote { color:#dac2ac; font-size:9px; line-height:1.6; margin-top:12px !important; }
 .person { align-self:end; position:relative; }
 .portrait { position:relative; height:440px; overflow:hidden; }
