@@ -7,6 +7,8 @@ import { use } from "react"
 import { getSupabaseClient } from "@/lib/supabase-client"
 import { actualizarPropiedad, borrarImagenPropiedad, borrarPropiedad, guardarOrdenImagenes } from "@/lib/property-actions"
 import { comprimirImagen } from "@/lib/comprimir-imagen"
+import DisponibilidadTemporada from "@/components/DisponibilidadTemporada"
+import { esTemporada } from "@/lib/temporada"
 
 const supabase = getSupabaseClient()
 
@@ -396,6 +398,9 @@ export default function EditarPropiedad({ params }: { params: Promise<{ id: stri
               </div>
             )}
           </div>
+
+          {esTemporada(form.operacion) && esTemporada(formOriginal.operacion) && <DisponibilidadTemporada key={id} propiedadId={id} admin />}
+          {esTemporada(form.operacion) && !esTemporada(formOriginal.operacion) && <p>Guardá el cambio a alquiler temporada para administrar su disponibilidad.</p>}
 
           <button onClick={handleGuardar} disabled={loading || !hayCambios}
             style={{background: "#C2540A", color: "#fff", fontWeight: 700, padding: "14px", borderRadius: "10px", border: "none", fontSize: "15px", cursor: loading || !hayCambios ? "not-allowed" : "pointer", opacity: loading || !hayCambios ? 0.5 : 1}}>

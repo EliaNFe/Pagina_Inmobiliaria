@@ -27,11 +27,11 @@
 .activeFilters { display:flex; align-items:center; gap:12px; margin:0 0 24px; font-size:11px; color:#705d4d; }
 .activeFilters a { display:inline-flex; align-items:center; gap:12px; padding:6px 13px; border:1px solid #ccb297; border-radius:999px; color:#95411e; }
 .activeFilters b { font-size:18px; font-weight:400; }
-.sectionNav { display:flex; flex-wrap:wrap; gap:14px 32px; padding-block:0 20px; margin-bottom:20px; }
-.sectionNav a { display:inline-flex; gap:9px; align-items:center; color:#705d4d; font-size:12px; padding-block:6px; }
-.sectionNav a::after { content:"\2193"; color:#a5704d; font-size:14px; margin-left:3px; }
-.sectionNav a:hover { color:#b34c1c; }
-.sectionNav span { font-size:9px; color:#9c7150; }
+.sectionNav { display:flex; flex-wrap:wrap; gap:16px 36px; padding-block:4px 24px; margin-bottom:20px; }
+.sectionNav a { display:inline-flex; gap:12px; align-items:center; min-height:52px; color:#49301f; font-size:17px; font-weight:650; padding-block:10px; border-bottom:3px solid #a56c46; transition:color .2s,border-color .2s; }
+.sectionNav a::after { content:"\2193"; color:#99522d; font-size:21px; margin-left:3px; }
+.sectionNav a:hover { color:#b34c1c; border-bottom-color:#b34c1c; }
+.sectionNav span { display:grid; place-items:center; min-width:26px; height:26px; padding-inline:6px; border-radius:999px; background:#e9dfd2; font-size:11px; font-weight:600; color:#68432e; }
 .sections { display:flex; flex-direction:column; gap:88px; }
 .propertySection { scroll-margin-top:100px; }
 .sectionHeader { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:32px; padding:25px 28px; background:#e9dfd2; border-top:2px solid #9b6a48; border-bottom:1px solid #d4c2ae; border-radius:0 0 12px 12px; }
@@ -109,6 +109,7 @@
 .mobilePanel .filterOptions { flex-direction:column; gap:3px; }
 .mobilePanel .filterLink { justify-content:space-between; min-height:42px; }
 .sectionNav { gap:10px 22px; margin-bottom:30px; }
+.sectionNav a { font-size:15px; gap:9px; }
 .sectionHeader>span { display:none; }
 .sectionHeader>div { gap:12px; }
 .sectionHeader h2 { font-size:23px; }

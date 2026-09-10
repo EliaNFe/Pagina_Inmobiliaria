@@ -1,9 +1,12 @@
 ﻿import { getPropiedad, getImagenesPropiedad, getConfiguracion } from "@/lib/supabase"
 import { formatearPrecio } from "@/lib/formatear-precio"
 import Link from "next/link"
-import { MapPin, MessageCircle } from "lucide-react"
+import { ArrowDown, CalendarDays, MapPin, MessageCircle } from "lucide-react"
 import CarruselImagenes from "@/components/CarruselImagenes"
 import styles from "./detalle.module.css"
+import DisponibilidadTemporada from "@/components/DisponibilidadTemporada"
+import { esTemporada } from "@/lib/temporada"
+import { contactoPropiedad } from "@/lib/contacto-propiedad"
 
 interface PageProps { params: Promise<{ id: string }> }
 
@@ -17,8 +20,7 @@ export default async function DetallePropiedad({ params }: PageProps) {
 
   const listaImagenes: string[] = imagenes?.map(i => i.url) || []
   const todasLasImagenes = listaImagenes.length ? listaImagenes : (propiedad.imagen_url ? [propiedad.imagen_url] : [])
-  const mensajeWhatsapp = encodeURIComponent(`Hola, quería consultar por la propiedad "${propiedad.titulo}" ubicada en ${propiedad.ubicacion}.`)
-  const whatsappUrl = config?.whatsapp ? `https://wa.me/${config.whatsapp}?text=${mensajeWhatsapp}` : "/contacto"
+  const whatsappUrl = contactoPropiedad(config?.whatsapp, propiedad.titulo, propiedad.ubicacion)
 
   return (
     <main className={styles.page}>
@@ -34,11 +36,24 @@ export default async function DetallePropiedad({ params }: PageProps) {
         <div className={styles.primary}>
           <section className={styles.gallery} aria-label="Fotografías de la propiedad"><CarruselImagenes imagenes={todasLasImagenes} titulo={propiedad.titulo} /></section>
           <section className={styles.descriptionSection} aria-labelledby="descripcion-title"><div className={styles.sectionHeading}><h2 id="descripcion-title">Sobre la propiedad</h2><span>Descripción</span></div>{propiedad.descripcion ? <p className={styles.description}>{propiedad.descripcion}</p> : <p className={styles.description}>Consultanos para conocer más detalles de esta propiedad.</p>}</section>
+          {esTemporada(propiedad.operacion) && <DisponibilidadTemporada propiedadId={id} titulo={propiedad.titulo} ubicacion={propiedad.ubicacion} whatsapp={config?.whatsapp} />}
         </div>
         <aside className={styles.summary} aria-label="Precio y consulta">
           <div className={styles.summaryPrice}><span>{propiedad.operacion || "Venta"}</span><strong>{formatearPrecio(propiedad.precio, propiedad.moneda)}</strong></div>
           <dl className={styles.features}><div><dt>Propiedad</dt><dd>{propiedad.tipo}</dd></div><div><dt>Superficie</dt><dd>{propiedad.superficie} m²</dd></div><div><dt>Ubicación</dt><dd>{propiedad.ubicacion}</dd></div></dl>
-          <div className={styles.contact}><h2>Consultá por esta propiedad</h2><p>Hablá con Liliana para conocer los detalles o coordinar una visita.</p><a className={styles.consultButton} href={whatsappUrl} target={config?.whatsapp ? "_blank" : undefined} rel={config?.whatsapp ? "noopener noreferrer" : undefined}><MessageCircle size={18} strokeWidth={1.5} aria-hidden="true" />{config?.whatsapp ? "Consultar por WhatsApp" : "Contactar a Liliana"}</a><small>Atención personal · Liliana Cirigliano</small></div>
+          <div className={styles.contact}>
+            <h2>Consultá por esta propiedad</h2>
+            <p>Hablá con Liliana para conocer los detalles o coordinar una visita.</p>
+            {esTemporada(propiedad.operacion) && (
+              <a href="#disponibilidad" className={styles.availabilityLink}>
+                <CalendarDays size={17} strokeWidth={1.5} aria-hidden="true" />
+                Ver disponibilidad
+                <ArrowDown size={15} strokeWidth={1.5} aria-hidden="true" />
+              </a>
+            )}
+            <a className={styles.consultButton} href={whatsappUrl} target={config?.whatsapp ? "_blank" : undefined} rel={config?.whatsapp ? "noopener noreferrer" : undefined}><MessageCircle size={18} strokeWidth={1.5} aria-hidden="true" />{config?.whatsapp ? "Consultar por WhatsApp" : "Contactar a Liliana"}</a>
+            <small>Atención personal · Liliana Cirigliano</small>
+          </div>
           <Link href="/propiedades" className={styles.back}>Seguir viendo propiedades</Link>
         </aside>
       </div>

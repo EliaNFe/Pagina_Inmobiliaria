@@ -20,6 +20,12 @@ body {
   color: var(--foreground);
 }
 
+/* Ancla del calendario público: deja espacio para la navegación fija. */
+#disponibilidad { scroll-margin-top: 110px; }
+@media (prefers-reduced-motion: no-preference) {
+  html:has(#disponibilidad) { scroll-behavior: smooth; }
+}
+
 h1, h2, h3, h4, .font-display {
   font-family: var(--font-display), Georgia, serif;
 }
