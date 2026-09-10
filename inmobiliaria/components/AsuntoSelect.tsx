@@ -24,7 +24,9 @@ export default function AsuntoSelect({ id, value, onChange }: { id: string; valu
   }, [open, value])
 
   return <div ref={root} className={s.root} onBlur={(event) => {
-    if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false)
+    // Touch browsers can blur with no next focus target before an option's click.
+    // Outside taps are handled by pointerdown; only dismiss a known focus exit here.
+    if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget)) setOpen(false)
   }} onKeyDown={(event) => {
     if (event.key === "Escape") { event.preventDefault(); setOpen(false); trigger.current?.focus() }
   }}>

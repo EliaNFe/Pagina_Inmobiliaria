@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase-server"
 import { registrarActividad } from "@/lib/auditoria"
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 import { redirect } from "next/navigation"
 
 async function requireUser() {
@@ -12,6 +12,35 @@ async function requireUser() {
     throw new Error("No autenticado")
   }
   return { supabase, user }
+}
+
+export async function cambiarDisponibilidadPropiedad(id: string, disponible: boolean) {
+  const { supabase, user } = await requireUser()
+  if (!id || typeof disponible !== "boolean") return { error: "Estado de disponibilidad inválido." }
+
+  const { data: anterior, error: readError } = await supabase
+    .from("propiedades").select("titulo, disponible").eq("id", id).single()
+  if (readError || !anterior) return { error: "No se pudo consultar la propiedad." }
+
+  const { data, error } = await supabase.from("propiedades")
+    .update({ disponible }).eq("id", id).select("id").single()
+  if (error || !data) return { error: "No se pudo cambiar la disponibilidad. Intentá nuevamente." }
+
+  updateTag("propiedades")
+  revalidatePath("/")
+  revalidatePath("/propiedades")
+  revalidatePath(`/propiedades/${id}`)
+  revalidatePath("/admin")
+
+  await registrarActividad(supabase, {
+    usuarioEmail: user.email ?? "Sin email",
+    accion: "editar",
+    entidad: "propiedad",
+    entidadId: id,
+    entidadTitulo: anterior.titulo,
+    detalle: { disponible: { antes: anterior.disponible, despues: disponible } },
+  })
+  return { success: true }
 }
 
 type FormPropiedad = {

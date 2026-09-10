@@ -11,6 +11,7 @@ export type Propiedad = {
   ubicacion: string
   imagen_url: string
   destacada: boolean
+  disponible: boolean
   created_at: string
 }
 

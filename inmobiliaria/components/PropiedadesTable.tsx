@@ -1,10 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { borrarPropiedadesMultiples } from "@/lib/property-actions"
+import { borrarPropiedadesMultiples, cambiarDisponibilidadPropiedad } from "@/lib/property-actions"
 import { formatearPrecio } from "@/lib/formatear-precio"
+import { type FiltrosAdmin, PROPIEDADES_POR_PAGINA, urlAdmin } from "@/lib/admin-propiedades"
+import styles from "./PropiedadesTable.module.css"
 
 type Propiedad = {
   id: string
@@ -14,23 +16,49 @@ type Propiedad = {
   moneda?: string
   precio: number
   destacada: boolean
+  disponible: boolean
+  operacion?: string
 }
 
 export default function PropiedadesTable({
   propiedades,
+  filtros,
+  tipos,
+  totalFiltrado,
   idsVisiblesEnHome,
   limiteHome,
 }: {
   propiedades: Propiedad[]
+  filtros: FiltrosAdmin
+  tipos: string[]
+  totalFiltrado: number
   idsVisiblesEnHome: string[]
   limiteHome: number
 }) {
   const router = useRouter()
   const [seleccionadas, setSeleccionadas] = useState<Set<string>>(new Set())
   const [borrando, setBorrando] = useState(false)
+  const paginas = Math.max(1, Math.ceil(totalFiltrado / PROPIEDADES_POR_PAGINA))
+  const [guardando, startTransition] = useTransition()
+  const [error, setError] = useState("")
+  const filtradas = propiedades
+
+  function cambiarDisponibilidad(propiedad: Propiedad) {
+    setError("")
+    setSeleccionadas(new Set())
+    startTransition(async () => {
+      try {
+        const resultado = await cambiarDisponibilidadPropiedad(propiedad.id, !propiedad.disponible)
+        if (resultado.error) setError(resultado.error)
+        else router.refresh()
+      } catch {
+        setError("No se pudo cambiar la disponibilidad. Intentá nuevamente.")
+      }
+    })
+  }
 
   const visibles = new Set(idsVisiblesEnHome)
-  const todasSeleccionadas = propiedades.length > 0 && seleccionadas.size === propiedades.length
+  const todasSeleccionadas = filtradas.length > 0 && filtradas.every(p => seleccionadas.has(p.id))
 
   function toggleUna(id: string) {
     setSeleccionadas(prev => {
@@ -45,7 +73,7 @@ export default function PropiedadesTable({
     if (todasSeleccionadas) {
       setSeleccionadas(new Set())
     } else {
-      setSeleccionadas(new Set(propiedades.map(p => p.id)))
+      setSeleccionadas(new Set(filtradas.map(p => p.id)))
     }
   }
 
@@ -68,6 +96,36 @@ export default function PropiedadesTable({
 
   return (
     <div style={{ background: "#fff", border: "1px solid #F0E4D8", borderRadius: "8px", overflow: "hidden" }}>
+      <form action="/admin" method="get" className={styles.filters}>
+        <label className={styles.location}>Buscar por ubicación
+          <input name="ubicacion" type="search" defaultValue={filtros.ubicacion} placeholder="Ej: calle 82" maxLength={200} />
+        </label>
+        <label>Tipo de propiedad
+          <select name="tipo" defaultValue={filtros.tipo}>
+            <option value="">Todos los tipos</option>
+            {tipos.map(tipo => <option key={tipo}>{tipo}</option>)}
+          </select>
+        </label>
+        <label>Operación
+          <select name="operacion" defaultValue={filtros.operacion}>
+            <option value="">Todas las operaciones</option>
+            <option>Venta</option><option>Alquiler</option><option>Alquiler temporada</option>
+          </select>
+        </label>
+        <label>Disponibilidad
+          <select name="disponibilidad" defaultValue={filtros.disponibilidad}>
+            <option value="">Todas</option>
+            <option value="disponibles">Disponibles</option>
+            <option value="no-disponibles">No disponibles</option>
+          </select>
+        </label>
+        <div className={styles.filterActions}>
+          <button type="submit" disabled={borrando || guardando} className={styles.search}>Buscar propiedades</button>
+          <Link href="/admin" className={styles.clear}>Limpiar filtros</Link>
+        </div>
+        <p className={styles.hint}>Buscá por calle, número o zona. Podés combinar la ubicación con todos los filtros.</p>
+      </form>
+      {error && <p role="alert" style={{ padding: "12px 24px", color: "#B91C1C" }}>{error}</p>}
 
       <div style={{
         padding: "16px 24px",
@@ -105,7 +163,7 @@ export default function PropiedadesTable({
           </>
         ) : (
           <h2 className="font-display" style={{ fontSize: "14px", fontWeight: 700, color: "#1C0A00" }}>
-            Todas las propiedades
+            {totalFiltrado} {totalFiltrado === 1 ? "propiedad encontrada" : "propiedades encontradas"}
           </h2>
         )}
       </div>
@@ -118,11 +176,13 @@ export default function PropiedadesTable({
               <input
                 type="checkbox"
                 checked={todasSeleccionadas}
+                aria-label="Seleccionar todas las propiedades de esta página"
+                disabled={borrando || guardando}
                 onChange={toggleTodas}
                 style={{ width: "16px", height: "16px", accentColor: "#C2540A", cursor: "pointer" }}
               />
             </th>
-            {["Propiedad", "Tipo", "Precio", "Home", ""].map(h => (
+            {["Propiedad", "Tipo", "Precio", "Disponibilidad", "Home", "Acciones"].map(h => (
               <th key={h} style={{ textAlign: "left", padding: "10px 24px 10px 0", fontSize: "11px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.08em" }}>
                 {h}
               </th>
@@ -130,7 +190,7 @@ export default function PropiedadesTable({
           </tr>
         </thead>
         <tbody>
-          {propiedades.map((propiedad) => (
+          {filtradas.map((propiedad) => (
             <tr
               key={propiedad.id}
               style={{
@@ -142,6 +202,8 @@ export default function PropiedadesTable({
                 <input
                   type="checkbox"
                   checked={seleccionadas.has(propiedad.id)}
+                  aria-label={`Seleccionar ${propiedad.titulo}`}
+                  disabled={borrando || guardando}
                   onChange={() => toggleUna(propiedad.id)}
                   style={{ width: "16px", height: "16px", accentColor: "#C2540A", cursor: "pointer" }}
                 />
@@ -149,6 +211,7 @@ export default function PropiedadesTable({
               <td style={{ padding: "14px 24px 14px 0" }}>
                 <p className="font-display" style={{ fontWeight: 700, color: "#1C0A00", fontSize: "14px" }}>{propiedad.titulo}</p>
                 <p style={{ color: "#A8A29E", fontSize: "12px", marginTop: "2px" }}>{propiedad.ubicacion}</p>
+                <p style={{ color: "#78716C", fontSize: "12px", marginTop: "2px" }}>{propiedad.operacion || "Venta"}</p>
               </td>
               <td style={{ padding: "14px 24px 14px 0" }}>
                 <span style={{ background: "#1C0A00", color: "#fff", fontSize: "11px", fontWeight: 600, padding: "4px 10px", borderRadius: "4px" }}>
@@ -159,7 +222,12 @@ export default function PropiedadesTable({
                 {formatearPrecio(propiedad.precio, propiedad.moneda)}
               </td>
               <td style={{ padding: "14px 24px 14px 0" }}>
-                {!propiedad.destacada ? (
+                <span style={{ display: "block", fontSize: "12px", fontWeight: 700, color: propiedad.disponible ? "#166534" : "#92400E", marginBottom: "4px" }}>{propiedad.disponible ? "Disponible" : "No disponible"}</span>
+              </td>
+              <td style={{ padding: "14px 24px 14px 0" }}>
+                {!propiedad.disponible ? (
+                  <span style={{ color: "#78716C", fontSize: "11px" }}>Oculta</span>
+                ) : !propiedad.destacada ? (
                   <span style={{ background: "#F5F5F4", color: "#78716C", fontSize: "11px", fontWeight: 600, padding: "4px 10px", borderRadius: "4px" }}>No</span>
                 ) : visibles.has(propiedad.id) ? (
                   <span style={{ background: "#FFF7ED", color: "#C2540A", fontSize: "11px", fontWeight: 700, padding: "4px 10px", borderRadius: "4px", border: "1px solid #FFE4CC" }}>
@@ -175,9 +243,14 @@ export default function PropiedadesTable({
                 )}
               </td>
               <td style={{ padding: "14px 24px 14px 0" }}>
+                <div className={styles.rowActions}>
+                <button type="button" disabled={guardando || borrando} onClick={() => cambiarDisponibilidad(propiedad)} aria-label={`${propiedad.disponible ? "Marcar como no disponible" : "Volver a publicar"}: ${propiedad.titulo}`} className={styles.availability} data-available={propiedad.disponible}>
+                  {guardando ? "Guardando…" : propiedad.disponible ? "Marcar no disponible" : "Volver a publicar"}
+                </button>
                 <Link href={`/admin/propiedades/${propiedad.id}`} style={{ color: "#C2540A", fontSize: "13px", fontWeight: 600, textDecoration: "none" }}>
                   Editar →
                 </Link>
+                </div>
               </td>
             </tr>
           ))}
@@ -185,11 +258,19 @@ export default function PropiedadesTable({
       </table>
       </div>
 
-      {propiedades.length === 0 && (
+      {filtradas.length === 0 && (
         <div style={{ padding: "48px 24px", textAlign: "center" }}>
-          <p style={{ color: "#A8A29E", fontSize: "14px" }}>Todavía no cargaste ninguna propiedad.</p>
+          <p style={{ color: "#78716C", fontSize: "14px" }}>No hay propiedades que coincidan con la búsqueda. Probá otra ubicación o limpiá los filtros.</p>
         </div>
       )}
+      <nav aria-label="Paginación de propiedades" className={styles.pagination}>
+        <p>{totalFiltrado ? `${(filtros.pagina - 1) * PROPIEDADES_POR_PAGINA + 1}–${Math.min(filtros.pagina * PROPIEDADES_POR_PAGINA, totalFiltrado)} de ${totalFiltrado}` : "0 resultados"}</p>
+        <div>
+          {filtros.pagina > 1 ? <Link href={urlAdmin(filtros, filtros.pagina - 1)}>Anterior</Link> : <span aria-disabled="true">Anterior</span>}
+          <span aria-current="page">Página {filtros.pagina} de {paginas}</span>
+          {filtros.pagina < paginas ? <Link href={urlAdmin(filtros, filtros.pagina + 1)}>Siguiente</Link> : <span aria-disabled="true">Siguiente</span>}
+        </div>
+      </nav>
     </div>
   )
 }

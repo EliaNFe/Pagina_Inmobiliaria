@@ -2,27 +2,52 @@ import { createClient } from "@/lib/supabase-server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import PropiedadesTable from "@/components/PropiedadesTable"
+import { leerFiltrosAdmin, patronUbicacion, PROPIEDADES_POR_PAGINA, TIPOS_PROPIEDAD, urlAdmin } from "@/lib/admin-propiedades"
 
 export const dynamic = "force-dynamic"
 
-export default async function AdminDashboard() {
+export default async function AdminDashboard({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect("/admin/login")
 
-  const { data: propiedades } = await supabase
-    .from("propiedades")
-    .select("*")
-    .order("created_at", { ascending: false })
-
-  const listaPropiedades = propiedades || []
-
-  const total = listaPropiedades.length
-  const marcadasDestacadas = listaPropiedades.filter(p => p.destacada)
-  const destacadas = marcadasDestacadas.length
-
+  const filtros = leerFiltrosAdmin(await searchParams)
   const LIMITE_HOME = 10
-  const idsVisiblesEnHome = marcadasDestacadas.slice(0, LIMITE_HOME).map(p => p.id)
+  function consulta() {
+    let query = supabase.from("propiedades").select("id,titulo,ubicacion,tipo,operacion,moneda,precio,destacada,disponible", { count: "exact" })
+    if (filtros.ubicacion) query = query.ilike("ubicacion", patronUbicacion(filtros.ubicacion))
+    if (filtros.tipo) query = query.eq("tipo", filtros.tipo)
+    if (filtros.operacion === "Venta") query = query.or("operacion.eq.Venta,operacion.is.null")
+    else if (filtros.operacion) query = query.eq("operacion", filtros.operacion)
+    if (filtros.disponibilidad) query = query.eq("disponible", filtros.disponibilidad === "disponibles")
+    return query.order("created_at", { ascending: false }).order("id")
+  }
+  async function obtenerTipos() {
+    const tipos = new Set(TIPOS_PROPIEDAD)
+    for (let desde = 0; ; desde += 1000) {
+      const { data, error } = await supabase.from("propiedades").select("tipo").order("id").range(desde, desde + 999)
+      if (error) throw new Error("No se pudieron cargar las categorías.")
+      for (const p of data ?? []) if (p.tipo) tipos.add(p.tipo)
+      if (!data || data.length < 1000) break
+    }
+    return [...tipos].sort((a, b) => a.localeCompare(b, "es"))
+  }
+  const desde = (filtros.pagina - 1) * PROPIEDADES_POR_PAGINA
+  const [resultado, totales, ocultas, destacadasResultado, tipos] = await Promise.all([
+    consulta().range(desde, desde + PROPIEDADES_POR_PAGINA - 1),
+    supabase.from("propiedades").select("id", { count: "exact", head: true }),
+    supabase.from("propiedades").select("id", { count: "exact", head: true }).eq("disponible", false),
+    supabase.from("propiedades").select("id", { count: "exact" }).eq("destacada", true).eq("disponible", true).order("created_at", { ascending: false }).limit(LIMITE_HOME),
+    obtenerTipos(),
+  ])
+  if (resultado.error || totales.error || ocultas.error || destacadasResultado.error) throw new Error("No se pudieron cargar las propiedades. Intentá nuevamente.")
+  const totalFiltrado = resultado.count ?? 0
+  const paginas = Math.max(1, Math.ceil(totalFiltrado / PROPIEDADES_POR_PAGINA))
+  if (filtros.pagina > paginas) redirect(urlAdmin(filtros, paginas))
+  const listaPropiedades = resultado.data ?? []
+  const total = totales.count ?? 0
+  const destacadas = destacadasResultado.count ?? 0
+  const idsVisiblesEnHome = (destacadasResultado.data ?? []).map(p => p.id)
   const excedenLimite = destacadas - idsVisiblesEnHome.length
 
   return (
@@ -86,7 +111,7 @@ export default async function AdminDashboard() {
           {[
             { label: "Total propiedades", value: total, dark: true },
             { label: `Destacadas (máx. ${LIMITE_HOME} en home)`, value: destacadas, dark: false, accent: true },
-            { label: "No destacadas", value: total - destacadas, dark: false },
+            { label: "No disponibles", value: ocultas.count ?? 0, dark: false },
           ].map(s => (
             <div
               key={s.label}
@@ -125,6 +150,10 @@ export default async function AdminDashboard() {
         )}
 
         <PropiedadesTable
+          key={JSON.stringify([filtros, listaPropiedades])}
+          filtros={filtros}
+          tipos={tipos}
+          totalFiltrado={totalFiltrado}
           propiedades={listaPropiedades as never}
           idsVisiblesEnHome={idsVisiblesEnHome}
           limiteHome={LIMITE_HOME}

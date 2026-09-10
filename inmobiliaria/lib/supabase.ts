@@ -11,6 +11,7 @@ export const getPropiedadesHome = unstable_cache(
   async (operacion: "Venta" | "Alquiler") => {
     let query = supabase.from("propiedades")
       .select("id,titulo,tipo,operacion,precio,moneda,ubicacion,superficie,imagen_url")
+      .eq("disponible", true)
       .order("created_at", { ascending: false })
       .limit(12)
 
@@ -34,6 +35,7 @@ export const getPropiedadesDestacadas = unstable_cache(
     const { data } = await supabase
       .from("propiedades")
       .select("*")
+      .eq("disponible", true)
       .eq("destacada", true)
       .order("created_at", { ascending: false })
       .limit(10)
@@ -53,6 +55,7 @@ export const getPropiedades = unstable_cache(
     let query = supabase
       .from("propiedades")
       .select("*", { count: "exact" })
+      .eq("disponible", true)
       .order("created_at", { ascending: false })
 
     if (tipo) {
@@ -71,6 +74,7 @@ export const getPropiedades = unstable_cache(
 export const getConteoPorTipo = unstable_cache(
   async () => {
     const { data } = await supabase.from("propiedades").select("tipo")
+      .eq("disponible", true)
     const conteo: Record<string, number> = {}
     data?.forEach((row: { tipo: string }) => {
       conteo[row.tipo] = (conteo[row.tipo] || 0) + 1
@@ -89,6 +93,7 @@ export const getPropiedadesPorOperacion = unstable_cache(
     const { data } = await supabase
       .from("propiedades")
       .select("*")
+      .eq("disponible", true)
       .order("created_at", { ascending: false })
 
     const grupos: Record<string, typeof data> = {
@@ -128,6 +133,7 @@ export const getPropiedadesPorOperacionPaginado = unstable_cache(
     let query = supabase
       .from("propiedades")
       .select("*", { count: "exact" })
+      .eq("disponible", true)
       .order("created_at", { ascending: false })
 
     query = operacion === "Venta"
@@ -151,6 +157,7 @@ export const getPropiedadesPorOperacionPaginado = unstable_cache(
 export const getConteoPorOperacion = unstable_cache(
   async () => {
     const { data } = await supabase.from("propiedades").select("operacion")
+      .eq("disponible", true)
     const conteo: Record<string, number> = {}
     data?.forEach((row: { operacion?: string }) => {
       const op = row.operacion || "Venta"
@@ -168,6 +175,7 @@ export const getPropiedad = unstable_cache(
     const { data } = await supabase
       .from("propiedades")
       .select("*")
+      .eq("disponible", true)
       .eq("id", id)
       .single()
     return data
