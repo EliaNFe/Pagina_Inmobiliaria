@@ -11,6 +11,7 @@ export default function ConsultaWhatsappForm({ numeroWhatsapp }: { numeroWhatsap
   const [email, setEmail] = useState("")
   const [asunto, setAsunto] = useState("")
   const [mensaje, setMensaje] = useState("")
+  const [aceptaPrivacidad, setAceptaPrivacidad] = useState(false)
   const numero = numeroWhatsapp.replace(/\D/g, "")
   const texto = `Hola, soy ${nombre.trim()}.${email.trim() ? ` Mi email: ${email.trim()}.` : ""}${asunto ? ` Me interesa: ${asunto}.` : ""} ${mensaje.trim()}`
 
@@ -40,7 +41,11 @@ export default function ConsultaWhatsappForm({ numeroWhatsapp }: { numeroWhatsap
           <label htmlFor={`${id}-mensaje`}>Contame un poco más</label>
           <textarea id={`${id}-mensaje`} required maxLength={2000} value={mensaje} onChange={(e) => setMensaje(e.target.value)} className={s.input} rows={4} placeholder="Escribí tu consulta…" />
         </div>
-        <button type="submit" disabled={!numero || !asunto} className={s.submit}><MessageCircle size={17} />Continuar en WhatsApp</button>
+        <div className={s.privacyConsent}>
+          <input id={`${id}-privacidad`} type="checkbox" required checked={aceptaPrivacidad} onChange={(e) => setAceptaPrivacidad(e.target.checked)} />
+          <label htmlFor={`${id}-privacidad`}>Acepto y entiendo la <a href="/privacidad" target="_blank" rel="noopener noreferrer">Política de Privacidad</a></label>
+        </div>
+        <button type="submit" disabled={!numero || !asunto || !aceptaPrivacidad} className={s.submit}><MessageCircle size={17} />Continuar en WhatsApp</button>
         </fieldset>
         </div>
       </div>

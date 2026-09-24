@@ -14,6 +14,10 @@
 .revealInner { min-height:0; overflow:hidden; padding-inline:5px; margin-inline:-5px; }
 .fields { display:flex; flex-direction:column; gap:15px; min-width:0; border:0; margin:0; padding:24px 0 5px; }
 .field { min-width:0; }
+.privacyConsent { display:flex; align-items:flex-start; gap:9px; color:#f0dccb; font-size:11px; line-height:1.6; }
+.privacyConsent input { width:15px; height:15px; margin:1px 0 0; accent-color:#cf8050; flex:none; }
+.privacyConsent a { color:#f2b27a; text-decoration:underline; text-underline-offset:2px; }
+.privacyConsent a:hover { color:#fff3e8; }
 .field label { display:block; margin-bottom:7px; color:#f0dccb; font-size:11px; font-weight:500; }
 .field label span { color:#c9af99; font-weight:400; }
 .input { display:block; width:100%; min-height:46px; padding:12px 14px; border:1px solid #866044; border-radius:13px; background:#463024; font-size:16px; color:#fff3e8; transition:background .25s,border-color .25s; }

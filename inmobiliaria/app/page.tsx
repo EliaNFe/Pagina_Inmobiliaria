@@ -109,8 +109,7 @@ export default async function Home() {
       <footer className={s.footer}>
         <div className={s.container}>
           <div className={s.footerBrand}><House size={39} strokeWidth={1.1} /><div><p className={s.eyebrow}>Inmobiliaria</p><span className={s.footerName}>Liliana Cirigliano</span></div></div>
-          <nav aria-label="Navegación al pie"><Link href="/">Inicio</Link><Link href="/propiedades">Propiedades</Link><Link href="/nosotros">Nosotros</Link><Link href="/contacto">Contacto</Link></nav>
-          <p>Necochea, Buenos Aires</p>
+          <nav aria-label="Navegación al pie"><Link href="/">Inicio</Link><Link href="/propiedades">Propiedades</Link><Link href="/nosotros">Nosotros</Link><Link href="/contacto">Contacto</Link><Link href="/privacidad">Política de Privacidad</Link></nav>`r`n          <p>Necochea, Buenos Aires</p>
         </div>
         <div className={`${s.container} ${s.footerBottom}`}><p>© {new Date().getFullYear()} Inmobiliaria Liliana Cirigliano.</p><p>Gestiones inmobiliarias</p></div>
       </footer>

@@ -58,7 +58,7 @@ export default async function DetallePropiedad({ params }: PageProps) {
         </aside>
       </div>
 
-      <footer className={styles.footer}><div className={styles.container}><Link href="/" className={styles.brand}><small>Inmobiliaria</small>Liliana Cirigliano</Link><nav aria-label="Navegación al pie"><Link href="/propiedades">Propiedades</Link><Link href="/nosotros">Nosotros</Link><Link href="/contacto">Contacto</Link></nav></div><div className={`${styles.container} ${styles.footerBottom}`}><p>© {new Date().getFullYear()} Inmobiliaria Liliana Cirigliano.</p><span>Necochea, Buenos Aires</span></div></footer>
+      <footer className={styles.footer}><div className={styles.container}><Link href="/" className={styles.brand}><small>Inmobiliaria</small>Liliana Cirigliano</Link><nav aria-label="Navegación al pie"><Link href="/propiedades">Propiedades</Link><Link href="/nosotros">Nosotros</Link><Link href="/contacto">Contacto</Link><Link href="/privacidad">Política de Privacidad</Link></nav></div><div className={`${styles.container} ${styles.footerBottom}`}> <p>© {new Date().getFullYear()} Inmobiliaria Liliana Cirigliano.</p><span>Necochea, Buenos Aires</span></div></footer>
     </main>
   )
 }
