@@ -6,6 +6,7 @@ import { getConfiguracion, getPropiedadesDestacadas, getPropiedades } from "@/li
 import HomeFeatured from "@/components/HomeFeatured"
 import HomeBotanical from "@/components/HomeBotanical"
 import ConsultaWhatsappForm from "@/components/ConsultaWhatsappForm"
+import BrandHouse from "@/components/BrandHouse"
 import s from "./home.module.css"
 
 const handwriting = Caveat({ subsets: ["latin"], weight: "400", variable: "--font-note" })
@@ -108,8 +109,9 @@ export default async function Home() {
 
       <footer className={s.footer}>
         <div className={s.container}>
-          <div className={s.footerBrand}><House size={39} strokeWidth={1.1} /><div><p className={s.eyebrow}>Inmobiliaria</p><span className={s.footerName}>Liliana Cirigliano</span></div></div>
-          <nav aria-label="Navegación al pie"><Link href="/">Inicio</Link><Link href="/propiedades">Propiedades</Link><Link href="/nosotros">Nosotros</Link><Link href="/contacto">Contacto</Link><Link href="/privacidad">Política de Privacidad</Link></nav>`r`n          <p>Necochea, Buenos Aires</p>
+          <div className={s.footerBrand}><BrandHouse className="h-9 w-11 shrink-0 text-[#e79754]" /><div><p className={s.eyebrow}>Inmobiliaria</p><span className={s.footerName}>Liliana Cirigliano</span></div></div>
+          <nav aria-label="Navegación al pie"><Link href="/">Inicio</Link><Link href="/propiedades">Propiedades</Link><Link href="/nosotros">Nosotros</Link><Link href="/contacto">Contacto</Link><Link href="/privacidad">Política de Privacidad</Link></nav>
+                  <p>Necochea, Buenos Aires</p>
         </div>
         <div className={`${s.container} ${s.footerBottom}`}><p>© {new Date().getFullYear()} Inmobiliaria Liliana Cirigliano.</p><p>Gestiones inmobiliarias</p></div>
       </footer>

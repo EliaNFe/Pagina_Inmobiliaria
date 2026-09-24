@@ -3,6 +3,7 @@ import Link from "next/link"
 import { ArrowUpRight, Clock3, House, Camera, Mail, MapPin, MessageCircle, Phone } from "lucide-react"
 import { getConfiguracion } from "@/lib/supabase"
 import s from "./contacto.module.css"
+import BrandHouse from "@/components/BrandHouse"
 
 export const metadata: Metadata = {
   title: "Contacto | Liliana Cirigliano",
@@ -67,7 +68,7 @@ export default async function Contacto() {
       </section>
 
       <footer className={s.footer}>
-        <div className={`${s.container} ${s.footerTop}`}><Link href="/" className={s.brand}><House size={33} strokeWidth={1.2} /><span><small>Inmobiliaria</small>Liliana Cirigliano</span></Link><p>De persona a persona.<br /><em>De principio a fin.</em></p><nav aria-label="NavegaciÃ³n al pie"><Link href="/">Inicio</Link><Link href="/propiedades">Propiedades</Link><Link href="/nosotros">Nosotros</Link></nav></div>
+        <div className={`${s.container} ${s.footerTop}`}><Link href="/" className={s.brand}><BrandHouse className="h-8 w-10 shrink-0 text-[#e79754]" /><span><small>Inmobiliaria</small>Liliana Cirigliano</span></Link><p>De persona a persona.<br /><em>De principio a fin.</em></p><nav aria-label="NavegaciÃ³n al pie"><Link href="/">Inicio</Link><Link href="/propiedades">Propiedades</Link><Link href="/nosotros">Nosotros</Link></nav></div>
         <div className={`${s.container} ${s.footerBottom}`}><p>Â© {new Date().getFullYear()} Inmobiliaria Liliana Cirigliano.</p><span>Necochea, Buenos Aires</span></div>
       </footer>
     </main>

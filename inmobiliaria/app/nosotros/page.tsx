@@ -3,6 +3,7 @@ import Link from "next/link"
 import { Fraunces } from "next/font/google"
 import { ArrowRight, House, MapPin } from "lucide-react"
 import s from "./nosotros.module.css"
+import BrandHouse from "@/components/BrandHouse"
 
 const display = Fraunces({ subsets: ["latin"], weight: ["500", "600"], style: ["normal", "italic"], variable: "--font-nosotros-display" })
 
@@ -82,7 +83,7 @@ export default function Nosotros() {
       {/* FOOTER */}
       <footer className={s.footer}>
         <div className={`${s.container}`}>
-          <div className={s.footerBrand}><House size={32} strokeWidth={1.1} /><div><p className={s.eyebrow}>Inmobiliaria</p><span className={s.footerName}>Liliana Cirigliano</span></div></div>
+          <div className={s.footerBrand}><BrandHouse className="h-8 w-10 shrink-0 text-[#e79754]" /><div><p className={s.eyebrow}>Inmobiliaria</p><span className={s.footerName}>Liliana Cirigliano</span></div></div>
           <nav aria-label="NavegaciÃ³n al pie"><Link href="/">Inicio</Link><Link href="/propiedades">Propiedades</Link><Link href="/nosotros">Nosotros</Link><Link href="/contacto">Contacto</Link><Link href="/privacidad">Política de Privacidad</Link></nav>`r`n          <p>Necochea, Buenos Aires</p>
         </div>
         <div className={`${s.container} ${s.footerBottom}`}>

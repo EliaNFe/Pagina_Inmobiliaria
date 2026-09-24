@@ -1,4 +1,4 @@
-﻿.page { background:#f6f2eb; color:#29170d; min-height:100vh; font-family:var(--font-body),sans-serif; }
+.page { background:#f6f2eb; color:#29170d; min-height:100vh; font-family:var(--font-body),sans-serif; }
 .container { width:min(1280px,calc(100% - 96px)); margin-inline:auto; }
 .page a { text-decoration:none; }
 .page a:focus-visible,.page button:focus-visible,.page [tabindex]:focus-visible { outline:2px solid #806c55; outline-offset:5px; }
@@ -40,7 +40,7 @@
 .description { font-size:14px; line-height:1.95; color:#66594a; white-space:pre-line; overflow-wrap:anywhere; margin:0; max-width:740px; }
 .footer { background:#1c0a00; color:#d2b79f; padding-block:32px 23px; }
 .footer>.container { display:flex; justify-content:space-between; align-items:center; gap:24px; }
-.brand { font-family:var(--font-display),Georgia,serif; color:#f7eee3; font-size:20px; }
+.brand { display:flex; align-items:center; gap:12px; font-family:var(--font-display),Georgia,serif; color:#f7eee3; font-size:20px; }
 .brand small { display:block; font-family:var(--font-body),sans-serif; color:#e79754; font-size:9px; letter-spacing:.2em; text-transform:uppercase; margin-bottom:5px; }
 .footer nav { display:flex; flex-wrap:wrap; gap:24px; font-size:11px; }
 .footer nav a { padding-block:12px; }

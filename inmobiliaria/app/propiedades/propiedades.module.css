@@ -74,7 +74,7 @@
 .emptyState a { display:inline-flex; margin-top:22px; border-radius:999px; background:#b34c1c; color:white; padding:13px 22px; font-size:12px; }
 .footer { background:#1c0a00; color:#d2b79f; padding-block:32px 23px; }
 .footer>.container { display:flex; align-items:center; justify-content:space-between; gap:24px; }
-.footerBrand { font-family:var(--font-display),Georgia,serif; color:#f7eee3; font-size:20px; }
+.footerBrand { display:flex; align-items:center; gap:12px; font-family:var(--font-display),Georgia,serif; color:#f7eee3; font-size:20px; }
 .footerBrand small { display:block; font-family:var(--font-body),sans-serif; color:#e79754; font-size:9px; letter-spacing:.2em; text-transform:uppercase; margin-bottom:5px; }
 .footer nav { display:flex; flex-wrap:wrap; gap:24px; font-size:11px; }
 .footer nav a { padding-block:12px; }
