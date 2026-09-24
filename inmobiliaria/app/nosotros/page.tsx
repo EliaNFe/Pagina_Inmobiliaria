@@ -16,14 +16,14 @@ export default function Nosotros() {
       <section className={s.hero} aria-labelledby="nosotros-title">
         <div className={s.container + ' ' + s.heroGrid}>
           <div className={s.heroCopy}>
-            <p className={s.eyebrow}>Liliana Cirigliano Â· Desde 2019</p>
-            <h1 id="nosotros-title">Cada historia<br />merece un lugar.<br /><span>La tuya, tambiÃ©n.</span></h1>
-            <p className={s.heroIntro}>Soy Liliana. Te acompaÃ±o a encontrar tu lugar en Necochea con la cercanÃ­a de conocernos y la tranquilidad de sentirte bien asesorado.</p>
+            <p className={s.eyebrow}>Liliana Cirigliano · Desde 2019</p>
+            <h1 id="nosotros-title">Cada historia<br />merece un lugar.<br /><span>La tuya, también.</span></h1>
+            <p className={s.heroIntro}>Soy Liliana. Te acompaño a encontrar tu lugar en Necochea con la cercanía de conocernos y la tranquilidad de sentirte bien asesorado.</p>
             <div className={s.heroActions}>
               <Link href="/contacto" className={s.button}>Conversemos <span className={s.buttonArrow}><ArrowRight size={18} /></span></Link>
-              <a href={MATRICULA_URL} target="_blank" rel="noopener noreferrer" className={s.textLink}>Ver matrÃ­cula <ArrowRight size={15} /></a>
+              <a href={MATRICULA_URL} target="_blank" rel="noopener noreferrer" className={s.textLink}>Ver matrícula <ArrowRight size={15} /></a>
             </div>
-            <div className={s.heroSignature}><span className={s.signatureName}>Liliana Cirigliano</span><span>Martillera y corredora pÃºblica</span></div>
+            <div className={s.heroSignature}><span className={s.signatureName}>Liliana Cirigliano</span><span>Martillera y corredora pública</span></div>
           </div>
           <figure className={s.heroVisual}>
             <div className={s.heroPhoto}><Image src="/fachada-nosotros.jpg" alt="Nuestra oficina de Liliana Cirigliano en Necochea" fill sizes="(max-width: 760px) 90vw, 42vw" preload /></div>
@@ -48,27 +48,27 @@ export default function Nosotros() {
           </figure>
 
           <div className={s.historiaCopy}>
-            <p className={s.eyebrow}>AtenciÃ³n personalizada</p>
-            <h2 id="historia-title">Conocemos el mercado,<br /><span>entendemos lo que buscÃ¡s.</span></h2>
-            <p>El rubro inmobiliario requiere mucho mÃ¡s que simplemente mostrar propiedades; se trata de escuchar y entender la necesidad real de cada persona que entra a la oficina. Ese es el enfoque principal de nuestra inmobiliaria: un trato directo, realista y sin vueltas.</p>
-            <p>Ya sea para tasaciones, ventas o alquileres, nos enfocamos en que el proceso sea dinÃ¡mico y ordenado. Sabemos que el papeleo y los trÃ¡mites pueden ser estresantes, por lo que nos ocupamos de filtrar el ruido y dejar las condiciones claras desde el primer momento.</p>
-            <p>Trabajar de forma personalizada nos permite estar encima de cada detalle de la operaciÃ³n. AcÃ¡ hablÃ¡s siempre con la misma persona, asegurando respuestas concretas y priorizando la tranquilidad de tu inversiÃ³n.</p>
+            <p className={s.eyebrow}>Atención personalizada</p>
+            <h2 id="historia-title">Conocemos el mercado,<br /><span>entendemos lo que buscás.</span></h2>
+            <p>El rubro inmobiliario requiere mucho más que simplemente mostrar propiedades; se trata de escuchar y entender la necesidad real de cada persona que entra a la oficina. Ese es el enfoque principal de nuestra inmobiliaria: un trato directo, realista y sin vueltas.</p>
+            <p>Ya sea para tasaciones, ventas o alquileres, nos enfocamos en que el proceso sea dinámico y ordenado. Sabemos que el papeleo y los trámites pueden ser estresantes, por lo que nos ocupamos de filtrar el ruido y dejar las condiciones claras desde el primer momento.</p>
+            <p>Trabajar de forma personalizada nos permite estar encima de cada detalle de la operación. Acá hablás siempre con la misma persona, asegurando respuestas concretas y priorizando la tranquilidad de tu inversión.</p>
             <Link href="/contacto" className={s.textLink}>Hablar con Liliana <ArrowRight size={15} /></Link>
           </div>
         </div>
       </section>
 
-      {/* CÃ“MO TRABAJAMOS */}
+      {/* CÓMO TRABAJAMOS */}
       <section className={s.trabajo} aria-labelledby="trabajo-title">
         <div className={s.container}>
           <div className={s.trabajoHead}>
-            <p className={s.eyebrow} id="trabajo-title">CÃ³mo trabajamos</p>
+            <p className={s.eyebrow} id="trabajo-title">Cómo trabajamos</p>
           </div>
           <div className={s.steps}>
             {[
-              { num: "01", titulo: "Asesoramiento inicial", desc: "Escuchamos quÃ© estÃ¡s buscando comprar, vender o alquilar para entender tus prioridades y presupuesto real desde el primer dÃ­a." },
-              { num: "02", titulo: "BÃºsqueda y gestiÃ³n", desc: "Seleccionamos propiedades o compradores adecuados. Filtramos las opciones para que no pierdas tiempo en visitas innecesarias." },
-              { num: "03", titulo: "Cierre de operaciÃ³n", desc: "Nos ocupamos de la documentaciÃ³n, escribanÃ­a y coordinaciÃ³n. Un proceso prolijo y sin sorpresas de Ãºltimo momento." },
+              { num: "01", titulo: "Asesoramiento inicial", desc: "Escuchamos qué estás buscando comprar, vender o alquilar para entender tus prioridades y presupuesto real desde el primer día." },
+              { num: "02", titulo: "Búsqueda y gestión", desc: "Seleccionamos propiedades o compradores adecuados. Filtramos las opciones para que no pierdas tiempo en visitas innecesarias." },
+              { num: "03", titulo: "Cierre de operación", desc: "Nos ocupamos de la documentación, escribanía y coordinación. Un proceso prolijo y sin sorpresas de último momento." },
             ].map((item) => (
               <div key={item.num} className={s.step}>
                 <span className={s.stepNum}>{item.num}</span>
@@ -84,11 +84,12 @@ export default function Nosotros() {
       <footer className={s.footer}>
         <div className={`${s.container}`}>
           <div className={s.footerBrand}><BrandHouse className="h-8 w-10 shrink-0 text-[#e79754]" /><div><p className={s.eyebrow}>Inmobiliaria</p><span className={s.footerName}>Liliana Cirigliano</span></div></div>
-          <nav aria-label="NavegaciÃ³n al pie"><Link href="/">Inicio</Link><Link href="/propiedades">Propiedades</Link><Link href="/nosotros">Nosotros</Link><Link href="/contacto">Contacto</Link><Link href="/privacidad">Política de Privacidad</Link></nav>`r`n          <p>Necochea, Buenos Aires</p>
+          <nav aria-label="Navegación al pie"><Link href="/">Inicio</Link><Link href="/propiedades">Propiedades</Link><Link href="/nosotros">Nosotros</Link><Link href="/contacto">Contacto</Link><Link href="/privacidad">Política de Privacidad</Link></nav>
+          <p>Necochea, Buenos Aires</p>
         </div>
         <div className={`${s.container} ${s.footerBottom}`}>
-          <p>Â© {new Date().getFullYear()} Inmobiliaria Liliana Cirigliano.</p>
-          <p className={s.matricInline}>Martillera y corredora pÃºblica matriculada Â· <a href={MATRICULA_URL} target="_blank" rel="noopener noreferrer">Ver matrÃ­cula</a></p>
+          <p>© {new Date().getFullYear()} Inmobiliaria Liliana Cirigliano.</p>
+          <p className={s.matricInline}>Martillera y corredora pública matriculada · <a href={MATRICULA_URL} target="_blank" rel="noopener noreferrer">Ver matrícula</a></p>
         </div>
       </footer>
     </main>
