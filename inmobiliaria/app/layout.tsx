@@ -4,6 +4,7 @@ import { Lora, Manrope } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import ScrollToTop from "@/components/ScrollToTop";
+import { Analytics } from "@vercel/analytics/next";
 
 const lora = Lora({
   variable: "--font-display",
@@ -34,6 +35,7 @@ export default function RootLayout({
           <ScrollToTop />
         </Suspense>
         {children}
+        <Analytics />
       </body>
     </html>
   );
