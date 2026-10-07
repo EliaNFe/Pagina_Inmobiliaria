@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { getPropiedad, getImagenesPropiedad, getConfiguracion } from "@/lib/supabase"
 import { formatearPrecio } from "@/lib/formatear-precio"
 import Link from "next/link"
@@ -10,6 +11,22 @@ import { esTemporada } from "@/lib/temporada"
 import { contactoPropiedad } from "@/lib/contacto-propiedad"
 
 interface PageProps { params: Promise<{ id: string }> }
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params
+  const p = await getPropiedad(id)
+  if (!p) return { title: "Propiedad no encontrada", robots: { index: false, follow: true } }
+  const operacion = p.operacion || "Venta"
+  const title = `${p.titulo} | ${p.tipo} en ${operacion.toLowerCase()} en Necochea`
+  const base = p.descripcion?.replace(/\s+/g, " ").trim()
+  const description = (base ? base.slice(0, 155) : `${p.tipo} en ${operacion.toLowerCase()} en ${p.ubicacion}, Necochea. Consultá por esta propiedad con Liliana Cirigliano.`)
+  return {
+    title,
+    description,
+    alternates: { canonical: `/propiedades/${id}` },
+    openGraph: { title, description, type: "website", images: p.imagen_url ? [{ url: p.imagen_url }] : undefined },
+  }
+}
 
 export default async function DetallePropiedad({ params }: PageProps) {
   const { id } = await params

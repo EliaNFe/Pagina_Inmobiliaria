@@ -5,6 +5,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import ScrollToTop from "@/components/ScrollToTop";
 import { Analytics } from "@vercel/analytics/next";
+import { SITE_URL, SITE_NAME } from "@/lib/site";
 
 const lora = Lora({
   variable: "--font-display",
@@ -18,8 +19,10 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Inmobiliaria Liliana Cirigliano",
-  description: "Tu próximo hogar está acá. Terrenos, casas y departamentos en Necochea.",
+  metadataBase: new URL(SITE_URL),
+  title: "Inmobiliaria en Necochea | Liliana Cirigliano",
+  description: "Inmobiliaria en Necochea: casas, departamentos, terrenos y alquileres. Atención personal de Liliana Cirigliano, martillera y corredora pública.",
+  openGraph: { type: "website", locale: "es_AR", siteName: SITE_NAME },
 };
 
 export default function RootLayout({

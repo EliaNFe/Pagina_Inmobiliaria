@@ -1,9 +1,16 @@
 import { getPropiedadesPorOperacionPaginado, getConteoPorTipo } from "@/lib/supabase"
 import { formatearPrecio } from "@/lib/formatear-precio"
 import Reveal from "@/components/Reveal"
+import type { Metadata } from "next"
 import Link from "next/link"
 import styles from "./propiedades.module.css"
 import BrandHouse from "@/components/BrandHouse"
+
+export const metadata: Metadata = {
+  title: "Propiedades en Necochea | Venta y alquiler - Liliana Cirigliano",
+  description: "Casas, departamentos, terrenos y lotes en venta y alquiler en Necochea, incluido alquiler por temporada. Mirá las propiedades disponibles.",
+  alternates: { canonical: "/propiedades" },
+}
 
 const TIPOS = ["Casa", "Departamento", "Terreno", "Lote", "Local comercial"]
 const SECCIONES: { clave: "Venta" | "Alquiler" | "Alquiler temporada"; paramPagina: "pv" | "pa" | "pt"; titulo: string; subtitulo: string }[] = [

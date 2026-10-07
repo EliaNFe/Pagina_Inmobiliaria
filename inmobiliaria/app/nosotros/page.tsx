@@ -1,4 +1,5 @@
-﻿import Image from "next/image"
+﻿import type { Metadata } from "next"
+import Image from "next/image"
 import Link from "next/link"
 import { Fraunces } from "next/font/google"
 import { ArrowRight, House, MapPin } from "lucide-react"
@@ -6,6 +7,12 @@ import s from "./nosotros.module.css"
 import BrandHouse from "@/components/BrandHouse"
 
 const display = Fraunces({ subsets: ["latin"], weight: ["500", "600"], style: ["normal", "italic"], variable: "--font-nosotros-display" })
+
+export const metadata: Metadata = {
+  title: "Nosotros | Inmobiliaria en Necochea - Liliana Cirigliano",
+  description: "Conocé a Liliana Cirigliano, martillera, corredora pública y tasadora matriculada. Desde 2019 acompañando a quienes compran, venden y alquilan en Necochea.",
+  alternates: { canonical: "/nosotros" },
+}
 
 const MATRICULA_URL = "https://martillerosnecochea.com.ar/colegiados/cirigliano-liliana-noemi/"
 

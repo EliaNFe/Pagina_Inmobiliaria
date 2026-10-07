@@ -124,6 +124,35 @@
 .footer .footerBottom { margin-top:24px; padding-top:17px; border-top:1px solid #573821; font-size:10px; color:#bda188; }
 .empty { padding-block:35px; color:#796a5d; line-height:1.8; }
 .empty a { text-decoration:underline; }
+.reviewsSection { position:relative; background:var(--cream); padding-block:84px 128px; }
+.reviewsSection::after { content:""; position:absolute; inset:auto 0 -1px; height:48px; background:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1440 48%22 preserveAspectRatio=%22none%22%3E%3Cpath d=%22M0 48V30C260 6 520 8 760 24S1200 42 1440 14V48Z%22 fill=%22%23f1e4d3%22/%3E%3C/svg%3E") center bottom/100% 100% no-repeat; pointer-events:none; }
+.reviewsWrap { position:relative; }
+.reviewsHead { display:flex; align-items:flex-end; justify-content:space-between; gap:40px; margin-bottom:44px; }
+.reviewsHead h2 { text-wrap:balance; }
+.reviewsSummary { display:flex; align-items:center; flex-wrap:wrap; gap:12px; margin-top:20px !important; font-size:14px; color:#6c5b4d; }
+.reviewsSummary strong { font-size:28px; font-weight:600; letter-spacing:-.03em; color:var(--ink); font-variant-numeric:tabular-nums; }
+.stars { display:inline-flex; gap:3px; }
+.starOn { color:#c06a1a; fill:#c06a1a; }
+.starOff { color:#c9ad92; }
+.reviewsSection .sliderControls button { border-color:#cfae8f; color:var(--ink); }
+.reviewsSection .sliderControls button:hover:not(:disabled) { background:#e6d2bb; }
+.reviews { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); }
+.review { display:flex; flex-direction:column; gap:20px; padding:4px 36px 4px 36px; border-left:1px solid #d6bda2; animation:reviewIn .6s cubic-bezier(.22,1,.36,1) both; }
+.review:first-child { padding-left:0; border-left:0; }
+.review:last-child { padding-right:0; }
+.review:nth-child(2) { animation-delay:.07s; }
+.review:nth-child(3) { animation-delay:.14s; }
+.review blockquote { margin:0; font-size:16px; line-height:1.7; color:var(--ink); flex:1; text-wrap:pretty; }
+.review figcaption { display:flex; flex-direction:column; gap:2px; font-size:13px; color:#6c5b4d; }
+.review figcaption strong { font-size:14px; font-weight:600; color:var(--ink); }
+.reviewsFoot { display:flex; align-items:center; justify-content:space-between; gap:24px; margin-top:48px; flex-wrap:wrap; }
+.dots { display:flex; gap:8px; }
+.dots span { width:8px; height:8px; border-radius:50%; background:#cfb396; transition:background .3s,width .3s; }
+.dots .dotOn { width:24px; border-radius:4px; background:var(--clay); }
+.reviewsActions { display:flex; align-items:center; gap:28px; flex-wrap:wrap; margin-left:auto; }
+.reviewsLink { font-size:13px; font-weight:600; color:var(--clay); text-decoration:underline !important; text-decoration-color:#b34c1c55 !important; text-underline-offset:6px; padding-block:14px; }
+.reviewsLink:hover { text-decoration-color:var(--clay) !important; }
+@keyframes reviewIn { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
 @media (min-width:761px) and (max-width:1050px) {
 .container { width:calc(100% - 64px); }
 .heroInner { min-height:590px; }
@@ -140,6 +169,8 @@
 .officePhoto { aspect-ratio:1.15; }
 .officeVisit { display:none; }
 .botanical { right:-70px; width:145px; }
+.review { padding-inline:22px; }
+.review blockquote { font-size:15px; }
 .contactGrid { grid-template-columns:1.05fr 1fr .65fr; gap:18px; }
 .form { padding-left:18px; }
 .personNote { right:-20px; top:10px; font-size:23px; }
@@ -178,6 +209,15 @@
 .home h2 { font-size:37px; }
 .properties { grid-template-columns:1fr; gap:20px; }
 .botanical { width:100px; height:260px; right:-38px; bottom:-145px; opacity:.65; }
+.reviewsSection { padding-block:56px 92px; }
+.reviewsSection::after { height:32px; }
+.reviewsHead { align-items:flex-end; }
+.reviews { grid-template-columns:1fr; }
+.review,.review:first-child,.review:last-child { padding:26px 0; border-left:0; border-top:1px solid #d6bda2; }
+.review:first-child { border-top:0; padding-top:4px; }
+.reviewsFoot { flex-direction:column-reverse; align-items:stretch; }
+.dots { justify-content:center; }
+.reviewsActions { flex-direction:column; align-items:stretch; margin-left:0; gap:4px; text-align:center; }
 .office { padding-block:42px; }
 .officeGrid { grid-template-columns:1fr; gap:44px; }
 .officePhoto { aspect-ratio:1.25; }
@@ -199,4 +239,4 @@
 .footer nav { flex-wrap:wrap; }
 .footer .footerBottom { gap:10px; }
 }
-@media (prefers-reduced-motion:reduce) { .home * { transition:none !important; } }
+@media (prefers-reduced-motion:reduce) { .home * { transition:none !important; } .review { animation:none; } }

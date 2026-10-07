@@ -1,4 +1,5 @@
-﻿import Image from "next/image"
+﻿import type { Metadata } from "next"
+import Image from "next/image"
 import { Caveat } from "next/font/google"
 import Link from "next/link"
 import { ArrowRight, ArrowUpRight, Building2, Home as House, MapPin, MessageCircle, Trees } from "lucide-react"
@@ -7,7 +8,17 @@ import HomeFeatured from "@/components/HomeFeatured"
 import HomeBotanical from "@/components/HomeBotanical"
 import ConsultaWhatsappForm from "@/components/ConsultaWhatsappForm"
 import BrandHouse from "@/components/BrandHouse"
+import HomeReviews from "@/components/HomeReviews"
+import { URL_ESCRIBIR_RESENA, URL_VER_RESENAS } from "@/lib/resenas"
+import { getResenasHome } from "@/lib/google-resenas"
+import { SITE_URL, SITE_NAME } from "@/lib/site"
 import s from "./home.module.css"
+
+export const metadata: Metadata = {
+  title: "Inmobiliaria en Necochea | Casas, departamentos y terrenos - Liliana Cirigliano",
+  description: "Inmobiliaria en Necochea: propiedades en venta y alquileres de casas, departamentos, terrenos y lotes. Atención personal de Liliana Cirigliano, martillera y corredora pública.",
+  alternates: { canonical: "/" },
+}
 
 const handwriting = Caveat({ subsets: ["latin"], weight: "400", variable: "--font-note" })
 const categorias = [
@@ -18,11 +29,23 @@ const categorias = [
 ]
 
 export default async function Home() {
-  const [destacadas, config] = await Promise.all([getPropiedadesDestacadas(), getConfiguracion()])
+  const [destacadas, config, resenas] = await Promise.all([getPropiedadesDestacadas(), getConfiguracion(), getResenasHome()])
   const propiedades = destacadas?.length ? destacadas : (await getPropiedades()).data || []
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "RealEstateAgent",
+    name: SITE_NAME,
+    url: SITE_URL,
+    image: `${SITE_URL}/fachada-inmobiliaria.jpg`,
+    areaServed: "Necochea, Buenos Aires, Argentina",
+    address: { "@type": "PostalAddress", ...(config.direccion ? { streetAddress: config.direccion } : {}), addressLocality: "Necochea", addressRegion: "Buenos Aires", addressCountry: "AR" },
+    ...(config.telefono ? { telephone: config.telefono } : {}),
+    ...(config.email ? { email: config.email } : {}),
+  }
 
   return (
     <main className={`${s.home} ${handwriting.variable}`}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <section className={s.hero} aria-labelledby="home-title">
         <div className={s.heroPhoto}>
           <Image src="/hero-necochea-gaviotas.png" alt="Imagen generada inspirada en la costa de Necochea: atardecer dorado sobre el mar, olas y gaviotas" fill sizes="100vw" preload />
@@ -30,7 +53,7 @@ export default async function Home() {
         <div className={`${s.container} ${s.heroInner}`}>
           <div className={s.heroCopy}>
             <p className={s.eyebrow}>Necochea, Buenos Aires</p>
-            <h1 id="home-title">Encontrá tu<br />próximo lugar<br /><span>en Necochea.</span></h1>
+            <h1 id="home-title">Inmobiliaria<br />en Necochea<br /><span>Propiedades y alquileres.</span></h1>
             <p className={s.intro}>Casas, departamentos y terrenos. Te acompañamos a elegir con confianza y un trato cercano.</p>
             <div className={s.actions}>
               <Link href="/propiedades" className={s.button}>Ver propiedades <ArrowRight size={17} /></Link>
@@ -68,6 +91,12 @@ export default async function Home() {
             <div className={s.officePhoto}><Image src="/fachada-inmobiliaria.jpg" alt="Fachada del local de Liliana Cirigliano en Necochea" fill sizes="(max-width: 760px) 100vw, 45vw" /></div>
             <figcaption><MapPin size={25} strokeWidth={1.3} /><span>Nos encontrás en<br />Necochea, Buenos Aires</span><span className={s.officeVisit}>Te esperamos para<br />asesorarte personalmente</span></figcaption>
           </figure>
+        </div>
+      </section>
+
+      <section className={s.reviewsSection} aria-labelledby="reviews-title">
+        <div className={s.container}>
+          <HomeReviews resenas={resenas.resenas} promedio={resenas.promedio} total={resenas.total} urlEscribir={URL_ESCRIBIR_RESENA} urlVer={URL_VER_RESENAS} />
         </div>
       </section>
 
