@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Building2, Users, MessageCircle, ArrowUpRight } from "lucide-react"
+import { Home, Building2, Users, MessageCircle, ArrowRight } from "lucide-react"
 import BrandHouse from "@/components/BrandHouse"
 
 const links = [
@@ -31,31 +31,34 @@ export default function Navbar() {
 
   return (
     <>
-      {/* NAV DESKTOP — barra sólida, elegante, sin glass */}
+      {/* Navbar de escritorio con vidrio oscuro sobre el hero */}
       <header
         className="hidden md:block fixed top-0 inset-x-0 z-50"
         style={{
-          background: "#1C0A00",
-          borderBottom: "1px solid rgba(242,178,122,0.14)",
+          background: "linear-gradient(100deg, rgba(29, 26, 25, 0.76), rgba(49, 37, 32, 0.58) 52%, rgba(39, 31, 29, 0.7))",
+          borderBottom: "1px solid rgba(247, 205, 164, 0.13)",
+          backdropFilter: "blur(22px) saturate(130%)",
+          WebkitBackdropFilter: "blur(22px) saturate(130%)",
+          boxShadow: "0 6px 24px rgba(22, 12, 7, 0.1)",
         }}
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-5 px-8 lg:px-12 h-[72px]">
+        <div className="mx-auto grid h-[78px] w-[90%] max-w-[1480px] grid-cols-[1fr_auto_1fr] items-center gap-8">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 leading-none" style={{ textDecoration: "none" }}>
-            <BrandHouse />
+          <Link href="/" className="flex items-center gap-3 leading-none justify-self-start" style={{ textDecoration: "none" }}>
+            <BrandHouse className="h-9 w-[48px] shrink-0 text-[#e79754]" />
             <span className="flex flex-col">
-            <span className="text-[10px] tracking-[0.28em] text-[#C2540A] font-semibold uppercase">
+            <span className="text-[9px] tracking-[0.3em] text-[#e79754] font-medium uppercase">
               Inmobiliaria
             </span>
-            <span className="font-display text-[19px] font-bold text-white mt-1 tracking-[-0.01em]">
+            <span className="font-display text-[22px] font-medium text-white/95 mt-1 tracking-[-0.02em]">
               Liliana Cirigliano
             </span>
             </span>
           </Link>
 
           {/* Links — minimalistas, con línea inferior animada */}
-          <nav aria-label="Navegación principal" className="flex items-center gap-5 lg:gap-9">
+          <nav aria-label="Navegación principal" className="flex items-center justify-center gap-12">
             {links.map((link) => {
               const active = pathname === link.href
               return (
@@ -63,15 +66,15 @@ export default function Navbar() {
                   key={link.href}
                   href={link.href}
                   aria-current={active ? "page" : undefined}
-                  className="group relative py-2 text-[12px] font-medium transition-colors"
+                  className="group relative py-3 text-[13px] font-normal tracking-[0.01em] transition-colors"
                   style={{
                     textDecoration: "none",
-                    color: active ? "#F2B27A" : "rgba(255,255,255,0.62)",
+                    color: active ? "#efa767" : "rgba(255,255,255,0.84)",
                   }}
                 >
                   {link.label}
                   <span
-                    className="absolute -bottom-0.5 left-0 h-px bg-[#C2540A] transition-all duration-300"
+                    className="absolute -bottom-0.5 left-0 h-px bg-[#e79754] transition-all duration-300"
                     style={{ width: active ? "100%" : "0%" }}
                   />
                   <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-[#F2B27A] transition-all duration-300 group-hover:w-full" />
@@ -84,25 +87,30 @@ export default function Navbar() {
           <Link
             href="/#consulta"
             onClick={handleConsultaClick}
-            className="group relative inline-flex shrink-0 items-center gap-3 overflow-hidden rounded-[3px] bg-[#bd521d] px-5 py-3 text-[12px] font-semibold text-white"
+            className="group inline-flex h-[46px] shrink-0 items-center justify-center gap-2.5 rounded-full bg-transparent px-[18px] text-[13px] font-normal tracking-[0.01em] text-[#efa15f] transition-colors hover:bg-[#e79754]/[0.08] justify-self-end"
             style={{
               textDecoration: "none",
-              border: "1px solid rgba(194,84,10,0.55)",
+              border: "1px solid rgba(231,151,84,0.62)",
             }}
           >
-            <span className="absolute inset-0 -translate-x-full bg-[#C2540A] transition-transform duration-500 ease-[cubic-bezier(.16,1,.3,1)] group-hover:translate-x-0" />
-            <span className="relative z-10 transition-colors duration-300 group-hover:text-white">Hablar con Liliana</span>
-            <ArrowUpRight
+            <span className="inline-flex h-[18px] w-[18px] items-center justify-center">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="h-[18px] w-[18px]">
+                <path d="M20.2 11.7a8.2 8.2 0 0 1-12.1 7.2L4 20l1.1-4A8.2 8.2 0 1 1 20.2 11.7Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+                <path d="M8.2 7.8c.2-.4.4-.5.7-.5h.5c.2 0 .4.1.5.4l.8 1.8c.1.3.1.5-.1.7l-.6.7c-.2.2-.2.4-.1.6.6 1 1.4 1.8 2.5 2.4.2.1.4.1.6-.1l.8-.8c.2-.2.4-.3.7-.2l1.7.8c.3.1.4.3.4.5 0 .6-.3 1.2-.7 1.6-.4.4-1 .5-1.6.5-1-.1-2.3-.7-3.5-1.9-1.2-1.2-1.8-2.5-1.9-3.5-.1-.6.1-1.2.5-1.7Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+            <span>Hablar con Liliana</span>
+            <ArrowRight
               size={15}
-              strokeWidth={2.3}
-              className="relative z-10 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white"
+              strokeWidth={1.6}
+              className="ml-1 transition-transform duration-300 group-hover:translate-x-1"
             />
           </Link>
         </div>
       </header>
 
       {/* Espaciador para que el contenido no quede debajo de la barra fija */}
-      <div className="hidden md:block h-[72px]" />
+      {pathname === "/" ? null : <div className="hidden md:block h-[78px]" />}
 
       <header className="flex md:hidden items-center justify-between gap-4 bg-[#1C0A00] px-5 py-5 text-[#F7F2EA] border-b border-white/15">
         <Link href="/" className="flex items-center gap-2.5"><BrandHouse /><span className="flex flex-col gap-1"><span className="text-[9px] uppercase tracking-[.2em] text-[#dba37b]">Inmobiliaria</span><span className="font-display text-[17px]">Liliana Cirigliano</span></span></Link>

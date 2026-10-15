@@ -2,7 +2,7 @@
 import Image from "next/image"
 import { Caveat } from "next/font/google"
 import Link from "next/link"
-import { ArrowRight, ArrowUpRight, Building2, Home as House, MapPin, MessageCircle, Trees } from "lucide-react"
+import { ArrowRight, ArrowUpRight, Building2, Home as House, MapPin, MessageCircle, SlidersHorizontal, Trees } from "lucide-react"
 import { getConfiguracion, getPropiedadesDestacadas, getPropiedades } from "@/lib/supabase"
 import HomeFeatured from "@/components/HomeFeatured"
 import HomeBotanical from "@/components/HomeBotanical"
@@ -65,10 +65,15 @@ export default async function Home() {
       </section>
 
       <div className={s.categoryBand}>
-        <nav className={`${s.container} ${s.types}`} aria-label="Buscar por tipo de propiedad">
-          <span>Buscá por categoría</span>
-          {categorias.map(({ tipo, label, icon: Icon }) => <Link key={tipo} href={`/propiedades?tipo=${tipo}`}><Icon size={22} strokeWidth={1.3} />{label}</Link>)}
-          <Link className={s.allTypes} href="/propiedades">Ver todas <ArrowRight size={17} /></Link>
+        <nav className={`${s.container} ${s.types}`} aria-label="Filtrar propiedades por categoría">
+          <div className={s.filterLabel}>
+            <span className={s.filterIcon}><SlidersHorizontal size={16} strokeWidth={1.6} /></span>
+            <span><strong>Filtrar propiedades</strong><small>Por categoría</small></span>
+          </div>
+          <div className={s.filterOptions}>
+            {categorias.map(({ tipo, label, icon: Icon }) => <Link className={s.typeOption} key={tipo} href={`/propiedades?tipo=${tipo}`}><Icon size={17} strokeWidth={1.5} />{label}</Link>)}
+            <Link className={s.allTypes} href="/propiedades">Ver todas <ArrowRight size={15} /></Link>
+          </div>
         </nav>
       </div>
 
