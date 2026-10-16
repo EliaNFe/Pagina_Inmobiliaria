@@ -110,7 +110,7 @@ export default function Navbar() {
       </header>
 
       {/* Espaciador para que el contenido no quede debajo de la barra fija */}
-      {pathname === "/" ? null : <div className="hidden md:block h-[78px]" />}
+      <div className="hidden md:block h-[78px]" />
 
       <header className="flex md:hidden items-center justify-between gap-4 bg-[#1C0A00] px-5 py-5 text-[#F7F2EA] border-b border-white/15">
         <Link href="/" className="flex items-center gap-2.5"><BrandHouse /><span className="flex flex-col gap-1"><span className="text-[9px] uppercase tracking-[.2em] text-[#dba37b]">Inmobiliaria</span><span className="font-display text-[17px]">Liliana Cirigliano</span></span></Link>
